@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="msapplication-tap-highlight" content="no"/>
+    <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+    <meta name="viewport"
+          content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi"/>
+    <link rel="stylesheet" type="text/css" href="css/index.css"/>
+    <title>Hello World</title>
+
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" charset="utf-8" src="jxcore.js"></script>
+
+</head>
+<body>
+<div class="app">
+    <h1>Apache Cordova and JXcore</h1>
+</div>
+
+<br/>
+
+<p id='txt'>
+    Hello World!!
+</p>
+
+<script type="text/javascript" charset="utf-8">
+
+    function log(x) {
+        var txt = document.getElementById('txt');
+        if (txt)
+            txt.innerHTML += "<BR/>" + x;
+    }
+
+    window.onload = function () {
+        jxcore.isReady(function () {
+            // register log method from UI to jxcore instance
+            jxcore('log').register(log);
+
+            jxcore('app.js').loadMainFile(function (ret, err) {
+                if (err) {
+                    alert(err);
+                } else {
+                    jxcore_ready();
+                }
+            });
+        });
+    };
+
+    function jxcore_ready() {
+        // calling a method from JXcore (app.js)
+        jxcore('asyncPing').call('Hello', function (ret, err) {
+            log(ret);
+            // register getTime method from jxcore (app.js)
+            var getBuffer = jxcore("getBuffer");
+
+            getBuffer.call(function (bf, err) {
+                var arr = new Uint8Array(bf);
+                log("Buffer size:" + arr.length + " - first item: " + arr[0]);
+            });
+        });
+    }
+</script>
+
+</body>
+</html>

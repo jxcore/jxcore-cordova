@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="io.jxcore.node"
+    version="0.0.1-dev">
+    <name>JXcore</name>
+    <description>Cordova JXcore/Node.JS Plugin</description>
+    <license>MIT</license>
+    <keywords>cordova,jxcore,node.js</keywords>
+
+    <js-module src="www/jxcore.js" name="jxcore">
+        <clobbers target="jxcore" />
+    </js-module>
+
+    <!-- ios -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="JXcore">
+                <param name="ios-package" value="CDVJXcore"/>
+            </feature>
+        </config-file>
+
+        <resource-file src="app/jxcore_app" />
+        <resource-file src="app/jxcore_cordova.js" />
+        <header-file src="src/ios/CDVJXcore.h" />
+        <source-file src="src/ios/CDVJXcore.m" />
+        <header-file src="bin/jx.h" />
+        <header-file src="bin/jx_result.h" />
+        <source-file src="bin/libcares.a" framework="true" />
+        <source-file src="bin/libchrome_zlib.a" framework="true" />
+        <source-file src="bin/libhttp_parser.a" framework="true" />
+        <source-file src="bin/libjx.a" framework="true" compiler-flags="-std=c++11" />
+        <source-file src="bin/libmozjs.a" framework="true" compiler-flags="-std=c++11" />
+        <source-file src="bin/libopenssl.a" framework="true" />
+        <source-file src="bin/libsqlite3.a" framework="true" />
+        <source-file src="bin/libuv.a" framework="true" />
+
+        <framework src="libstdc++.6.0.9.dylib" />
+        <framework src="CFNetwork.framework" />
+        <framework src="Foundation.framework" />
+        <framework src="Security.framework" />
+    </platform>
+
+
+    <!-- android
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="JXcore" >
+                <param name="android-package" value="io.jxcore.node"/>
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/Device.java" target-dir="src/io/jxcore/node/device" />
+    </platform>
+    -->
+
+</plugin>
