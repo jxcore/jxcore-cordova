@@ -82,9 +82,6 @@ void ConvertResult(JXResult *result, CDVPluginResult **to_result,
 void callback(JXResult *results, int argc) {
   if (argc != 3) {
     NSLog(@"JXcore-Cordova: Unexpected callback received");
-    for (int i = 0; i < argc; i++) {
-      JX_FreeResultData(&results[i]);
-    }
     return;
   }
 
@@ -113,9 +110,6 @@ void callback(JXResult *results, int argc) {
 
   [activeDevice.commandDelegate sendPluginResult:pluginResult
                                       callbackId:callbackId];
-
-  JX_FreeResultData(&retval);
-  JX_FreeResultData(&cid);
 }
 
 @interface CDVJXcore () {
