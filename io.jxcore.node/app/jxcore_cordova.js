@@ -51,6 +51,8 @@ cordova.prototype.call = function (rest) {
   }
 
   fnc.callback.apply(null, params);
+
+  return this;
 };
 
 global.cordova = cordova;
@@ -125,6 +127,5 @@ cordova.executeJSON = function (json, callbackId) {
     return fnc.method.apply(null, json.params);
   }
 };
-
 
 console.log("JXcore Cordova Bridge is Ready!");

@@ -71,11 +71,9 @@ void ConvertResult(JXResult *result, CDVPluginResult **to_result,
       return;
   }
 
-  if (result->type_ == RT_Null || result->type_ == RT_Undefined)
-    [ret_val setKeepCallback:[NSNumber numberWithBool:YES]];
-  else
-    [ret_val setKeepCallback:[NSNumber numberWithBool:NO]];
-
+  // TODO(obastemur) fix me! detect when we can remove a callback
+  [ret_val setKeepCallback:[NSNumber numberWithBool:YES]];
+ 
   *to_result = ret_val;
 }
 
@@ -119,14 +117,14 @@ void callback(JXResult *results, int argc) {
 @implementation CDVJXcore
 
 - (void)pluginInitialize {
-  NSLog(@"JXcore Cordova plugin init.");
+  NSLog(@"JXcore Cordova plugin initializing");
   NSString *sandboxPath = NSHomeDirectory();
-  NSLog(@"The app sandbox resides at: %@", sandboxPath);
+ // NSLog(@"The app sandbox resides at: %@", sandboxPath);
 
   NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
                                                        NSUserDomainMask, YES);
   NSString *documentsDirectory = [paths objectAtIndex:0];
-  NSLog(@"The app document resides at: %@", documentsDirectory);
+ // NSLog(@"The app document resides at: %@", documentsDirectory);
 
   NSString *filePath =
       [[NSBundle mainBundle] pathForResource:@"jxcore_cordova" ofType:@"js"];
