@@ -41,7 +41,7 @@ cordova plugin add jxcore-cordova/io.jxcore.node/
 
 ```
 cordova platform remove ios
-cordova plugin remove jxcore-cordova/io.jxcore.node
+cordova plugin remove io.jxcore.node
 cordova plugin add jxcore-cordova/io.jxcore.node/
 cordova platform add ios
 ```
