@@ -142,6 +142,7 @@ void callback(JXResult *results, int argc) {
   }
 
   JX_Initialize([sandboxPath UTF8String], callback);
+  JX_InitializeNewEngine();
   JX_DefineMainFile([fileContents UTF8String]);
   JX_StartEngine();
   [self jxcoreLoop:[NSNumber numberWithInt:0]];
