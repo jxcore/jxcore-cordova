@@ -119,12 +119,6 @@ void callback(JXResult *results, int argc) {
 - (void)pluginInitialize {
   NSLog(@"JXcore Cordova plugin initializing");
   NSString *sandboxPath = NSHomeDirectory();
- // NSLog(@"The app sandbox resides at: %@", sandboxPath);
-
-  NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
-                                                       NSUserDomainMask, YES);
-  NSString *documentsDirectory = [paths objectAtIndex:0];
- // NSLog(@"The app document resides at: %@", documentsDirectory);
 
   NSString *filePath =
       [[NSBundle mainBundle] pathForResource:@"jxcore_cordova" ofType:@"js"];
@@ -164,6 +158,10 @@ float delay = 0;
                afterDelay:0.01 + delay];
 }
 
++ (int)jxcoreLoopOnce {
+  return JX_LoopOnce();
+}
+
 - (void)Evaluate:(CDVInvokedUrlCommand *)command {
   CDVPluginResult *result = nil;
   NSString *script = [command.arguments objectAtIndex:0];
@@ -188,6 +186,11 @@ float delay = 0;
   // has no effect
   delay = 0.50;
   NSLog(@"Application On Pause");
+
+  // unload sub threads
+  // when app resumes, jxcore will be reloading them back
+  JXResult result;
+  JX_Evaluate("jxcore.tasks.unloadThreads()", "ios_on_pause.js", &result);
 }
 
 - (void)onResume:(CDVInvokedUrlCommand *)command {

@@ -8,6 +8,8 @@
 
 + (NSString*)cordovaVersion;
 
++ (int)jxcoreLoopOnce;
+
 - (void)isReady:(CDVInvokedUrlCommand*)command;
 
 - (void)Evaluate:(CDVInvokedUrlCommand*)command;
