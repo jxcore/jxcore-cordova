@@ -3,7 +3,7 @@
 ### Status
 
 IOS - Works  
-Android - Under development
+Android - Under development ([Android jxcore sample project](https://github.com/obastemur/jxcore-android-basics) - plugin is coming soon!)
 
 
 ### Goals
