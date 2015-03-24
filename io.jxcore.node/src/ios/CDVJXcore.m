@@ -19,7 +19,7 @@ void fputs$UNIX2003(const char *restrict c, FILE *restrict f) { fputs(c, f); }
 
 static CDVJXcore *activeDevice = nil;
 
-void ConvertResult(JXResult *result, CDVPluginResult **to_result,
+void ConvertResult(JXValue *result, CDVPluginResult **to_result,
                    bool is_error) {
   CDVPluginResult *ret_val;
 
@@ -77,17 +77,17 @@ void ConvertResult(JXResult *result, CDVPluginResult **to_result,
   *to_result = ret_val;
 }
 
-void callback(JXResult *results, int argc) {
+void callback(JXValue *results, int argc) {
   if (argc != 3) {
     NSLog(@"JXcore-Cordova: Unexpected callback received");
     return;
   }
 
-  JXResult retval = results[0];
-  JXResult errval = results[1];
-  JXResult cid = results[2];
+  JXValue retval = results[0];
+  JXValue errval = results[1];
+  JXValue cid = results[2];
 
-  if (!JX_ResultIsString(&cid)) {
+  if (!JX_IsString(&cid)) {
     NSLog(@"JXcore-Cordova: Unexpected callback received. Third parameter must "
            "be a String");
     return;
@@ -101,7 +101,7 @@ void callback(JXResult *results, int argc) {
   NSString *callbackId = [NSString stringWithUTF8String:JX_GetString(&cid)];
   CDVPluginResult *pluginResult = nil;
 
-  if (JX_ResultIsUndefined(&errval) || JX_ResultIsNull(&errval))
+  if (JX_IsUndefined(&errval) || JX_IsNull(&errval))
     ConvertResult(&retval, &pluginResult, false);
   else
     ConvertResult(&errval, &pluginResult, true);
@@ -171,9 +171,10 @@ float delay = 0;
     NSString *scriptWithCallbackId =
         [NSString stringWithFormat:@"%@, '%@')", script, command.callbackId];
     const char *str = [scriptWithCallbackId UTF8String];
-    JXResult jxresult;
+    JXValue jxresult;
     JX_Evaluate(str, 0, &jxresult);
     ConvertResult(&jxresult, &result, false);
+    JX_Free(&jxresult);
   } else {
     result = [CDVPluginResult
         resultWithStatus:CDVCommandStatus_ERROR
@@ -189,8 +190,9 @@ float delay = 0;
 
   // unload sub threads
   // when app resumes, jxcore will be reloading them back
-  JXResult result;
+  JXValue result;
   JX_Evaluate("jxcore.tasks.unloadThreads()", "ios_on_pause.js", &result);
+  JX_Free(&result);
 }
 
 - (void)onResume:(CDVInvokedUrlCommand *)command {
