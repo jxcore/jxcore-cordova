@@ -1,4 +1,3 @@
-
 // See the LICENSE file
 
 var channel = require('cordova/channel'),
@@ -12,7 +11,7 @@ channel.waitForInitialization('onJXcoreReady');
 function callNative(name, args, callback) {
   exec(
     function cb(data) {
-      if (data == null) return;
+      if (data === null) return;
       if (callback) callback(data, null);
     },
     function errorHandler(err) {
@@ -103,9 +102,11 @@ module.exports = jxcore;
 function onPause() {
   callNative("onPause");
 }
+
 document.addEventListener("pause", onPause, false);
 
 function onResume() {
   callNative("onResume");
 }
+
 document.addEventListener("resume", onResume, false);

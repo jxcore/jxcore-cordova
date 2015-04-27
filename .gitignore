@@ -9,7 +9,6 @@
 *.pch
 
 # Compiled Dynamic libraries
-*.so
 *.dylib
 *.dll
 
@@ -28,3 +27,4 @@
 *.app
 
 bin/
+io.jxcore.node/src/android/obj/

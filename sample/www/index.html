@@ -26,22 +26,23 @@
 </p>
 
 <script type="text/javascript" charset="utf-8">
-
     function log(x) {
         var txt = document.getElementById('txt');
         if (txt)
             txt.innerHTML += "<BR/>" + x;
     }
 
-    window.onload = function () {
-        jxcore.isReady(function () {
+    window.onload = function() {
+        jxcore.isReady(function(){
+            log('READY');
             // register log method from UI to jxcore instance
             jxcore('log').register(log);
 
             jxcore('app.js').loadMainFile(function (ret, err) {
-                if (err) {
+                if(err) {
                     alert(err);
                 } else {
+                    log('Loaded');
                     jxcore_ready();
                 }
             });
@@ -50,12 +51,11 @@
 
     function jxcore_ready() {
         // calling a method from JXcore (app.js)
-        jxcore('asyncPing').call('Hello', function (ret, err) {
-            log(ret);
+        jxcore('asyncPing').call('Hello', function(ret, err){
             // register getTime method from jxcore (app.js)
             var getBuffer = jxcore("getBuffer");
 
-            getBuffer.call(function (bf, err) {
+            getBuffer.call(function(bf, err){
                 var arr = new Uint8Array(bf);
                 log("Buffer size:" + arr.length + " - first item: " + arr[0]);
             });

@@ -1,8 +1,6 @@
 // See the LICENSE file
 
 var path = require('path');
-var fs = require('fs');
-
 var jx_methods = {};
 var internal_methods = {};
 var ui_methods = {};
@@ -72,10 +70,6 @@ internal_methods['registerUIMethod'] = function (methodName, callback_) {
   };
 };
 
-// ugly patching
-var base_path = process.cwd();
-process.cwd = function() { return base_path + "/jxcore_app/"; };
-
 internal_methods['loadMainFile'] = function (filePath, callback_) {
   if (filePath && Array.isArray(filePath)) {
     filePath = filePath[0];
@@ -127,5 +121,136 @@ cordova.executeJSON = function (json, callbackId) {
     return fnc.method.apply(null, json.params);
   }
 };
+
+console.error("Platform", process.platform);
+if (process.platform == "android") {
+  process.registerAssets = function () {
+    var fs = require('fs');
+    var folders = process.natives.assetReadDirSync();
+    var root = process.cwd();
+    var jxcore_root;
+
+    var prepVirtualDirs = function () {
+      var _ = {};
+      for (var o in folders) {
+        var sp = o.split('/');
+        var last = _;
+        for (var i in sp) {
+          var loc = sp[i];
+          if (!last[loc]) last[loc] = {};
+          last = last[loc];
+        }
+        last['!s'] = folders[o];
+      }
+
+      folders = {};
+      var sp = root.split('/');
+      if (sp[0] === '') sp.shift();
+      jxcore_root = folders;
+      for (var o in sp) {
+        jxcore_root[sp[o]] = {};
+        jxcore_root = jxcore_root[sp[o]];
+      }
+
+      jxcore_root['jxcore'] = _; // assets/jxcore -> /
+    };
+
+    prepVirtualDirs();
+
+    var findIn = function (what, where) {
+      var last = where;
+      for (var o in what) {
+        var subject = what[o];
+        if (!last[subject]) return;
+
+        last = last[subject];
+      }
+
+      return last;
+    };
+
+    var getLast = function (location) {
+      while (location[0] == '/')
+        location = location.substr(1);
+      while (location[location.length - 1] == '/')
+        location = location.substr(0, location.length - 1);
+
+      var dirs = location.split('/');
+
+      var res = findIn(dirs, folders);
+      if (!res) res = findIn(dirs, jxcore_root);
+
+      return res;
+    };
+
+    var existssync = function (pathname) {
+      var n = pathname.indexOf(root);
+      if (n === 0 || n === -1) {
+        if (n === 0) {
+          pathname = pathname.replace(root, '');
+          pathname = path.join('jxcore/', pathname);
+        }
+
+        var last = getLast(pathname);
+        if (!last) return false;
+
+        var result;
+        if (typeof last['!s'] === 'undefined')
+          result = {
+            size: 0
+          };
+        else
+          result = {
+            size: last['!s']
+          };
+
+        return result;
+      }
+    };
+
+    var readfilesync = function (pathname) {
+      if (!existssync(pathname)) throw new Error(pathname + " does not exist");
+
+      var n = pathname.indexOf(root);
+      if (n === 0) {
+        pathname = pathname.replace(root, "");
+        pathname = path.join('jxcore/', pathname);
+        return process.natives.assetReadSync(pathname);
+      }
+    };
+
+    var readdirsync = function (pathname) {
+      var n = pathname.indexOf(root);
+      if (n === 0 || n === -1) {
+        var last = getLast(pathname);
+        if (!last || typeof last['!s'] !== 'undefined') return null;
+
+        var arr = [];
+        for (var o in last) {
+          var item = last[o];
+          if (item && o != '!s') arr.push(o);
+        }
+        return arr;
+      }
+      return null;
+    };
+
+    var extension = {
+      readFileSync: readfilesync,
+      readDirSync: readdirsync,
+      existsSync: existssync
+    };
+
+    fs.setExtension("jxcore-java", extension);
+  };
+
+  process.registerAssets();
+} else {
+//ugly patching
+  var base_path = process.cwd();
+  process.cwd = function () {
+    return base_path + "/jxcore/";
+  };
+}
 
 console.log("JXcore Cordova Bridge is Ready!");

@@ -20,7 +20,7 @@
             </feature>
         </config-file>
 
-        <resource-file src="app/jxcore_app" />
+        <resource-file src="app/jxcore" />
         <resource-file src="app/jxcore_cordova.js" />
         <header-file src="src/ios/CDVJXcore.h" />
         <source-file src="src/ios/CDVJXcore.m" />
@@ -41,17 +41,20 @@
         <framework src="Security.framework" />
     </platform>
 
-
-    <!-- android
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="JXcore" >
-                <param name="android-package" value="io.jxcore.node"/>
+                <param name="android-package" value="io.jxcore.node.jxcore"/>
             </feature>
         </config-file>
+        <source-file src="app/jxcore" target-dir="assets/" />
+        <source-file src="app/jxcore_cordova.js" target-dir="assets/" />
 
-        <source-file src="src/android/Device.java" target-dir="src/io/jxcore/node/device" />
+        <source-file src="src/android/java/io/jxcore/node/FileManager.java" target-dir="src/io/jxcore/node/" />
+        <source-file src="src/android/java/io/jxcore/node/jxcore.java" target-dir="src/io/jxcore/node/" />
+        <source-file src="src/android/libs/armeabi" target-dir="libs/" />
+        <source-file src="src/android/libs/armeabi-v7a" target-dir="libs/" />
+        <source-file src="src/android/libs/x86" target-dir="libs/" />
     </platform>
-    -->
 
 </plugin>

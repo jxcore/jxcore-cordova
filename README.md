@@ -3,7 +3,7 @@
 ### Status
 
 IOS - Works  
-Android - Under development ([Android jxcore sample project](https://github.com/obastemur/jxcore-android-basics) - plugin is coming soon!)
+Android - Works
 
 
 ### Goals
@@ -17,8 +17,6 @@ I'm not an Apache Cordova expert, certainly all sorts of contributions are welco
 
 ### How to Install
 
-First, you should [compile JXcore for iOS](https://github.com/jxcore/jxcore/blob/master/doc/iOS_Compile.md).
-
 Assuming your Cordova app is located under `/YourCordovaApp` folder;
 
 Get the latest `jxcore-cordova`
@@ -28,9 +26,14 @@ YourCordovaApp / > git clone https://github.com/obastemur/jxcore-cordova
 ```
 
 Now you have the plugin source codes are located under `/YourCordovaApp/jxcore-cordova/io.jxcore.node`
-The next step is to put `bin` folder from `out_ios` into `io.jxcore.node` folder.
 
-We are almost done. It's time to add this plugin into your project. Go back to the root folder `/YourCordovaApp`
+You need iOS binaries from JXcore. If you want to compile latest JXcore, follow the below steps;
+ - Visit both [compile JXcore](https://github.com/jxcore/jxcore/blob/master/doc/iOS_Compile.md), and [compile JXcore for iOS](https://github.com/jxcore/jxcore/blob/master/doc/iOS_Compile.md)
+ - put `bin` folder from `out_ios` into `io.jxcore.node` folder.
+
+Alternatively you can download the [bin.zip](https://github.com/jxcore/jxcore) (500Mb!) file and extract it into `io.jxcore.node` folder.
+
+You are almost done. It's time to add this plugin into your project. Go back to the root folder `/YourCordovaApp`
 
 ```
 cordova plugin add jxcore-cordova/io.jxcore.node/
@@ -41,19 +44,19 @@ cordova plugin add jxcore-cordova/io.jxcore.node/
 
 ```
 cordova platform remove ios
+cordova platform remove android
 cordova plugin remove io.jxcore.node
 cordova plugin add jxcore-cordova/io.jxcore.node/
 cordova platform add ios
+cordova platform add android
 ```
 
-Now you can visit `platforms/ios` folder and open Xcode project file.
+Now you can visit `platforms/ios` or `platforms/android` folders and open Xcode project file or import the android project from Eclipse.
 
 
-### How to Use
+### How to use 
 
-Assuming you have JXcore plugin installed and XCode is up and running on front of you.
+Edit the app.js file under `jxcore-cordova/io.jxcore.node/app/jxcore` 
+This is the folder you should put all the necessary node modules etc. 
 
-Under the `Resources` folder you will see the `jxcore_app` folder and a JavaScript file (app.js) inside.
-This is the location where the node.js part of your solution is located.
-
-For the UI side usage, visit `sample` folder of this repository.
+`sample` folder includes both index.html and sample node app.
