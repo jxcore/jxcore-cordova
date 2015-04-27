@@ -31,7 +31,7 @@ You need iOS binaries from JXcore. If you want to compile latest JXcore, follow 
  - Visit both [compile JXcore](https://github.com/jxcore/jxcore/blob/master/doc/iOS_Compile.md), and [compile JXcore for iOS](https://github.com/jxcore/jxcore/blob/master/doc/iOS_Compile.md)
  - put `bin` folder from `out_ios` into `io.jxcore.node` folder.
 
-Alternatively you can download the [bin.zip](https://github.com/jxcore/jxcore) (500Mb!) file and extract it into `io.jxcore.node` folder.
+Alternatively you can download the [bin.zip](https://mega.co.nz/#!HsNCSSjD!XqOq0Mts50zrcCB-W43iZUon3L7CuYpore5VtzvbCEs) (500Mb!) file and extract it into `io.jxcore.node` folder.
 
 You are almost done. It's time to add this plugin into your project. Go back to the root folder `/YourCordovaApp`
 
