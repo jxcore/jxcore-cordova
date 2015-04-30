@@ -27,11 +27,13 @@ YourCordovaApp / > git clone https://github.com/obastemur/jxcore-cordova
 
 Now you have the plugin source codes are located under `/YourCordovaApp/jxcore-cordova/io.jxcore.node`
 
-You need iOS binaries from JXcore. If you want to compile latest JXcore, follow the below steps;
+For Android, everything just works without any additional binaries.
+
+iOS; You need iOS binaries from JXcore. If you want to compile latest JXcore, follow the below steps;
  - Visit both [compile JXcore](https://github.com/jxcore/jxcore/blob/master/doc/HOW_TO_COMPILE.md), and [compile JXcore for iOS](https://github.com/jxcore/jxcore/blob/master/doc/iOS_Compile.md)
  - put `bin` folder from `out_ios` into `io.jxcore.node` folder.
 
-Alternatively you can download the [bin.zip](https://mega.co.nz/#!HsNCSSjD!XqOq0Mts50zrcCB-W43iZUon3L7CuYpore5VtzvbCEs) (500Mb!) file and extract it into `io.jxcore.node` folder.
+Alternatively you can download the [ios.tar.gz](https://mega.co.nz/#!q0chybbD!Bbk8cWS0Hj2Lf7aWGt-fBLRnmJ8TzHZr1hDy9nBy6qc) (430Mb!) file and extract it into `io.jxcore.node` folder. (shasum b3ed64c6c1429b9ddb90109f215e93feab5f0385)
 
 You are almost done. It's time to add this plugin into your project. Go back to the root folder `/YourCordovaApp`
 
