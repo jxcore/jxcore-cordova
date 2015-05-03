@@ -136,7 +136,13 @@ public class jxcore extends CordovaPlugin {
       result = new PluginResult(Status.OK, addon.getString(id));
       break;
     case RT_JSON:
-      result = new PluginResult(Status.OK, addon.getString(id));
+      try {
+        result = new PluginResult(Status.OK, new JSONArray(addon.getString(id)));
+      } catch (JSONException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+        return;
+      }
       break;
     case RT_Buffer:
       result = new PluginResult(Status.OK, addon.getBuffer(id));
@@ -155,15 +161,16 @@ public class jxcore extends CordovaPlugin {
     }
 
     if (async) {
-    if (addon.callbacks.containsKey(callback_id)) {
-      activity.runOnUiThread(addon.new CoreRunable(callback_id, result) {
-        @Override
-        public void run() {
-          CallbackContext ctx = addon.callbacks.get(callback_id_);          
-          ctx.sendPluginResult(result_);
-        }
-      });
-    }
+      result.setKeepCallback(true);
+      if (addon.callbacks.containsKey(callback_id)) {
+        activity.runOnUiThread(addon.new CoreRunable(callback_id, result) {
+          @Override
+          public void run() {
+            CallbackContext ctx = addon.callbacks.get(callback_id_);          
+            ctx.sendPluginResult(result_);
+          }
+        });
+      }
     } else {
       CallbackContext ctx = addon.callbacks.remove(callback_id);          
       ctx.sendPluginResult(result);

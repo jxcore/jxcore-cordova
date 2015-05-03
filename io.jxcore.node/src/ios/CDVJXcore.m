@@ -55,7 +55,11 @@ void ConvertResult(JXValue *result, CDVPluginResult **to_result,
       ret_val = [CDVPluginResult resultWithStatus:status
                              messageAsArrayBuffer:ns_data];
     } break;
-    case RT_JSON:
+    case RT_JSON: {
+      NSString *eval_str = [NSString stringWithUTF8String:JX_GetString(result)];
+      NSArray *arr = [NSArray arrayWithObjects:eval_str, nil];
+      ret_val = [CDVPluginResult resultWithStatus:status messageAsArray:arr];
+    } break;
     case RT_String: {
       NSString *eval_str = [NSString stringWithUTF8String:JX_GetString(result)];
       ret_val =

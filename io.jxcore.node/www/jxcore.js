@@ -7,12 +7,51 @@ var channel = require('cordova/channel'),
 
 channel.createSticky('onJXcoreReady');
 channel.waitForInitialization('onJXcoreReady');
+var jxcore_device = {
+  ios: (navigator.userAgent.match(/iPad/i))  == "iPad" || (navigator.userAgent.match(/iPhone/i))  == "iPhone",
+  android: (navigator.userAgent.match(/Android/i)) == "Android"
+};
+
+if (!jxcore_device.ios && !jxcore_device.android) {
+  var counter = 0, errmsg = 'JXcore plugin: Device type is unkown. Defaulting to Android';
+  var inter = setInterval(function(){
+    if (typeof log != "undefined") {
+      log(errmsg, 'red');
+    } else if (++counter > 400) {
+      if (typeof console != "undefined") {
+        console.log(errmsg);
+      }
+    } else {
+      return;
+    }
+    clearInterval(inter);
+  },5);
+  jxcore_device.android = true;
+}
 
 function callNative(name, args, callback) {
   exec(
     function cb(data) {
       if (data === null) return;
-      if (callback) callback(data, null);
+      if (callback) {
+        if (!Array.isArray(data)) {
+          data = [data];
+        } else {
+          if (!jxcore_device.android) {
+            try {
+              data = JSON.parse(data);
+            } catch (e) {
+              log("Error:", e.message);
+              return;
+            }
+            if (!Array.isArray(data)) {
+              data = [data];
+            }
+          }
+        }
+
+        callback.apply(null, data);
+      }
     },
     function errorHandler(err) {
       if (callback) callback(null, err);

@@ -48,7 +48,7 @@ cordova.prototype.call = function (rest) {
     throw new Error("Method " + this.name + " is undefined.");
   }
 
-  fnc.callback.apply(null, params);
+  fnc.callback.apply(null, [params, null]);
 
   return this;
 };
