@@ -7,7 +7,6 @@
     <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
     <meta name="viewport"
           content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi"/>
-    <link rel="stylesheet" type="text/css" href="css/index.css"/>
     <title>Hello World</title>
 
     <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
@@ -16,7 +15,7 @@
 </head>
 <body>
 <div class="app">
-    <h1>Apache Cordova and JXcore</h1>
+    <h1>Cordova and JXcore</h1>
 </div>
 
 <br/>
@@ -32,7 +31,10 @@
             txt.innerHTML += "<BR/>" + x;
     }
 
-    window.onload = function() {
+    var inter = setInterval(function() {
+        if (typeof jxcore == 'undefined') return;
+        
+        clearInterval(inter);
         jxcore.isReady(function(){
             log('READY');
             // register log method from UI to jxcore instance
@@ -47,7 +49,7 @@
                 }
             });
         });
-    };
+    }, 5);
 
     function jxcore_ready() {
         // calling a method from JXcore (app.js)
