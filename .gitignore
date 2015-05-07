@@ -18,7 +18,6 @@
 # Compiled Static libraries
 *.lai
 *.la
-*.a
 *.lib
 
 # Executables
@@ -26,5 +25,4 @@
 *.out
 *.app
 
-bin/
 io.jxcore.node/src/android/obj/
