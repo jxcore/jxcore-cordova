@@ -2,13 +2,14 @@
 
 #import <UIKit/UIKit.h>
 #import <Cordova/CDVPlugin.h>
+#import "JXcore.h"
 
 @interface CDVJXcore : CDVPlugin
 {}
 
 + (NSString*)cordovaVersion;
 
-+ (int)jxcoreLoopOnce;
++ (CDVJXcore*) activeInstance;
 
 - (void)isReady:(CDVInvokedUrlCommand*)command;
 
@@ -19,7 +20,5 @@
 - (void)onResume:(CDVInvokedUrlCommand*)command;
 
 - (void)pluginInitialize;
-
-- (void)jxcoreLoop:(NSNumber*) n;
 
 @end

@@ -16,63 +16,32 @@ void fputs$UNIX2003(const char *restrict c, FILE *restrict f) { fputs(c, f); }
 
 #import <Cordova/CDV.h>
 #import "CDVJXcore.h"
+#import "JXcoreExtension.h"
+
 
 static CDVJXcore *activeDevice = nil;
 
-void ConvertResult(JXValue *result, CDVPluginResult **to_result,
-                   bool is_error) {
-  CDVPluginResult *ret_val;
+void ConvertResult(NSObject *result, CDVPluginResult **to_result) {
+  CDVPluginResult *ret_val = nil;
 
   CDVCommandStatus status = CDVCommandStatus_OK;
-  if (is_error) {
-    status = CDVCommandStatus_ERROR;
-  }
-
-  switch (result->type_) {
-    case RT_Null:
-      ret_val = [CDVPluginResult resultWithStatus:status];
-      break;
-    case RT_Undefined:
-      ret_val = [CDVPluginResult resultWithStatus:status];
-      break;
-    case RT_Boolean:
-      ret_val = [CDVPluginResult resultWithStatus:status
-                                    messageAsBool:JX_GetBoolean(result)];
-      break;
-    case RT_Int32:
-      ret_val = [CDVPluginResult resultWithStatus:status
-                                     messageAsInt:JX_GetInt32(result)];
-      break;
-    case RT_Double:
-      ret_val = [CDVPluginResult resultWithStatus:status
-                                  messageAsDouble:JX_GetDouble(result)];
-      break;
-    case RT_Buffer: {
-      char *data = JX_GetString(result);
-      int32_t len = JX_GetDataLength(result);
-      NSData *ns_data =
-          [NSData dataWithBytes:(const void *)data length:sizeof(char) * len];
-      ret_val = [CDVPluginResult resultWithStatus:status
-                             messageAsArrayBuffer:ns_data];
-    } break;
-    case RT_JSON: {
-      NSString *eval_str = [NSString stringWithUTF8String:JX_GetString(result)];
-      NSArray *arr = [NSArray arrayWithObjects:eval_str, nil];
-      ret_val = [CDVPluginResult resultWithStatus:status messageAsArray:arr];
-    } break;
-    case RT_String: {
-      NSString *eval_str = [NSString stringWithUTF8String:JX_GetString(result)];
-      ret_val =
-          [CDVPluginResult resultWithStatus:status messageAsString:eval_str];
-    } break;
-    case RT_Error: {
-      NSString *eval_str = [NSString stringWithUTF8String:JX_GetString(result)];
-      ret_val = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                  messageAsString:eval_str];
-    } break;
-    default:
-      *to_result = nil;
-      return;
+  
+  if ([result isKindOfClass:[JXNull class]]) {
+    ret_val = [CDVPluginResult resultWithStatus:status];
+  } else if ([result isKindOfClass:[NSString class]]) {
+    NSString *str_result = (NSString*) result;
+    ret_val = [CDVPluginResult resultWithStatus:status messageAsString:str_result];
+  } else if ([result isKindOfClass:[JXBoolean class]]) {
+    ret_val = [CDVPluginResult resultWithStatus:status messageAsBool:[(JXBoolean*)result getBoolean]];
+  } else if ([result isKindOfClass:[NSNumber class]]) {
+    NSNumber *nmr_result = (NSNumber*) result;
+    ret_val = [CDVPluginResult resultWithStatus:status messageAsDouble:[nmr_result doubleValue]];
+  } else if ([result isKindOfClass:[NSData class]]) {
+    ret_val = [CDVPluginResult resultWithStatus:status messageAsArrayBuffer:(NSData*)result];
+  } else if ([result isKindOfClass:[JXJSON class]]) {
+    NSString *str_result = [(JXJSON*)result getString];
+    NSArray *arr = [NSArray arrayWithObjects:str_result, nil];
+    ret_val = [CDVPluginResult resultWithStatus:status messageAsArray:arr];
   }
 
   // TODO(obastemur) fix me! detect when we can remove a callback
@@ -81,104 +50,68 @@ void ConvertResult(JXValue *result, CDVPluginResult **to_result,
   *to_result = ret_val;
 }
 
-void callback(JXValue *results, int argc) {
-  if (argc != 3) {
+static void callback(NSArray *arr, NSString *_callbackId) {
+  if (arr.count != 4) {
     NSLog(@"JXcore-Cordova: Unexpected callback received");
     return;
   }
 
-  JXValue retval = results[0];
-  JXValue errval = results[1];
-  JXValue cid = results[2];
-
-  if (!JX_IsString(&cid)) {
+  if (![[arr objectAtIndex:2] isKindOfClass:[NSString class]]) {
     NSLog(@"JXcore-Cordova: Unexpected callback received. Third parameter must "
            "be a String");
     return;
   }
-
+  
   if (activeDevice == nil) {
     NSLog(@"There is no active instance for JXcore plugin");
     return;
   }
+  
+  NSString *callbackId = (NSString*)[arr objectAtIndex:2];
 
-  NSString *callbackId = [NSString stringWithUTF8String:JX_GetString(&cid)];
   CDVPluginResult *pluginResult = nil;
 
-  if (JX_IsUndefined(&errval) || JX_IsNull(&errval))
-    ConvertResult(&retval, &pluginResult, false);
+  if (![[arr objectAtIndex:1] isKindOfClass:[JXNull class]])
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:(NSString*)[arr objectAtIndex:1]];
   else
-    ConvertResult(&errval, &pluginResult, true);
+    ConvertResult([arr objectAtIndex:0], &pluginResult);
+
+  [pluginResult setKeepCallbackAsBool:TRUE];
 
   [activeDevice.commandDelegate sendPluginResult:pluginResult
                                       callbackId:callbackId];
+
 }
 
-@interface CDVJXcore () {
-}
-@end
 
 @implementation CDVJXcore
 
++ (CDVJXcore*) activeInstance {
+  return activeDevice;
+}
+
 - (void)pluginInitialize {
   NSLog(@"JXcore Cordova plugin initializing");
-  NSString *sandboxPath = NSHomeDirectory();
-
-  NSString *filePath =
-      [[NSBundle mainBundle] pathForResource:@"jxcore_cordova" ofType:@"js"];
-
-  NSError *error;
-  NSString *fileContents =
-      [NSString stringWithContentsOfFile:filePath
-                                encoding:NSUTF8StringEncoding
-                                   error:&error];
-
-  if (error) {
-    NSLog(@"Error reading jxcore_cordova.js file: %@",
-          error.localizedDescription);
-    assert(0);
-  }
-
-  JX_Initialize([sandboxPath UTF8String], callback);
-  JX_InitializeNewEngine();
-  JX_DefineMainFile([fileContents UTF8String]);
-  JX_StartEngine();
-  [self jxcoreLoop:[NSNumber numberWithInt:0]];
+  
+  [JXcore startEngine:@"jxcore_cordova" withCallback:callback namedAs:@"  _callback_  "];
 
   activeDevice = self;
-}
-
-float delay = 0;
-
-- (void)jxcoreLoop:(NSNumber *)n {
-  int result = JX_LoopOnce();
-  if (result == 0)
-    [self performSelector:@selector(jxcoreLoop:)
-               withObject:[NSNumber numberWithInt:0]
-               afterDelay:0.05 + delay];
-  else
-    [self performSelector:@selector(jxcoreLoop:)
-               withObject:[NSNumber numberWithInt:0]
-               afterDelay:0.01 + delay];
-}
-
-+ (int)jxcoreLoopOnce {
-  return JX_LoopOnce();
+  
+  [JXcoreExtension defineMethods];
 }
 
 - (void)Evaluate:(CDVInvokedUrlCommand *)command {
-  CDVPluginResult *result = nil;
+  CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+  [result setKeepCallbackAsBool:TRUE];
+  
   NSString *script = [command.arguments objectAtIndex:0];
-  activeDevice = self;
 
   if (script != nil) {
     NSString *scriptWithCallbackId =
         [NSString stringWithFormat:@"%@, '%@')", script, command.callbackId];
-    const char *str = [scriptWithCallbackId UTF8String];
-    JXValue jxresult;
-    JX_Evaluate(str, 0, &jxresult);
-    ConvertResult(&jxresult, &result, false);
-    JX_Free(&jxresult);
+    
+    [JXcore Evaluate:scriptWithCallbackId];
+    [result setKeepCallbackAsBool:TRUE];
   } else {
     result = [CDVPluginResult
         resultWithStatus:CDVCommandStatus_ERROR
@@ -188,20 +121,13 @@ float delay = 0;
 }
 
 - (void)onPause:(CDVInvokedUrlCommand *)command {
-  // has no effect
-  delay = 0.50;
   NSLog(@"Application On Pause");
 
-  // unload sub threads
-  // when app resumes, jxcore will be reloading them back
-  JXValue result;
-  JX_Evaluate("jxcore.tasks.unloadThreads()", "ios_on_pause.js", &result);
-  JX_Free(&result);
+  [JXcore Evaluate:@"jxcore.tasks.unloadThreads()"];
 }
 
 - (void)onResume:(CDVInvokedUrlCommand *)command {
   // has no effect
-  delay = 0;
   NSLog(@"Application On Resume");
 }
 

@@ -27,6 +27,16 @@ void Callback(long id) {
   }
 }
 
+void CallJava(jobject arr) {
+  JniMethodInfo t;
+  if (JniHelper::getStaticMethodInfo(t, "io/jxcore/node/jxcore",
+                                  "javaCall", "(Ljava/util/ArrayList;)V")) {
+
+    t.env->CallStaticVoidMethod(t.classID, t.methodID, arr);
+    t.env->DeleteLocalRef(t.classID);
+  }
+}
+
 void OnThread(const int attached) {
   if (attached == 0) {
     JniHelper::getEnv();  // attach current thread

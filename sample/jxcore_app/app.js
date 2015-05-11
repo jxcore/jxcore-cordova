@@ -1,5 +1,4 @@
 var fs = require('fs');
-var path = require('path');
 
 cordova('log').call("JXcore is up and running!");
 

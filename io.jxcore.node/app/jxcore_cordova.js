@@ -5,6 +5,32 @@ var jx_methods = {};
 var internal_methods = {};
 var ui_methods = {};
 
+function cordova(x) {
+  if (!(this instanceof cordova)) return new cordova(x);
+
+  this.name = x;
+}
+
+function callJXcoreNative(name, args) {
+  var params = Array.prototype.slice.call(args, 0);
+
+  var cb = "";
+
+  if (params.length && typeof params[params.length-1] == "function") {
+    cb = "$$jxcore_callback_" + cordova.eventId;
+    cordova.eventId++;
+    cordova.eventId %= 1e5;
+    cordova.on(cb, new WrapFunction(cb, params[params.length-1]));
+    params.pop();
+  }
+
+  var fnc = [name];
+  var arr = fnc.concat(params);
+  arr.push(cb);
+
+  process.natives.callJXcoreNative.apply(null, arr);
+}
+
 function MakeCallback(callbackId) {
   this.cid = callbackId;
 
@@ -13,15 +39,65 @@ function MakeCallback(callbackId) {
     var ret_val = arguments[0];
     var err_val = arguments[1];
 
-    process.natives.asyncCallback(ret_val, err_val, _this.cid);
+    callJXcoreNative("  _callback_  ", [ret_val, err_val, _this.cid]);
   };
 }
 
-function cordova(x) {
-  if (!(this instanceof cordova)) return new cordova(x);
+function WrapFunction(cb, fnc) {
+  this.fnc = fnc;
+  this.cb = cb;
 
-  this.name = x;
+  var _this = this;
+  this.callback = function () {
+    delete cordova.events[_this.cb];
+    return _this.fnc.apply(null, arguments);
+  }
 }
+
+cordova.events = {};
+cordova.eventId = 0;
+cordova.on = function(name, target) {
+  cordova.events[name] = target;
+};
+
+cordova.prototype.callNative = function () {
+  callJXcoreNative(this.name, arguments);
+  return this;
+};
+
+cordova.ping = function(name, param) {
+
+  if (cordova.events.hasOwnProperty(name)) {
+    var x;
+    if (Array.isArray(param)) {
+      x = param;
+    } else if (param.str) {
+      x = [param.str];
+    } else if (param.json) {
+      try {
+        x = [JSON.parse(param.json)];
+      } catch (e) {
+        return e;
+      }
+    } else {
+      x = null;
+    }
+
+    var target = cordova.events[name];
+
+    if (target instanceof WrapFunction) {
+      return target.callback.apply(target, x);
+    } else
+      return cordova.events[name].apply(null, x);
+  }
+};
+
+process.natives.defineEventCB("eventPing", cordova.ping);
+
+cordova.prototype.registerToNative = function (target) {
+  process.natives.defineEventCB(this.name, target);
+  return this;
+};
 
 cordova.prototype.registerSync = function (target) {
   jx_methods[this.name] = {is_synced: 1, method: target};
@@ -118,7 +194,12 @@ cordova.executeJSON = function (json, callbackId) {
       json.params[json.params.length] = new MakeCallback(callbackId).callback;
     }
 
-    return fnc.method.apply(null, json.params);
+    var ret_val = fnc.method.apply(null, json.params);
+    if (fnc.is_synced && callbackId) {
+      new MakeCallback(callbackId).callback(ret_val);
+    } else {
+      return ret_val;
+    }
   }
 };
 

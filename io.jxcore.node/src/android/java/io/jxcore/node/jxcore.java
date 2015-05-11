@@ -1,7 +1,7 @@
 // License information is available from LICENSE file
 
 package io.jxcore.node;
-
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +14,6 @@ import org.apache.cordova.PluginResult;
 import org.apache.cordova.PluginResult.Status;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
@@ -93,14 +92,19 @@ public class jxcore extends CordovaPlugin {
   public native int getBoolean(long id);
 
   public native String convertToString(long id);
+  
+  public native long callCBString(String event_name, String param, int is_json);
+  
+  public native long callCBArray(String event_name, Object[] arr, int size);
 
   private static String LOGTAG = "JX-Cordova";
   public static Activity activity;
   public static jxcore addon;
 
-  private final static int CB_VALUE = -3;
-  private final static int ERR_VALUE = -2;
-  private final static int CB_ID = -1;
+  Map<String, CallbackContext> callbacks;
+  static Map<String, JXcoreCallback> java_callbacks;
+  private Handler handler = null;
+  public static boolean app_paused = false;
   
   public class CoreRunable implements Runnable {
     @Override
@@ -117,47 +121,34 @@ public class jxcore extends CordovaPlugin {
     }
   }
   
-  public static void CreateResult(long id, String callback_id, boolean async) {
-    jxcore.JXType tp = jxcore.JXType.fromInt(addon.getType(id));
-
+  public static void CreateResult(Object value, String callback_id, boolean async, boolean is_error) {
     PluginResult result;
-    switch (tp) {
-    case RT_Int32:
-      result = new PluginResult(Status.OK, addon.getInt32(id));
-      break;
-    case RT_Double:
-      // FIX THIS! 
-      result = new PluginResult(Status.OK, (float)addon.getDouble(id));
-      break;
-    case RT_Boolean:
-      result = new PluginResult(Status.OK, addon.getBoolean(id) == 1);
-      break;
-    case RT_String:
-      result = new PluginResult(Status.OK, addon.getString(id));
-      break;
-    case RT_JSON:
+    
+    if (value == null) {
+      result = new PluginResult(is_error ? Status.ERROR : Status.OK, 0);
+    } else if (is_error) {
+      result = new PluginResult(Status.ERROR, (String)value);
+    } else if (value.getClass().equals(Integer.class)) {
+      result = new PluginResult(Status.OK, (Integer)value);
+    } else if (value.getClass().equals(Boolean.class)) {
+      result = new PluginResult(Status.OK, (Boolean)value);
+    } else if (value.getClass().equals(Double.class)) {
+      result = new PluginResult(Status.OK, (Float)value);
+    } else if (value.getClass().equals(String.class)) {
+      result = new PluginResult(Status.OK, (String)value);
+    } else if (value.getClass().equals(byte[].class)) {
+      result = new PluginResult(Status.OK, ((byte[])value));
+    } else if (value.getClass().equals(String[].class)) {
+      String[] arr = (String[]) value;
       try {
-        result = new PluginResult(Status.OK, new JSONArray(addon.getString(id)));
+        result = new PluginResult(Status.OK, new JSONArray(arr[0]));
       } catch (JSONException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
         return;
       }
-      break;
-    case RT_Buffer:
-      result = new PluginResult(Status.OK, addon.getBuffer(id));
-      break;
-    case RT_Undefined:
-      result = new PluginResult(Status.OK, 0);
-      break;
-    case RT_Null:
-      result = new PluginResult(Status.OK, 0);
-      break;
-    case RT_Error:
-      result = new PluginResult(Status.ERROR, addon.getString(id));
-      break;
-    default:
-      result = new PluginResult(Status.OK, addon.getString(id));
+    } else {
+      result = new PluginResult(Status.OK, value.toString());
     }
 
     if (async) {
@@ -178,9 +169,15 @@ public class jxcore extends CordovaPlugin {
   }
 
   public static void callback(long is_error) {
-    int id = is_error == 0 ? CB_VALUE : ERR_VALUE;
-    final String cid = addon.getString(CB_ID);
-    CreateResult(id, cid, true);
+    Log.e(LOGTAG, "WTF?");
+  }
+  
+  public interface JXcoreCallback {
+    public void Receiver(ArrayList<Object> params, String callbackId);
+  }
+  
+  public static void jx_callback(Object value, Object error, String callbackId) {
+    CreateResult(error == null ? value : error , callbackId, true, error != null);
   }
 
   @Override
@@ -190,13 +187,24 @@ public class jxcore extends CordovaPlugin {
     addon = this;
 
     callbacks = new HashMap<String, CallbackContext>();
+    java_callbacks = new HashMap<String, JXcoreCallback>();
+    
+    RegisterMethod("  _callback_  ", new JXcoreCallback(){
+      @Override
+      public void Receiver(ArrayList<Object> params, String callbackId) {
+        if (params.size() < 3 || !params.get(2).getClass().equals(String.class)) {
+          Log.e(LOGTAG, "Unkown _callback_ received");
+          return;
+        }
+        jxcore.jx_callback(params.get(0), params.get(1), params.get(2).toString());
+      }
+    });
+    
+    JXcoreExtension.LoadExtensions();
 
     setNativeContext(activity.getBaseContext(), activity.getAssets());
     startProgress();
   }
-
-  private Handler handler = null;
-  public static boolean app_paused = false;
 
   public void startProgress() {
     Initialize(activity.getBaseContext().getFilesDir().getAbsolutePath());
@@ -212,32 +220,79 @@ public class jxcore extends CordovaPlugin {
           handler.postDelayed(this, 1);
       }
     };
-
+  
     if (handler != null) {
-      handler.getLooper().quit();
+      handler.getLooper().quit(); 
     }
-    
+   
     handler = new Handler();
     handler.postDelayed(runnable, 5);
   }
 
-  Map<String, CallbackContext> callbacks;
+  public static void javaCall(ArrayList<Object> params) {
+    if (params.size() < 2 || params.get(0).getClass() != String.class  || params.get(params.size()-1).getClass() != String.class ) {
+      Log.e(LOGTAG, "JavaCall recevied an unknown call");
+      return;
+    }
+    
+    String receiver = params.remove(0).toString();
+    String callId = params.remove(params.size()-1).toString();
+    
+    if (!java_callbacks.containsKey(receiver)) {
+      Log.e(LOGTAG, "JavaCall recevied a call for unknown method " + receiver);
+      return;
+    }
+    
+    java_callbacks.get(receiver).Receiver(params, callId);
+  }
+  
+  public static void RegisterMethod(String name, JXcoreCallback callback) {
+    java_callbacks.put(name, callback);
+  }
+  
+  public static boolean CallJSMethod(String id, Object[] args) {
+    long ret = addon.callCBArray(id, args, args.length);
+    int tp = addon.getType(ret);
+    JXType ret_tp = JXType.fromInt(tp); 
+    
+    if (ret_tp == JXType.RT_JSON || ret_tp == JXType.RT_String || ret_tp == JXType.RT_Error) {
+      Log.e(LOGTAG, "jxcore.CallJSMethod :" +  addon.getString(ret));
+      return false;
+    }
+    
+    return true;
+  }
+  
+  public static boolean CallJSMethod(String id, String json) {
+    long ret = addon.callCBString(id, json, 1);
+    int tp = addon.getType(ret);
+    JXType ret_tp = JXType.fromInt(tp);
+    
+    if (ret_tp == JXType.RT_JSON || ret_tp == JXType.RT_String || ret_tp == JXType.RT_Error) {
+      Log.e(LOGTAG, "jxcore.CallJSMethod :" +  addon.getString(ret));
+      return false;
+    }
+    
+    return true;
+  }
 
   @Override
   public boolean execute(final String action, final JSONArray data,
       final CallbackContext callbackContext) {
-
+    
     PluginResult result = null;
     try {
       if (action.equals("isReady")) {
-        result = new PluginResult(Status.OK);
+        result = new PluginResult(Status.OK); 
       } else if (action.equals("Evaluate")) {
         String json = data.get(0).toString() + ", '"
             + callbackContext.getCallbackId() + "')";
         callbacks.put(callbackContext.getCallbackId(), callbackContext);
         long res = evalEngine(json);
         if (res >= 0) {
-          CreateResult(res, callbackContext.getCallbackId(), false);
+          String str_err = getString(res);
+          
+          CreateResult(str_err, callbackContext.getCallbackId(), false, true);
           return true;
         } else {
           result = new PluginResult(Status.NO_RESULT);
@@ -279,9 +334,6 @@ public class jxcore extends CordovaPlugin {
   }
 
   public void Initialize(String home) {
-    // we could proxy it by request (over NDK) but NDK doesn't support reading
-    // directory names.
-    // we do not read the file contents here. just the name tree.
     // assets.list is terribly slow, below trick is literally 100 times faster
     StringBuilder assets = new StringBuilder();
     assets.append("{");
@@ -313,8 +365,6 @@ public class jxcore extends CordovaPlugin {
     prepareEngine(home, assets.toString());
 
     String mainFile = FileManager.readFile("jxcore_cordova.js");
-    Log.d("XX-1", assets.toString());
-    Log.d("XX-2", home);
     
     String data = "process.cwd = function(){ return '" + home + "';};\n"
         + mainFile;
