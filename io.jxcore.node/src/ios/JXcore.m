@@ -415,8 +415,12 @@ static float delay = 0;
 }
 
 + (void) callEventCallbackNoThread:(NSString*)eventName withParams:(NSArray*)params isJSON:(BOOL) is_json {
-  CPPWrapper *cpp = [natives valueForKey:@"eventPing"];
+  CPPWrapper *cpp = [natives valueForKey:eventName];
   JXValue *fnc;
+
+  if (cpp == nil) {
+    cpp = [natives valueForKey:@"eventPing"];
+  }
   
   if (cpp != nil) {
     fnc = [cpp getFunction];
