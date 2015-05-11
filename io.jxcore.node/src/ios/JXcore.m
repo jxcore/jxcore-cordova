@@ -226,13 +226,26 @@ static void callJXcoreNative(JXValue *results, int argc) {
   
   ConvertParams(results+1, argc-1, params);
 
-  CPPWrapper *cpp = [natives valueForKey:name];
-  if (cpp != nil) {
-    JXcoreNative callback = [cpp getCallback];
-    callback(params, callbackId);
-  } else {
-    NSLog(@"Native method %@ not found.", name);
+  NSObject *obj = [natives valueForKey:name];
+  
+  if (obj != nil) {
+    if ([obj isKindOfClass:[CPPWrapper class]])
+    {
+      CPPWrapper *cpp = [natives valueForKey:name];
+      if (cpp != nil) {
+        JXcoreNative callback = [cpp getCallback];
+        callback(params, callbackId);
+      }
+    } else {
+      void (^code_block)(NSArray*, NSString*);
+      code_block = (void(^)(NSArray*, NSString*))obj;
+      code_block(params, callbackId);
+    }
+    
+    return;
   }
+  
+  NSLog(@"Native method %@ not found.", name);
 }
 
 static void defineEventCB(JXValue *params, int argc) {
@@ -415,7 +428,7 @@ static float delay = 0;
 }
 
 + (void) callEventCallbackNoThread:(NSString*)eventName withParams:(NSArray*)params isJSON:(BOOL) is_json {
-  CPPWrapper *cpp = [natives valueForKey:eventName];
+  NSObject *cpp = [natives valueForKey:eventName];
   JXValue *fnc;
 
   if (cpp == nil) {
@@ -423,7 +436,14 @@ static float delay = 0;
   }
   
   if (cpp != nil) {
-    fnc = [cpp getFunction];
+    if ([cpp isKindOfClass:[CPPWrapper class]])
+    {
+      CPPWrapper *cpp_ = (CPPWrapper*)cpp;
+      fnc = [cpp_ getFunction];
+    } else {
+      NSLog(@"Error: Only Wrapped JXcore functions can be called from OBJ-C side");
+      return;
+    }
   } else {
     NSLog(@"Callback reference method %@ not found.", eventName);
     return;
@@ -529,6 +549,10 @@ static float delay = 0;
   CPPWrapper *callback = [[CPPWrapper alloc] init];
   [callback setCallback:nativeMethod];
   [natives setObject:callback forKey:name];
+}
+
++ (void)addNativeBlock:(void(^)(NSArray*, NSString*))code_block withName:(NSString*)name {
+  [natives setObject:code_block forKey:name];
 }
 
 + (void)Evaluate:(NSString *)script_ {

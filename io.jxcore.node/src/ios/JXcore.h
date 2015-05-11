@@ -43,6 +43,8 @@ typedef void (*JXcoreNative)(NSArray *params, NSString *callbackId);
 
 + (void)Evaluate:(NSString *)script;
 
++ (void)addNativeBlock:(void(^)(NSArray*, NSString*))code_block withName:(NSString*)name;
+
 @end
 
 @interface JXNull : NSObject

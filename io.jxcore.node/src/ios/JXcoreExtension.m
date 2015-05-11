@@ -25,5 +25,11 @@ static void screenInfo(NSArray *arr_, NSString *callbackId) {
 
 + (void) defineMethods {
   [JXcore addNativeMethod:screenInfo withName:@"ScreenInfo"];
+  
+  [JXcore addNativeBlock:^(NSArray *params, NSString *callbackId) {
+    CGFloat br = [[UIScreen mainScreen] brightness];
+    
+    [JXcore callEventCallback:callbackId withJSON:[NSString stringWithFormat:@"%f", (float)br]];
+  } withName:@"ScreenBrightness"];
 }
 @end
