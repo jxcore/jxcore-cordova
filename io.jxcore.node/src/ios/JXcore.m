@@ -551,7 +551,7 @@ static float delay = 0;
   [natives setObject:callback forKey:name];
 }
 
-+ (void)addNativeBlock:(void(^)(NSArray*, NSString*))code_block withName:(NSString*)name {
++ (void)addNativeBlock:(void(^)(NSArray *params, NSString *callbackId))code_block withName:(NSString*)name {
   [natives setObject:code_block forKey:name];
 }
 
