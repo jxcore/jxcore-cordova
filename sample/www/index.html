@@ -25,30 +25,35 @@
 </p>
 
 <script type="text/javascript" charset="utf-8">
+
     function log(x) {
-        var txt = document.getElementById('txt');
-        if (txt)
-            txt.innerHTML += "<BR/>" + x;
+      var txt = document.getElementById('txt');
+      if (txt)
+        txt.innerHTML += "<BR/>" + x;
     }
 
+    // silly but reliable on multiple environments.
+    // it tries until the jxcore reference is ready.
     var inter = setInterval(function() {
-        if (typeof jxcore == 'undefined') return;
-        
-        clearInterval(inter);
-        jxcore.isReady(function(){
-            log('READY');
-            // register log method from UI to jxcore instance
-            jxcore('log').register(log);
+      if (typeof jxcore == 'undefined') return;
 
-            jxcore('app.js').loadMainFile(function (ret, err) {
-                if(err) {
-                    alert(err);
-                } else {
-                    log('Loaded');
-                    jxcore_ready();
-                }
-            });
+      clearInterval(inter);
+
+      // sign-up for jxcore.isReady event
+      jxcore.isReady(function(){
+        // register log method from UI to jxcore instance
+        // so you can call it (app.js) cordova('log').cal(...)
+        jxcore('log').register(log);
+
+        // set the main file and load.
+        jxcore('app.js').loadMainFile(function (ret, err) {
+          if(err) {
+            alert(err);
+          } else {
+            jxcore_ready();
+          }
         });
+      });
     }, 5);
 
     function jxcore_ready() {
