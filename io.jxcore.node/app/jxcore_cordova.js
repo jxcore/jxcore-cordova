@@ -220,11 +220,11 @@ if (isAndroid) {
     var prepVirtualDirs = function () {
       var _ = {};
       for (var o in folders) {
-        var sp = o.split('/');
+        var sub = o.split('/');
         var last = _;
-        for (var i in sp) {
-          var loc = sp[i];
-          if (!last[loc]) last[loc] = {};
+        for (var i in sub) {
+          var loc = sub[i];
+          if (!last.hasOwnProperty(loc)) last[loc] = {};
           last = last[loc];
         }
         last['!s'] = folders[o];
@@ -235,11 +235,15 @@ if (isAndroid) {
       if (sp[0] === '') sp.shift();
       jxcore_root = folders;
       for (var o in sp) {
+        if (sp[o] === 'jxcore')
+          continue;
+
         jxcore_root[sp[o]] = {};
         jxcore_root = jxcore_root[sp[o]];
       }
 
       jxcore_root['jxcore'] = _; // assets/jxcore -> /
+      jxcore_root = _;
     };
 
     prepVirtualDirs();
@@ -259,13 +263,14 @@ if (isAndroid) {
     var getLast = function (location) {
       while (location[0] == '/')
         location = location.substr(1);
+
       while (location[location.length - 1] == '/')
         location = location.substr(0, location.length - 1);
 
       var dirs = location.split('/');
 
-      var res = findIn(dirs, folders);
-      if (!res) res = findIn(dirs, jxcore_root);
+      var res = findIn(dirs, jxcore_root);
+      if (!res) res = findIn(dirs, folders);
 
       return res;
     };
@@ -275,11 +280,15 @@ if (isAndroid) {
       if (n === 0 || n === -1) {
         if (n === 0) {
           pathname = pathname.replace(root, '');
-          pathname = path.join('jxcore/', pathname);
         }
 
-        var last = getLast(pathname);
-        if (!last) return false;
+        var last;
+        if (pathname !== '') {
+          last = getLast(pathname);
+          if (!last) return false;
+        } else {
+          last = jxcore_root;
+        }
 
         var result;
         if (typeof last['!s'] === 'undefined')
@@ -319,6 +328,7 @@ if (isAndroid) {
         }
         return arr;
       }
+
       return null;
     };
 

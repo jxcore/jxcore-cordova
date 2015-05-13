@@ -32,6 +32,7 @@ SOFTWARE.
 #include <android/log.h>
 #include "android/asset_manager.h"
 #include "android/asset_manager_jni.h"
+#include <assert.h>
 
 void ConvertResult(JXValue *result, std::string &to_result) {
   switch (result->type_) {
@@ -113,6 +114,8 @@ static void callJXcoreNative(JXValue *results, int argc) {
   jclass doubleClass = NULL;
   jmethodID doubleMethod;
 
+  jclass strClass = env->FindClass("java/lang/String");
+
   for (int i = 0; i < argc; i++) {
     JXValue *result = results + i;
     jobject objValue = NULL;
@@ -161,12 +164,13 @@ static void callJXcoreNative(JXValue *results, int argc) {
           objValue = (jobject)env->NewStringUTF(str_result.c_str());
         } else {
           jobjectArray ret = (jobjectArray)env->NewObjectArray(
-              1, env->FindClass("java/lang/String"), env->NewStringUTF(""));
+              1, strClass, env->NewStringUTF(""));
 
-          env->SetObjectArrayElement(ret, 0,
-                                     env->NewStringUTF(str_result.c_str()));
+          jstring jstr = env->NewStringUTF(str_result.c_str());
+          env->SetObjectArrayElement(ret, 0, jstr);
 
           objValue = (jobject)ret;
+          env->DeleteLocalRef(jstr);
         }
       } break;
       case RT_Error:
@@ -174,16 +178,30 @@ static void callJXcoreNative(JXValue *results, int argc) {
         std::string str_result;
         ConvertResult(result, str_result);
 
-        objValue = (jobject)env->NewStringUTF(str_result.c_str());
+        objValue = env->NewStringUTF(str_result.c_str());
       } break;
       default:
         break;
     }
 
     env->CallBooleanMethod(objArray, addObject, objValue);
+    env->DeleteLocalRef(objValue);
   }
 
   jxcore::CallJava(objArray);
+
+  env->DeleteLocalRef(objArray);
+  env->DeleteLocalRef(arrClass);
+  env->DeleteLocalRef(strClass);
+
+  if (doubleClass != NULL)
+    env->DeleteLocalRef(doubleClass);
+
+  if (intClass != NULL)
+    env->DeleteLocalRef(intClass);
+
+  if (boolClass != NULL)
+    env->DeleteLocalRef(boolClass);
 }
 
 AAssetManager *assetManager;
@@ -351,7 +369,15 @@ Java_io_jxcore_node_jxcore_callCBArray(JNIEnv *env, jobject thiz,
 
       JX_SetIndexedProperty(&args[1], i, &val);
       JX_Free(&val);
+
+      env->DeleteLocalRef(elm);
     }
+
+    env->DeleteLocalRef(boolClass);
+    env->DeleteLocalRef(doubleClass);
+    env->DeleteLocalRef(intClass);
+    env->DeleteLocalRef(strClass);
+    env->DeleteLocalRef(barrClass);
 
     JXValue out;
     JX_CallFunction(eventCB, args, 2, &out);
@@ -405,6 +431,8 @@ Java_io_jxcore_node_jxcore_evalEngine(JNIEnv *env, jobject thiz,
 
   JXValue result;
   JX_Evaluate(data, 0, &result);
+
+  env->ReleaseStringUTFChars(contents, data);
 
   if (!JX_IsNull(&result) && !JX_IsUndefined(&result))
     return JX_StoreValue(&result);
