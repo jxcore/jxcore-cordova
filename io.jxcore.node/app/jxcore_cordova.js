@@ -36,10 +36,7 @@ function MakeCallback(callbackId) {
 
   var _this = this;
   this.callback = function () {
-    var ret_val = arguments[0];
-    var err_val = arguments[1];
-
-    callJXcoreNative("  _callback_  ", [ret_val, err_val, _this.cid]);
+    callJXcoreNative("  _callback_  ", [Array.prototype.slice.call(arguments, 0), null, _this.cid]);
   };
 }
 
