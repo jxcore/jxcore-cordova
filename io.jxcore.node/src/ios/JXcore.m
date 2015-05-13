@@ -471,7 +471,7 @@ static float delay = 0;
       NSString *strval = (NSString*)objValue;
       
       const char* chval = [strval UTF8String];
-      unsigned length = (unsigned)[strval length];
+      unsigned length = (unsigned)[strval lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
       if (is_json)
         JX_SetJSON(&value, chval, length);
       else
@@ -496,7 +496,7 @@ static float delay = 0;
     } else if ([objValue isKindOfClass:[JXJSON class]]) {
       NSString *strval = [(JXJSON*)objValue getString];
       const char* chval = [strval UTF8String];
-      unsigned length = (unsigned)[strval length];
+      unsigned length = (unsigned)[strval lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
       JX_SetJSON(&value, chval, length);
     } else {
       JX_SetNull(&value);
