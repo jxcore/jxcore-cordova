@@ -65,8 +65,9 @@ cordova.prototype.callNative = function () {
   return this;
 };
 
-cordova.ping = function(name, param) {
+var isAndroid = process.platform == "android";
 
+cordova.ping = function(name, param) {
   if (cordova.events.hasOwnProperty(name)) {
     var x;
     if (Array.isArray(param)) {
@@ -87,15 +88,19 @@ cordova.ping = function(name, param) {
 
     if (target instanceof WrapFunction) {
       return target.callback.apply(target, x);
-    } else
+    } else {
       return cordova.events[name].apply(null, x);
+    }
   }
 };
 
 process.natives.defineEventCB("eventPing", cordova.ping);
 
 cordova.prototype.registerToNative = function (target) {
-  process.natives.defineEventCB(this.name, target);
+  if (!isAndroid)
+    process.natives.defineEventCB(this.name, target);
+  else
+    cordova.events[this.name] = target;
   return this;
 };
 
@@ -204,11 +209,15 @@ cordova.executeJSON = function (json, callbackId) {
 };
 
 console.error("Platform", process.platform);
-if (process.platform == "android") {
+if (isAndroid) {
   process.registerAssets = function () {
     var fs = require('fs');
     var folders = process.natives.assetReadDirSync();
     var root = process.cwd();
+
+    // patch execPath to userPath
+    process.execPath = root;
+
     var jxcore_root;
 
     var prepVirtualDirs = function () {
