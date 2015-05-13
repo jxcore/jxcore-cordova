@@ -1,0 +1,25 @@
+{
+  "name": "jxcore-cordova",
+  "version": "0.0.1-dev",
+  "description": "Cordova JXcore Plugin",
+  "cordova": {
+    "id": "io.jxcore.node",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https:/.github.com/jxcore/jxcore-cordova"
+  },
+  "keywords": [
+    "cordova",
+    "jxcore",
+    "node.js",
+    "ios",
+    "android"
+  ],
+  "author": "Oguz Bastemur",
+  "license": "MIT"
+}
