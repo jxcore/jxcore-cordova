@@ -316,7 +316,6 @@ Java_io_jxcore_node_jxcore_callCBArray(JNIEnv *env, jobject thiz,
     jclass strClass = env->FindClass("java/lang/String");
     jclass barrClass = env->FindClass("[B");
 
-    error_console("JNI, number of params %d", (int)size);
     for (int i = 0; i < (int)size; i++) {
       jobject elm = (jobject)env->GetObjectArrayElement(params, i);
 
@@ -349,6 +348,7 @@ Java_io_jxcore_node_jxcore_callCBArray(JNIEnv *env, jobject thiz,
 
         env->ReleaseByteArrayElements(jarr, barr, JNI_ABORT);
       }
+
       JX_SetIndexedProperty(&args[1], i, &val);
       JX_Free(&val);
     }
