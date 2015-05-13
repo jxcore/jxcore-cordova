@@ -31,5 +31,27 @@ static void screenInfo(NSArray *arr_, NSString *callbackId) {
     
     [JXcore callEventCallback:callbackId withJSON:[NSString stringWithFormat:@"%f", (float)br]];
   } withName:@"ScreenBrightness"];
+  
+  [JXcore addNativeBlock:^(NSArray *params, NSString *callbackId) {
+    NSMutableArray *arr = [[NSMutableArray alloc] init];
+    
+    [arr addObject:[NSNumber numberWithInt:100]];
+    [arr addObject:[NSNumber numberWithInt:-1]];
+    [arr addObject:[NSNumber numberWithDouble:4.5]];
+    
+    JXBoolean *blval = [[JXBoolean alloc] init];
+    [blval setBoolean:TRUE];
+    [arr addObject:blval];
+    
+    [arr addObject:[NSString stringWithFormat:@"Hello World"]];
+    
+    NSString* nstr = @"Test Buffer";
+    NSData* data = [nstr dataUsingEncoding:NSUTF8StringEncoding];
+    [arr addObject:data];
+    
+    [arr addObject:[NSString stringWithFormat:@"Another String with UTF8 中國"]];
+    
+    [JXcore callEventCallback:callbackId withParams:arr];
+  } withName:@"TestParams"];
 }
 @end

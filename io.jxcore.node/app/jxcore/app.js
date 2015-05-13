@@ -1,4 +1,13 @@
-cordova('log').call("JXcore is up and running!");
+var util = require('util');
+
+console.toCordova = function() {
+  var msg = util.format.apply(this, arguments);
+
+  cordova('log').call(msg);
+};
+
+console.toCordova("JXcore is up and running!");
+
 
 cordova('getBuffer').registerSync(function() {
   console.log("getBuffer is called!!!");
@@ -23,9 +32,15 @@ cordova('fromJXcore').registerToNative(function(param1, param2){
 
 // calling this custom native method from JXcoreExtension.m / .java
 cordova('ScreenInfo').callNative(function(width, height){
-  console.log("Size", width, height);
+  console.toCordova("Screen Size", width, height);
 });
 
 cordova('ScreenBrightness').callNative(function(br){
-  console.log("Screen Brightness", br);
+  console.toCordova("Screen Brightness", br);
+});
+
+cordova('TestParams').callNative(function(){
+  console.toCordova("TestParams result:")
+  for (var i=0; i<arguments.length; i++)
+    console.toCordova("args[" + i +"] :", arguments[i].toString());
 });
