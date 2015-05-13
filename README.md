@@ -90,7 +90,10 @@ Methods below are suitable for JXcore JS side (i.e. app.js)
   sample: cordova('log').call(msg);
 
 ### JXcore to JAVA / Objective-C (vice versa)
-You may also define JXcore JS side methods those you want to call from Java / Obj-C
+You may also define JXcore JS side methods those you want to call from Java / Obj-C.
+
+If you need a JS side method that you want to call multiple times use below approach instead depending on a method callback id.
+JXcore cordova interface doesn't keep the reference for a callback id once it's used.
 
 ```
   cordova('fromJXcore').registerToNative(function(param1, param2){
