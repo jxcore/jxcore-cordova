@@ -54,7 +54,7 @@ Now you can visit `platforms/ios` or `platforms/android` folders and open Xcode 
 
 So you need an API to communicate between Cordova JS to JXcore JS.
 
-### Cordova to JXcore
+#### Cordova to JXcore
 Use the methods below under Cordova JS side (i.e. index.html)
 
 **Share a Cordova method to JXcore**
@@ -67,7 +67,7 @@ Use the methods below under Cordova JS side (i.e. index.html)
 
   sample: jxcore('asyncPing').call('Hello', function(p1, p2, p3...) { });
 
-### JXcore to Cordova
+#### JXcore to Cordova
 Methods below are suitable for JXcore JS side (i.e. app.js)
 
 **Share a JXcore method to Cordova**
@@ -89,7 +89,7 @@ Methods below are suitable for JXcore JS side (i.e. app.js)
 
   sample: cordova('log').call(msg);
 
-### JXcore to JAVA / Objective-C (vice versa)
+#### JXcore to JAVA / Objective-C (vice versa)
 You may also define JXcore JS side methods those you want to call from Java / Obj-C.
 
 If you need a JS side method that you want to call multiple times use below approach instead depending on a method callback id.
