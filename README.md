@@ -55,44 +55,62 @@ Now you can visit `platforms/ios` or `platforms/android` folders and open Xcode 
 So you need an API to communicate between Cordova JS to JXcore JS.
 
 #### Cordova to JXcore
-Use the methods below under Cordova JS side (i.e. index.html)
+These API methods are used on the side of Apache Cordova (for example, in the main `index.html` of your Cordova application).
 
-**Share a Cordova method to JXcore**
-  jxcore(name_of_the_method).register(method_itself);
+##### Sharing a JavaScript function from Cordova to JXcore
+```js
+jxcore(name_of_the_function).register(a_function_to_register);
+```
+Example:
+```js
+jxcore('alert').register(function(msg){ alert(msg); });
+```
 
-  sample: jxcore('alert').register(function(msg) { alert(msg; });
-
-**Call a JXcore JS method from Cordova JS**
-  jxcore(name_of_the_method).call(params_to_send..., callback_function);
-
-  sample: jxcore('asyncPing').call('Hello', function(p1, p2, p3...) { });
+##### Calling a JavaScript function (shared on JXcore side) from Cordova
+```js
+jxcore(name_of_the_function).call(params_to_send..., callback);
+```
+Example:
+```js
+jxcore('asyncPing').call('Hello', function(p1, p2, p3...){ });
+```
 
 #### JXcore to Cordova
-Methods below are suitable for JXcore JS side (i.e. app.js)
+These API methods are used on the side of JXcore (for example, in the main `app.js` of your application based on Node API).
 
-**Share a JXcore method to Cordova**
-  cordova(name_of_the_method).registerSync(method_to_register);
+##### Sharing a synchronous JavaScript function from JXcore to Cordova
+```js
+cordova(name_of_the_function).registerSync(a_function_to_register);
+```
+This method expects the registered function to be synchronous (i.e. to immediately return a value). Example:
+```js
+cordova('syncPing').registerSync(function(msg){ return msg + ' pong'; });
+```
 
-  OR
+##### Sharing an asynchronous JavaScript function from JXcore to Cordova
+```js
+cordova(name_of_the_function).registerAsync(a_function_to_register);
+```
+This method expects the registered function to be asynchronous (i.e. to return some value using a callback). Example:
+```js
+cordova('asyncPing').registerAsync(function(msg, callback){ callback(msg + ' pong') });
+```
 
-  cordova(name_of_the_method).registerAsync(method_to_register);
+##### Calling a JavaScript function (shared on Cordova side) from JXcore
 
-  Only difference between the two above is that one of them expects you to send the result via `function return`
-
-  sample:
-    cordova('syncPing').registerSync(function(msg) { return msg + ' pong'; });
-
-    cordova('asyncPing').registerAsync(function(msg, callback) { callback(msg + ' pong') });
-
-**Call a Cordova JS method from JXcore JS**
-  cordova(name_of_the_method).call(params...);
-
-  sample: cordova('log').call(msg);
+```js
+cordova(name_of_the_function).call(params...);
+```
+Example:
+```js
+cordova('log').call(msg);
+```
 
 #### JXcore to JAVA / Objective-C (vice versa)
 You may also define JXcore JS side methods those you want to call from Java / Obj-C.
 
 If you need a JS side method that you want to call multiple times use below approach instead depending on a method callback id.
+
 JXcore cordova interface doesn't keep the reference for a callback id once it's used.
 
 ```
@@ -106,5 +124,4 @@ JXcore cordova interface doesn't keep the reference for a callback id once it's 
 See JXcoreExtension.java / JXcoreExtension.m / .h for sample Java/Obj-C definitions.
 
 ### Contribution
-If you see a mistake / bug or you think there is a better way to do the things, feel free to contribute. This project considers the
-contributions under MIT licese.
+If you see a mistake / bug or you think there is a better way to do the things, feel free to contribute. This project considers the contributions under MIT license.
