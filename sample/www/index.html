@@ -48,7 +48,7 @@
         // set the main file and load.
         jxcore('app.js').loadMainFile(function (ret, err) {
           if(err) {
-            alert(err);
+            alert(JSON && JSON.stringify ? JSON.stringify(err) : err);
           } else {
             jxcore_ready();
           }
