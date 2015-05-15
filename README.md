@@ -47,10 +47,10 @@ cordova platform add android
 
 Now you can visit `platforms/ios` or `platforms/android` folders and open Xcode project file or import the android project from Eclipse.
 
-### Updating JXcore binaries
+### Updating JXcore binaries [optional]
 
 Below are the steps to be taken if you want to update JXcore binaries in your Cordova JXcore application.
-They all should be called prior to `cordova plugin add` command.
+They all should be called prior to `cordova plugin add` command. This step is optional. We keep the core binaries are updated. 
 
 1. Rebuild JXcore binaries: [Compile as a Static Library](https://github.com/jxcore/jxcore/blob/master/doc/Android_Compile.md#compile-as-a-static-library)
 2. Refresh `jxcore-cordova/io.jxcore.node/src/android/jxcore-binaries` folder contents:
