@@ -20,7 +20,7 @@
             </feature>
         </config-file>
 
-        <resource-file src="app/jxcore" />
+        <!--<resource-file src="app/jxcore" />-->
         <resource-file src="app/jxcore_cordova.js" />
         <header-file src="src/ios/CDVJXcore.h" />
         <source-file src="src/ios/CDVJXcore.m" />
@@ -51,7 +51,7 @@
                 <param name="android-package" value="io.jxcore.node.jxcore"/>
             </feature>
         </config-file>
-        <source-file src="app/jxcore" target-dir="assets/" />
+       <!-- <source-file src="app/jxcore" target-dir="assets/" /> -->
         <source-file src="app/jxcore_cordova.js" target-dir="assets/" />
 
         <source-file src="src/android/java/io/jxcore/node/FileManager.java" target-dir="src/io/jxcore/node/" />

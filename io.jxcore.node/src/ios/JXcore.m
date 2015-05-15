@@ -216,7 +216,7 @@ static void callJXcoreNative(JXValue *results, int argc) {
   
   NSMutableArray *params = [[NSMutableArray alloc] init];
   
-    char *dt_name = JX_GetString(results + 0);
+  char *dt_name = JX_GetString(results + 0);
   NSString *name = [NSString stringWithUTF8String:dt_name];
   free(dt_name);
   
@@ -266,10 +266,6 @@ static void defineEventCB(JXValue *params, int argc) {
   [natives setObject:cpp forKey:name];
 }
 
-@interface JXcore () {
-}
-@end
-
 @implementation JXcore
 
 static bool useThreading = false;
@@ -278,6 +274,7 @@ static NSMutableArray *operationQueue;
 static NSCondition *operationCheck;
 static NSMutableArray *scriptsQueue;
 static NSMutableArray *nativeCallsQueue;
+static float delay = 0;
 
 + (void)useSubThreading {
   assert(jxcoreThread == nil && "You should call this prior to starting JXcore engine");
@@ -341,8 +338,6 @@ static NSMutableArray *nativeCallsQueue;
   JX_StartEngine();
   [JXcore jxcoreLoop:[NSNumber numberWithInt:0]];
 }
-
-static float delay = 0;
 
 + (void)jxcoreLoop:(NSNumber *)n {
   int result = JX_LoopOnce();

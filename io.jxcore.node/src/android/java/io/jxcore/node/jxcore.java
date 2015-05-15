@@ -401,13 +401,13 @@ public class jxcore extends CordovaPlugin {
             .hasMoreElements();) {
           ZipEntry ze = e.nextElement();
           String name = ze.getName();
-          if (name.startsWith("assets/jxcore/")) {
+          if (name.startsWith("assets/www/jxcore/")) {
             if (first_entry)
               first_entry = false;
             else
               assets.append(",");
             int size = FileManager.aproxFileSize(name.substring(7));
-            assets.append("\"" + name.substring(14) + "\":" + size);
+            assets.append("\"" + name.substring(18) + "\":" + size);
           }
         }
       } finally {
@@ -417,11 +417,11 @@ public class jxcore extends CordovaPlugin {
     }
     assets.append("}");
 
-    prepareEngine(home, assets.toString());
+    prepareEngine(home + "/www", assets.toString());
 
     String mainFile = FileManager.readFile("jxcore_cordova.js");
 
-    String data = "process.cwd = function(){ return '" + home + "/jxcore';};\n"
+    String data = "process.cwd = function(){ return '" + home + "/www/jxcore';};\n"
         + mainFile;
     defineMainFile(data);
 

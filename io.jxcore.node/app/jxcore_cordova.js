@@ -215,9 +215,19 @@ if (isAndroid) {
     // patch execPath to userPath
     process.execPath = root;
 
-    // force create /jxcore sub folder so we can write into cwd
-    if (!fs.existsSync(root)) {
-      fs.mkdir(root);
+    console.warn("creating file system at", root);
+    try {
+      // force create www/jxcore sub folder so we can write into cwd
+      if (!fs.existsSync(process.userPath)) {
+        fs.mkdir(process.userPath);
+        if (!fs.existsSync(root)) {
+          fs.mkdir(root);
+        }
+      }
+    } catch(e) {
+      console.error("Problem creating assets root at ", root);
+      console.error("You may have a problem with writing files");
+      console.error("Original error was", e);
     }
 
     var jxcore_root;
@@ -247,7 +257,7 @@ if (isAndroid) {
         jxcore_root = jxcore_root[sp[o]];
       }
 
-      jxcore_root['jxcore'] = _; // assets/jxcore -> /
+      jxcore_root['jxcore'] = _; // assets/www/jxcore -> /
       jxcore_root = _;
     };
 
@@ -315,7 +325,7 @@ if (isAndroid) {
       var n = pathname.indexOf(root);
       if (n === 0) {
         pathname = pathname.replace(root, "");
-        pathname = path.join('jxcore/', pathname);
+        pathname = path.join('www/jxcore/', pathname);
         return process.natives.assetReadSync(pathname);
       }
     };
@@ -348,10 +358,15 @@ if (isAndroid) {
 
   process.registerAssets();
 } else {
-  //ugly patching
+  // ugly patching
   var base_path = process.cwd();
   process.cwd = function () {
-    return base_path + "/jxcore/";
+    if (arguments.length) {
+      // or we should throw this as an exception ?
+      // Who knows how many node modules would break..
+      console.error("You are on iOS. This platform doesn't support setting cwd");
+    }
+    return base_path + "/www/jxcore/";
   };
 }
 
