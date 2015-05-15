@@ -16,11 +16,11 @@ function callJXcoreNative(name, args) {
 
   var cb = "";
 
-  if (params.length && typeof params[params.length-1] == "function") {
+  if (params.length && typeof params[params.length - 1] == "function") {
     cb = "$$jxcore_callback_" + cordova.eventId;
     cordova.eventId++;
     cordova.eventId %= 1e5;
-    cordova.on(cb, new WrapFunction(cb, params[params.length-1]));
+    cordova.on(cb, new WrapFunction(cb, params[params.length - 1]));
     params.pop();
   }
 
@@ -53,7 +53,7 @@ function WrapFunction(cb, fnc) {
 
 cordova.events = {};
 cordova.eventId = 0;
-cordova.on = function(name, target) {
+cordova.on = function (name, target) {
   cordova.events[name] = target;
 };
 
@@ -64,7 +64,7 @@ cordova.prototype.callNative = function () {
 
 var isAndroid = process.platform == "android";
 
-cordova.ping = function(name, param) {
+cordova.ping = function (name, param) {
   if (cordova.events.hasOwnProperty(name)) {
     var x;
     if (Array.isArray(param)) {
@@ -86,7 +86,7 @@ cordova.ping = function(name, param) {
     if (target instanceof WrapFunction) {
       return target.callback.apply(target, x);
     } else {
-      return cordova.events[name].apply(null, x);
+      return target.apply(null, x);
     }
   }
 };
@@ -214,6 +214,11 @@ if (isAndroid) {
 
     // patch execPath to userPath
     process.execPath = root;
+
+    // force create /jxcore sub folder so we can write into cwd
+    if (!fs.existsSync(root)) {
+      fs.mkdir(root);
+    }
 
     var jxcore_root;
 
@@ -343,7 +348,7 @@ if (isAndroid) {
 
   process.registerAssets();
 } else {
-//ugly patching
+  //ugly patching
   var base_path = process.cwd();
   process.cwd = function () {
     return base_path + "/jxcore/";
