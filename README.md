@@ -24,7 +24,7 @@ Now you have the plugin source codes are located under `/hello/jxcore-cordova/io
 Feel free to edit app.js file under `jxcore-cordova/io.jxcore.node/app/jxcore`. (app.js) is your entry point to JXcore's JS.
 Besides, this is the folder you should put all the necessary node modules etc.
 
-Under the `samples` folder, you will find `index.html`. This sample file shows how to integrate JXcore interface into Cordova client side.
+Under the `sample/www` folder, you will find `index.html`. This sample file shows how to integrate JXcore interface into Cordova client side.
 Prior to installing JXcore plugin, you should update Cordova's index.html as shown from this sample file.
 
 In order to add JXcore plugin into your Android, iOS 'hello' project, use the command line given below;
