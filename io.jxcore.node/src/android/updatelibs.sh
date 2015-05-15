@@ -14,6 +14,8 @@ LOG() {
 if [ $# -eq 1 ]
 then
   cp -R $1/ jxcore-binaries/
+  rm jxcore-binaries/*_mipsel.a
+	rm jxcore-binaries/*_x64.a	
 fi
 
 ndk-build
