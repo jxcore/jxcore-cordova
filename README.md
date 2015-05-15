@@ -147,7 +147,9 @@ You may also define JXcore JS side methods those you want to call from Java / Ob
 
 If you need a JS side method that you want to call multiple times use below approach instead depending on a method callback id.
 
-JXcore cordova interface doesn't keep the reference for a callback id once it's used.
+**Remarks**
+  - JXcore cordova interface doesn't keep the reference for a callback id once it's used.
+  - JavaScript is a single threaded language. Don't call the referenced JS methods from other threads. 
 
 ```
   cordova('fromJXcore').registerToNative(function(param1, param2){
