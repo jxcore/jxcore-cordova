@@ -17,12 +17,16 @@ cordova('asyncPing').registerAsync(function(message, callback){
   }, 500);
 });
 
+try {
 // requiring a node module
-var jsnice = require('json-nice');
+  var jsnice = require('json-nice');
 
 //using it
-var obj = { a:1, b:2 };
-console.log(jsnice(obj));
+  var obj = {a: 1, b: 2};
+  console.log(jsnice(obj));
+} catch(e) {
+  console.error("Seems like you didn't copy node_modules folder from sample/jxcore");
+}
 
 // execpath
 console.log("execPath", process.execPath);
