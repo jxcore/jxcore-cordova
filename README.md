@@ -13,27 +13,21 @@ Assuming your first Cordova JXcore application is located under `/hello` folder;
 
 Go under `/hello` folder.
 
-Get the latest `jxcore-cordova`
-
-```
-hello / > git clone https://github.com/jxcore/jxcore-cordova
-```
-
-Now you have the plugin source codes are located under `/hello/jxcore-cordova/io.jxcore.node`
-
-Feel free to edit app.js file under `jxcore-cordova/io.jxcore.node/app/jxcore`. (app.js) is your entry point to JXcore's JS.
-Besides, this is the folder you should put all the necessary node modules etc.
-
-**Important Steps for the First Timers**
- 1. Under the `sample/www` folder, you will find `index.html`. This sample file shows how to integrate JXcore interface into   Cordova client side. Prior to installing JXcore plugin, you should update Cordova's index.html as shown from this sample file.
-
- 2. This plugin expects you to have a folder named `jxcore` under `www` folder. The sample `index.html` tries to load `app.js` from this folder. You can copy `sample/jxcore` folder into `www` to run the basic demo.
-
 In order to add JXcore plugin into your Android, iOS 'hello' project, use the command line given below;
 
+```sh
+cordova plugin add https://github.com/jxcore/jxcore-cordova.git
 ```
-cordova plugin add jxcore-cordova/io.jxcore.node/
-```
+
+`www/jxcore/app.js` is your entry point to JXcore's JS.
+
+Node modules should go in the `www/jxcore/node_modules` folder.
+
+**Important Steps for the First Timers**
+ 1. Under the `sample/www` folder of this repo, you will find `index.html`. This sample file shows how to integrate JXcore interface into Cordova client side. Prior to installing JXcore plugin, you should update Cordova's index.html as shown from this sample file.
+
+ 2. This plugin expects you to have a folder named `jxcore` under `www` folder. The sample `index.html` tries to load `app.js` from this folder. You can copy `sample/www/` folder into `www` to run the basic demo.
+
 
 !In case you have a problem with installing the plugin. You may follow the steps below;
 (be careful though since this trick removes the existing platforms and installs them back)
@@ -42,7 +36,7 @@ cordova plugin add jxcore-cordova/io.jxcore.node/
 cordova platform remove ios
 cordova platform remove android
 cordova plugin remove io.jxcore.node
-cordova plugin add jxcore-cordova/io.jxcore.node/
+cordova plugin add https://github.com/jxcore/jxcore-cordova.git
 cordova platform add ios
 cordova platform add android
 ```
