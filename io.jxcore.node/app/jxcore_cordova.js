@@ -290,6 +290,7 @@ if (isAndroid) {
       return res;
     };
 
+    var stat_archive = {};
     var existssync = function (pathname) {
       var n = pathname.indexOf(root);
       if (n === 0 || n === -1) {
@@ -306,15 +307,28 @@ if (isAndroid) {
         }
 
         var result;
-        if (typeof last['!s'] === 'undefined')
-          result = {
-            size: 0
-          };
-        else
-          result = {
-            size: last['!s']
-          };
+        // cache result and send the same again
+        // to keep same ino number for each file
+        // a node module may use caching for dev:ino
+        // combinations
+        if (stat_archive.hasOwnProperty(pathname))
+          return stat_archive[pathname];
 
+        if (typeof last['!s'] === 'undefined') {
+          result = { // mark as a folder
+            size: 340,
+            mode: 16877,
+            ino: fs.virtualFiles.getNewIno()
+          };
+        } else {
+          result = {
+            size: last['!s'],
+            mode: 33188,
+            ino: fs.virtualFiles.getNewIno()
+          };
+        }
+
+        stat_archive[pathname] = result;
         return result;
       }
     };
