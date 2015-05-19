@@ -19,6 +19,6 @@ then
 fi
 
 ndk-build
-cp libs/armeabi/* ../../../../platforms/android/libs/armeabi/
-cp libs/armeabi-v7a/* ../../../../platforms/android/libs/armeabi-v7a/
-cp libs/x86/* ../../../../platforms/android/libs/x86/
+cp libs/armeabi/* ../../../platforms/android/libs/armeabi/
+cp libs/armeabi-v7a/* ../../../platforms/android/libs/armeabi-v7a/
+cp libs/x86/* ../../../platforms/android/libs/x86/
