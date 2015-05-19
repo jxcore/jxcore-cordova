@@ -207,8 +207,9 @@ cordova.executeJSON = function (json, callbackId) {
 
 console.error("Platform", process.platform);
 if (isAndroid) {
-  process.registerAssets = function () {
-    var fs = require('fs');
+  process.registerAssets = function (from) {
+    var fs = from || require('fs');
+    var path = require('path');
     var folders = process.natives.assetReadDirSync();
     var root = process.cwd();
 
@@ -275,18 +276,17 @@ if (isAndroid) {
       return last;
     };
 
-    var getLast = function (location) {
-      while (location[0] == '/')
-        location = location.substr(1);
+    var getLast = function (pathname) {
+      while (pathname[0] == '/')
+        pathname = pathname.substr(1);
 
-      while (location[location.length - 1] == '/')
-        location = location.substr(0, location.length - 1);
+      while (pathname[pathname.length - 1] == '/')
+        pathname = pathname.substr(0, pathname.length - 1);
 
-      var dirs = location.split('/');
+      var dirs = pathname.split('/');
 
       var res = findIn(dirs, jxcore_root);
       if (!res) res = findIn(dirs, folders);
-
       return res;
     };
 
@@ -371,6 +371,7 @@ if (isAndroid) {
   };
 
   process.registerAssets();
+  process.binding('natives').fs += "(" + process.registerAssets + ")(exports);";
 } else {
   // ugly patching
   var base_path = process.cwd();
