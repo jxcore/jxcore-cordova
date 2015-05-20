@@ -100,7 +100,7 @@ public class jxcore extends CordovaPlugin {
   public native long callCBArray(String event_name, Object[] arr, int size);
 
   public static String LOGTAG = "JX-Cordova";
-  public static Activity activity;
+  public static Activity activity = null;
   public static jxcore addon;
 
   Map<String, CallbackContext> callbacks;
@@ -197,8 +197,13 @@ public class jxcore extends CordovaPlugin {
 
   @Override
   protected void pluginInitialize() {
-    Log.d(LOGTAG, "jxcore cordova android initializing");
+    final boolean new_instance = activity != null;
     activity = cordova.getActivity();
+    if (!new_instance) {
+      setNativeContext(activity.getBaseContext(), activity.getAssets());
+    } else {
+      Log.d(LOGTAG, "jxcore cordova android initializing");
+    }
     addon = this;
 
     callbacks = new HashMap<String, CallbackContext>();
@@ -217,6 +222,9 @@ public class jxcore extends CordovaPlugin {
     });
 
     JXcoreExtension.LoadExtensions();
+
+    if (new_instance)
+      return;
 
     activity.runOnUiThread(new Runnable() {
       @Override
@@ -421,8 +429,8 @@ public class jxcore extends CordovaPlugin {
 
     String mainFile = FileManager.readFile("jxcore_cordova.js");
 
-    String data = "process.cwd = function(){ return '" + home + "/www/jxcore';};\n"
-        + mainFile;
+    String data = "process.cwd = function(){ return '" + home
+        + "/www/jxcore';};\n" + mainFile;
     defineMainFile(data);
 
     startEngine();
