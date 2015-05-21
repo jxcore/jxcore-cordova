@@ -166,9 +166,10 @@ internal_methods['loadMainFile'] = function (filePath, callback_) {
   } catch (e) {
     result = false;
     err = e;
+    Error.captureStackTrace(err);
     console.error("loadMainFile", e);
   }
-  callback_(result, err);
+  callback_(result, !err ? null : err.message + "\n" + err.stack);
 };
 
 cordova.executeJSON = function (json, callbackId) {
@@ -225,7 +226,7 @@ if (isAndroid) {
           fs.mkdir(root);
         }
       }
-    } catch(e) {
+    } catch (e) {
       console.error("Problem creating assets root at ", root);
       console.error("You may have a problem with writing files");
       console.error("Original error was", e);
