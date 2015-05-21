@@ -23,7 +23,10 @@ cordova plugin add https://github.com/jxcore/jxcore-cordova.git
 
 Node modules should go in the `www/jxcore/node_modules` folder.
 
-**Important Steps for the First Timers**
+**Important Steps for the First Timers**  
+Under the sample folder you will find `express sample` application. There you have the entire `www` folder that you can use instead of the `www` folder under cordova project root folder. Replace `www` folder from the project's root to the one under the `sample/express sample`. 
+
+Are you are looking for a minimalistic sample? follow the steps below;  
  1. Under the `sample/www` folder of this repo, you will find `index.html`. This sample file shows how to integrate JXcore interface into Cordova client side. Prior to installing JXcore plugin, you should update Cordova's index.html as shown from this sample file.
 
  2. This plugin expects you to have a folder named `jxcore` under `www` folder. The sample `index.html` tries to load `app.js` from this folder. You can copy `sample/www/` folder into `www` to run the basic demo.
