@@ -7,7 +7,7 @@ This project is intended to ;
 
 ### Installation
 
-If you don't have **Cordova** is installed, follow the steps from [this link](https://cordova.apache.org/docs/en/4.0.0/guide_cli_index.md.html) to install Apache Cordova.
+If you don't have **Cordova** installed, follow the steps from [this link](https://cordova.apache.org/docs/en/4.0.0/guide_cli_index.md.html) to install Apache Cordova.
 
 Assuming your first Cordova JXcore application is located under `/hello` folder;
 
