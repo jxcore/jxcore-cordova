@@ -8,13 +8,13 @@ var channel = require('cordova/channel'),
 channel.createSticky('onJXcoreReady');
 channel.waitForInitialization('onJXcoreReady');
 var jxcore_device = {
-  ios: (navigator.userAgent.match(/iPad/i))  == "iPad" || (navigator.userAgent.match(/iPhone/i))  == "iPhone",
+  ios: (navigator.userAgent.match(/iPad/i)) == "iPad" || (navigator.userAgent.match(/iPhone/i)) == "iPhone",
   android: (navigator.userAgent.match(/Android/i)) == "Android"
 };
 
 if (!jxcore_device.ios && !jxcore_device.android) {
   var counter = 0, errmsg = 'JXcore plugin: Device type is unkown. Defaulting to Android';
-  var inter = setInterval(function(){
+  var inter = setInterval(function () {
     if (typeof log != "undefined") {
       log(errmsg, 'red');
     } else if (++counter > 400) {
@@ -25,7 +25,7 @@ if (!jxcore_device.ios && !jxcore_device.android) {
       return;
     }
     clearInterval(inter);
-  },5);
+  }, 5);
   jxcore_device.android = true;
 }
 
@@ -118,20 +118,41 @@ jxcore.prototype.call = function () {
       callback = arguments[ln];
   }
 
+  if (typeof log != "undefined") log("Calling " + methodName)
   callFunction(methodName, args, callback);
   return this;
 };
 
+var localMethods = {};
 jxcore.prototype.register = function (callback) {
   if (!isFunction(callback)) {
     throw new TypeError("callback needs to be a function");
   }
 
-  callFunction("registerUIMethod", [this.name], callback);
+  localMethods[this.name] = callback;
   return this;
 };
 
+
+var callLocalMethods = function () {
+  if (!localMethods.hasOwnProperty(arguments[0]))
+    return;
+
+  var hasParams = arguments.length > 1 && Array.isArray(arguments[1]);
+  var args;
+  if (!hasParams) {
+    args = Array.prototype.slice.call(arguments, 1);
+  } else {
+    args = arguments[1];
+    if (args.length && args[args.length - 1].hasOwnProperty("JXCORE_RETURN_CALLBACK")) {
+      args[args.length - 1] = jxcore(args[args.length - 1].JXCORE_RETURN_CALLBACK);
+    }
+  }
+  localMethods[arguments[0]].apply(null, args);
+};
+
 jxcore.prototype.loadMainFile = function (callback) {
+  callFunction("registerUIMethod", ["callLocalMethods"], callLocalMethods);
   callFunction("loadMainFile", [this.name], callback);
   return this;
 };

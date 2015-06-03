@@ -36,7 +36,9 @@ function MakeCallback(callbackId) {
 
   var _this = this;
   this.callback = function () {
-    callJXcoreNative("  _callback_  ", [Array.prototype.slice.call(arguments, 0), null, _this.cid]);
+    callJXcoreNative("  _callback_  ", [Array.prototype.slice.call(arguments, 0),
+      null,
+      _this.cid]);
   };
 }
 
@@ -65,22 +67,22 @@ cordova.prototype.callNative = function () {
 var isAndroid = process.platform == "android";
 
 cordova.ping = function (name, param) {
-  if (cordova.events.hasOwnProperty(name)) {
-    var x;
-    if (Array.isArray(param)) {
-      x = param;
-    } else if (param.str) {
-      x = [param.str];
-    } else if (param.json) {
-      try {
-        x = [JSON.parse(param.json)];
-      } catch (e) {
-        return e;
-      }
-    } else {
-      x = null;
+  var x;
+  if (Array.isArray(param)) {
+    x = param;
+  } else if (param.str) {
+    x = [param.str];
+  } else if (param.json) {
+    try {
+      x = [JSON.parse(param.json)];
+    } catch (e) {
+      return e;
     }
+  } else {
+    x = null;
+  }
 
+  if (cordova.events.hasOwnProperty(name)) {
     var target = cordova.events[name];
 
     if (target instanceof WrapFunction) {
@@ -88,6 +90,8 @@ cordova.ping = function (name, param) {
     } else {
       return target.apply(null, x);
     }
+  } else {
+    console.warn(name, "wasn't registered");
   }
 };
 
@@ -118,15 +122,26 @@ cordova.prototype.unregister = function () {
   return this;
 };
 
+var return_reference_counter = 0;
 cordova.prototype.call = function (rest) {
   var params = Array.prototype.slice.call(arguments, 0);
-  var fnc = ui_methods[this.name];
+  var fnc = ui_methods["callLocalMethods"];
 
   if (!fnc) {
     throw new Error("Method " + this.name + " is undefined.");
   }
 
-  fnc.callback.apply(null, [params, null]);
+  if (typeof params[params.length-1] === 'function') {
+    var return_reference = return_reference_counter + this.name;
+    return_reference_counter ++;
+    return_reference_counter %= 9999;
+    ui_methods[return_reference] = {};
+
+    ui_methods[return_reference].returnCallback = params[params.length-1];
+    params[params.length-1] = { JXCORE_RETURN_CALLBACK:"RC-" + return_reference };
+  }
+
+  fnc.callback.apply(null, [this.name, params, null]);
 
   return this;
 };
@@ -178,18 +193,12 @@ cordova.executeJSON = function (json, callbackId) {
   var internal = internal_methods[json.methodName];
   var fnc = jx_methods[json.methodName];
 
-  if (!fnc && !internal) {
-    console.error("JXcore: Method Doesn't Exist [", json.methodName, "] Did you register it?");
-    return;
-  }
-
   if (internal) {
     var cb = new MakeCallback(callbackId).callback
     json.params.push(cb);
     internal.apply(null, json.params);
-  }
-
-  if (fnc) {
+    return;
+  } else if (fnc) {
     if (!fnc.is_synced) {
       if (!json.params || (json.params.length == 1 && json.params[0] === null)) {
         json.params = [];
@@ -203,7 +212,19 @@ cordova.executeJSON = function (json, callbackId) {
     } else {
       return ret_val;
     }
+    return;
+  } else if (json.methodName && json.methodName.length>3 && json.methodName.substr(0,3) === "RC-") {
+    var cb = new MakeCallback(callbackId).callback
+    json.params.push(cb);
+    fnc = ui_methods[json.methodName.substr(3)];
+    if (fnc && fnc.returnCallback) {
+      fnc.returnCallback.apply(null, json.params);
+      delete ui_methods[json.methodName.substr(3)];
+      return;
+    }
   }
+
+  console.error("JXcore: Method Doesn't Exist [", json.methodName, "] Did you register it?");
 };
 
 console.error("Platform", process.platform);
