@@ -1,6 +1,6 @@
 {
   "name": "jxcore-cordova",
-  "version": "0.0.1-dev",
+  "version": "0.0.1-beta",
   "description": "Cordova JXcore Plugin",
   "cordova": {
     "id": "io.jxcore.node",
@@ -20,6 +20,6 @@
     "ios",
     "android"
   ],
-  "author": "Oguz Bastemur",
+  "author": "JXcore Contributors",
   "license": "MIT"
 }
