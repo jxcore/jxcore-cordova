@@ -118,7 +118,6 @@ jxcore.prototype.call = function () {
       callback = arguments[ln];
   }
 
-  if (typeof log != "undefined") log("Calling " + methodName)
   callFunction(methodName, args, callback);
   return this;
 };
@@ -140,12 +139,17 @@ var callLocalMethods = function () {
 
   var hasParams = arguments.length > 1 && Array.isArray(arguments[1]);
   var args;
+  var call_id;
   if (!hasParams) {
     args = Array.prototype.slice.call(arguments, 1);
   } else {
     args = arguments[1];
     if (args.length && args[args.length - 1].hasOwnProperty("JXCORE_RETURN_CALLBACK")) {
-      args[args.length - 1] = jxcore(args[args.length - 1].JXCORE_RETURN_CALLBACK);
+      call_id = args[args.length - 1].JXCORE_RETURN_CALLBACK;
+      args[args.length - 1] = function () {
+        var target = jxcore(call_id);
+        target.call.apply(target, arguments);
+      };
     }
   }
   localMethods[arguments[0]].apply(null, args);
