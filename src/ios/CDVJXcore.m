@@ -98,6 +98,7 @@ static void callback(NSArray *arr, NSString *_callbackId) {
   
   NSLog(@"JXcore Cordova plugin initializing");
   
+  [JXcore useSubThreading];
   [JXcore startEngine:@"jxcore_cordova" withCallback:callback namedAs:@"  _callback_  "];
 
   activeDevice = self;

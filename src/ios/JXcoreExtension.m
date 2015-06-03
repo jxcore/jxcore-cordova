@@ -1,4 +1,4 @@
-// Check LICENSE file
+// See LICENSE file
 
 #import <Foundation/Foundation.h>
 #import "JXcore.h"

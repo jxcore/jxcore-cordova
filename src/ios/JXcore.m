@@ -341,14 +341,14 @@ static float delay = 0;
 
 + (void)jxcoreLoop:(NSNumber *)n {
   int result = JX_LoopOnce();
-  if (result == 0)
-    [JXcore performSelector:@selector(jxcoreLoop:)
-               withObject:[NSNumber numberWithInt:0]
-               afterDelay:0.05 + delay];
+  float total_delay = delay + (result == 0 ? 0.05 : 0.01);
+  
+  if (useThreading)
+    return;
   else
     [JXcore performSelector:@selector(jxcoreLoop:)
                withObject:[NSNumber numberWithInt:0]
-               afterDelay:0.01 + delay];
+               afterDelay:total_delay];
 }
 
 + (void)threadMain
@@ -357,12 +357,17 @@ static float delay = 0;
   NSThread *currentThread;
 
   currentThread = [NSThread currentThread];
-
+  int result = 1;
+  NSTimeInterval waitInterval = 0.0;
+  
   while (true) {
     [operationCheck lock];
     {
       while ([operationQueue count] == 0 && ![currentThread isCancelled]) {
-        [operationCheck wait];
+        waitInterval = delay + (result == 0 ? 0.05 : 0.01);
+        [operationCheck waitUntilDate:[NSDate dateWithTimeIntervalSinceNow:waitInterval]];
+        
+        result = JX_LoopOnce();
       }
 
       if ([currentThread isCancelled]) {

@@ -1,4 +1,4 @@
-// Check LICENSE file
+// See LICENSE file
 
 #ifndef JXcordova_JXcoreExtension_h
 #define JXcordova_JXcoreExtension_h
