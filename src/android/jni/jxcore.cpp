@@ -34,6 +34,9 @@ SOFTWARE.
 #include "android/asset_manager_jni.h"
 #include <assert.h>
 
+static JXValue *cb_values = NULL;
+static JXValue eventCB = {0};
+
 void ConvertResult(JXValue *result, std::string &to_result) {
   switch (result->type_) {
     case RT_Null:
@@ -68,8 +71,6 @@ void ConvertResult(JXValue *result, std::string &to_result) {
       return;
   }
 }
-
-static JXValue *cb_values = NULL;
 
 static void callback(JXValue *results, int argc) {
   if (argc != 3) {
@@ -241,15 +242,14 @@ static void assetReadSync(JXValue *results, int argc) {
   JX_SetError(&results[argc], err, strlen(err));
 }
 
-JXValue *eventCB = NULL;
 static void defineEventCB(JXValue *results, int argc) {
   if (!JX_IsFunction(results + 1)) {
     error_console("defineEventCB expects a function");
     return;
   }
 
-  eventCB = results + 1;
-  JX_MakePersistent(eventCB);
+  JX_MakePersistent(results+1);
+  eventCB = *(results + 1);
 }
 
 std::string files_json;
@@ -265,7 +265,7 @@ JNIEXPORT jlong JNICALL
 Java_io_jxcore_node_jxcore_callCBString(JNIEnv *env, jobject thiz,
                                         jstring ev_name, jstring param,
                                         jint json) {
-  if (eventCB == NULL) {
+  if (eventCB.type_ == 0) {
     error_console("event callback is not ready yet.");
     return 0;
   }
@@ -291,7 +291,7 @@ Java_io_jxcore_node_jxcore_callCBString(JNIEnv *env, jobject thiz,
     JX_Free(&jx_str_param);
 
     JXValue out;
-    JX_CallFunction(eventCB, args, 2, &out);
+    JX_CallFunction(&eventCB, args, 2, &out);
 
     JX_Free(&args[0]);
     JX_Free(&args[1]);
@@ -314,7 +314,7 @@ JNIEXPORT jlong JNICALL
 Java_io_jxcore_node_jxcore_callCBArray(JNIEnv *env, jobject thiz,
                                        jstring ev_name, jobjectArray params,
                                        jint size) {
-  if (eventCB == NULL) {
+  if (eventCB.type_ == 0) {
     error_console("event callback is not ready yet.");
     return 0;
   }
@@ -380,7 +380,7 @@ Java_io_jxcore_node_jxcore_callCBArray(JNIEnv *env, jobject thiz,
     env->DeleteLocalRef(barrClass);
 
     JXValue out;
-    JX_CallFunction(eventCB, args, 2, &out);
+    JX_CallFunction(&eventCB, args, 2, &out);
 
     JX_Free(&args[0]);
     JX_Free(&args[1]);
@@ -562,6 +562,8 @@ Java_io_jxcore_node_jxcore_loopOnce(JNIEnv *env, jobject thiz) {
 
 JNIEXPORT void JNICALL
 Java_io_jxcore_node_jxcore_stopEngine(JNIEnv *env, jobject thiz) {
+  JX_ClearPersistent(&eventCB);
+  JX_Free(&eventCB);
   JX_StopEngine();
 }
 
