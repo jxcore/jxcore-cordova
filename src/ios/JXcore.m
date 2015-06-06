@@ -37,23 +37,24 @@ SOFTWARE.
 @end
 
 @implementation CPPWrapper {
-  void* data_;
+  JXcoreNative native_;
+  JXValue jxvalue_;
 }
 
 - (JXcoreNative) getCallback {
-  return (JXcoreNative) data_;
+  return native_;
 }
 
 - (void) setCallback:(JXcoreNative)native {
-  data_ = native;
+  native_ = native;
 }
 
 - (JXValue*) getFunction {
-  return (JXValue*)data_;
+  return &jxvalue_;
 }
 
 - (void) setFunction:(JXValue*)fnc {
-  data_ = fnc;
+  jxvalue_ = *fnc;
 }
 @end
 
