@@ -177,7 +177,7 @@ void ConvertParams(JXValue *results, int argc, NSMutableArray *params) {
             [NSData dataWithBytes:(const void *)data length:sizeof(char) * len];
         free(data);
       } break;
-      case RT_JSON: {
+      case RT_Object: {
         char *data = JX_GetString(result);
         int ln = JX_GetDataLength(result);
         if (ln > 0 && *data != '{' && *data != '[') {

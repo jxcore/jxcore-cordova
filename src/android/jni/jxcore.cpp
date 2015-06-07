@@ -59,7 +59,7 @@ void ConvertResult(JXValue *result, std::string &to_result) {
       to_result = ss.str();
     } break;
     case RT_Buffer:
-    case RT_JSON:
+    case RT_Object:
     case RT_String:
     case RT_Error: {
       char *chr = JX_GetString(result);
@@ -156,7 +156,7 @@ static void callJXcoreNative(JXValue *results, int argc) {
         objValue = (jobject)ret;
         free(arr);
       } break;
-      case RT_JSON: {
+      case RT_Object: {
         std::string str_result;
         ConvertResult(result, str_result);
         const char *data = str_result.c_str();
