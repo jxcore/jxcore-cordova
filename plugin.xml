@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="io.jxcore.node"
-    version="0.0.1-beta">
+    version="0.0.1">
     <name>JXcore</name>
     <description>Cordova JXcore/Node.JS Plugin</description>
     <license>MIT</license>

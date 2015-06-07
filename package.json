@@ -1,6 +1,6 @@
 {
   "name": "jxcore-cordova",
-  "version": "0.0.1-beta",
+  "version": "0.0.1",
   "description": "Cordova JXcore Plugin",
   "cordova": {
     "id": "io.jxcore.node",
