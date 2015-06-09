@@ -147,6 +147,9 @@ You may also define JXcore JS side methods those you want to call from Java / Ob
 
 If you need a JS side method that you want to call multiple times use below approach instead depending on a method callback id.
 
+#### Where To Save your Files (Write access on mobile targets)
+Consider using either `process.userPath` or `require('os').tmpdir()` to get the Documents (on ios) or a folder you have the write access. `process.cwd()` or `__dirname` may not target a folder that you have the write access!
+
 **Remarks**
   - JXcore cordova interface doesn't keep the reference for a callback id once it's used.
   - JavaScript is a single threaded language. Don't call the referenced JS methods from other threads. 
