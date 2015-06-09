@@ -337,6 +337,15 @@ static float delay = 0;
   JX_DefineExtension("defineEventCB", defineEventCB);
   JX_DefineMainFile([fileContents UTF8String]);
   JX_StartEngine();
+
+  NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+  NSString *documentsDirectory = [paths objectAtIndex:0];
+
+  NSMutableArray *arr = [[NSMutableArray alloc] init];
+  [arr addObject:documentsDirectory];
+
+  [JXcore callEventCallback:@"setProcessUserPath_" withParams:arr];
+
   [JXcore jxcoreLoop:[NSNumber numberWithInt:0]];
 }
 
@@ -439,8 +448,8 @@ static float delay = 0;
   if (cpp != nil) {
     if ([cpp isKindOfClass:[CPPWrapper class]])
     {
-      CPPWrapper *cpp_ = (CPPWrapper*)cpp;
-      fnc = [cpp_ getFunction];
+      [JXcore callDirectMethod:eventName withParams:params isJSON:is_json];
+      return;
     } else {
       NSLog(@"Error: Only Wrapped JXcore functions can be called from OBJ-C side");
       return;
@@ -517,8 +526,86 @@ static float delay = 0;
   }
 }
 
++ (void) callDirectMethod:(NSString*)eventName withParams:(NSArray*)params isJSON:(BOOL) is_json {
+  NSObject *cpp = [natives valueForKey:eventName];
+  JXValue *fnc;
+
+  if (cpp != nil && [cpp isKindOfClass:[CPPWrapper class]])
+  {
+    CPPWrapper *cpp_ = (CPPWrapper*)cpp;
+    fnc = [cpp_ getFunction];
+  } else {
+    NSLog(@"Error: Only Wrapped JXcore functions can be called from OBJ-C side");
+    return;
+  }
+  
+  unsigned nscount = 0;
+  
+  if (params != nil)
+    nscount = (unsigned)[params count];
+  
+  
+  JXValue *arr = NULL;
+  NSMutableData* mdata = nil;
+  
+  if (nscount > 0)
+  {
+    mdata = [NSMutableData dataWithLength:sizeof(JXValue) * nscount];
+    arr = (JXValue*) [mdata mutableBytes];
+  }
+  
+  for(unsigned i=0; i < nscount; i++) {
+    NSObject *objValue = [params objectAtIndex:i];
+    JXValue *value = arr+i;
+    JX_New(value);
+    
+    if ([objValue isKindOfClass:[NSString class]]) {
+      NSString *strval = (NSString*)objValue;
+      
+      const char* chval = [strval UTF8String];
+      unsigned length = (unsigned)[strval lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+      if (is_json)
+        JX_SetJSON(value, chval, length);
+      else
+        JX_SetString(value, chval, length);
+    } else if ([objValue isKindOfClass:[JXBoolean class]]) {
+      JX_SetBoolean(value, [(JXBoolean*)objValue getBoolean] == TRUE);
+    } else if ([objValue isKindOfClass:[NSNumber class]]) {
+      NSNumber *nmval = (NSNumber*)objValue;
+      if (CFNumberIsFloatType((CFNumberRef)nmval) || CFNumberGetType((CFNumberRef)nmval) == kCFNumberDoubleType) {
+        JX_SetDouble(value, [nmval doubleValue]);
+      } else {
+        JX_SetInt32(value, [nmval intValue]);
+      }
+    } else if ([objValue isKindOfClass:[NSData class]]) {
+      NSData *data = (NSData*) objValue;
+      
+      NSUInteger len = [data length];
+      Byte byteData[len];
+      memcpy(byteData, [data bytes], len);
+      
+      JX_SetBuffer(value, (char*)byteData, (int32_t) len);
+    } else if ([objValue isKindOfClass:[JXJSON class]]) {
+      NSString *strval = [(JXJSON*)objValue getString];
+      const char* chval = [strval UTF8String];
+      unsigned length = (unsigned)[strval lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+      JX_SetJSON(value, chval, length);
+    } else {
+      JX_SetNull(value);
+    }
+  }
+  
+  JXValue ret_val;
+  JX_CallFunction(fnc, arr, nscount, &ret_val);
+  
+  JX_Free(&ret_val);
+  
+  for(int i=0; i<nscount; i++)
+    JX_Free(arr+i);
+}
+
 + (void) callEventCallback:(NSString*)eventName_ withParams:(NSArray*)params_ isJSON:(BOOL) is_json {
-  if (useThreading) {
+  if (useThreading && [NSThread currentThread] != jxcoreThread) {
     NativeCall *nc = [[NativeCall alloc] init];
     [nc setName:eventName_ withParams:params_ isJSON:FALSE];
     

@@ -405,6 +405,10 @@ if (isAndroid) {
     }
     return base_path + "/www/jxcore/";
   };
+
+  cordova('setProcessUserPath_').registerToNative(function(dir){
+    process.userPath = dir;
+  });
 }
 
 console.log("JXcore Cordova Bridge is Ready!");
