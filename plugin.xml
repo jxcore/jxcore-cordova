@@ -38,6 +38,9 @@
         <source-file src="bin/libopenssl.a" framework="true" />
         <source-file src="bin/libsqlite3.a" framework="true" />
         <source-file src="bin/libuv.a" framework="true" />
+        <source-file src="bin/libleveldb.a" framework="true" compiler-flags="-std=c++11" />
+        <source-file src="bin/libleveldown.a" framework="true" />
+        <source-file src="bin/libsnappy.a" framework="true" />
 
         <framework src="libstdc++.6.0.9.dylib" />
         <framework src="CFNetwork.framework" />
