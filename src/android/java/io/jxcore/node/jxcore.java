@@ -196,7 +196,7 @@ public class jxcore extends CordovaPlugin {
 
   @Override
   protected void pluginInitialize() {
-    final boolean new_instance = activity != null;
+    final boolean new_instance = activity == null;
     activity = cordova.getActivity();
     if (!new_instance) {
       setNativeContext(activity.getBaseContext(), activity.getAssets());
@@ -222,7 +222,7 @@ public class jxcore extends CordovaPlugin {
 
     JXcoreExtension.LoadExtensions();
 
-    if (new_instance)
+    if (!new_instance)
       return;
 
     activity.runOnUiThread(new Runnable() {
@@ -234,7 +234,7 @@ public class jxcore extends CordovaPlugin {
     });
   }
 
-  public static void startProgress() {
+  private static void startProgress() {
     addon.Initialize(activity.getBaseContext().getFilesDir().getAbsolutePath());
 
     Runnable runnable = new Runnable() {
@@ -395,7 +395,7 @@ public class jxcore extends CordovaPlugin {
     app_paused = false;
   }
 
-  public void Initialize(String home) {
+  private void Initialize(String home) {
     // assets.list is terribly slow, below trick is literally 100 times faster
     StringBuilder assets = new StringBuilder();
     assets.append("{");
