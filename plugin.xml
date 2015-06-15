@@ -22,7 +22,6 @@
 
         <!--<resource-file src="app/jxcore" />-->
         <resource-file src="app/jxcore_cordova.js" />
-        <header-file src="src/ios/JXcoreAppInitializationProtocol.h" />
         <header-file src="src/ios/CDVJXcore.h" />
         <source-file src="src/ios/CDVJXcore.m" />
         <header-file src="src/ios/JXcore.h" />
