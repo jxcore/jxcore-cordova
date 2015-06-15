@@ -27,7 +27,7 @@
         <header-file src="src/ios/JXcore.h" />
         <source-file src="src/ios/JXcore.m" />
         <header-file src="src/ios/JXcoreExtension.h" />
-        <source-file src="src/ios/JXcoreExtension.m" />
+        <!--<source-file src="src/ios/JXcoreExtension.m" />    OPTIONAL-->
         <header-file src="bin/jx.h" />
         <header-file src="bin/jx_result.h" />
         <source-file src="bin/libcares.a" framework="true" />

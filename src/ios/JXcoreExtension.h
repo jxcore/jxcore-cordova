@@ -5,7 +5,7 @@
 
 @interface JXcoreExtension : NSObject
 {}
-+ (void) defineMethods;
+- (void) defineMethods;
 @end
 
 #endif
