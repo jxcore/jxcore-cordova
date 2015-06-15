@@ -286,6 +286,8 @@ static float delay = 0;
 {
   assert(jxcoreThread == nil && "You can start JXcore engine only once");
   
+  natives = [[NSMutableDictionary alloc] init];
+  
   jxcoreThread = [[NSThread alloc]
     initWithTarget:self
     selector:@selector(threadMain)
@@ -314,8 +316,6 @@ static float delay = 0;
 
   NSString *filePath =
       [[NSBundle mainBundle] pathForResource:fileName ofType:@"js"];
-
-  natives = [[NSMutableDictionary alloc] init];
 
   [JXcore addNativeMethod:jxCallback withName:name];
   
@@ -443,21 +443,19 @@ static float delay = 0;
 
   if (cpp == nil) {
     cpp = [natives valueForKey:@"eventPing"];
-  }
-  
-  if (cpp != nil) {
+  } else {
     if ([cpp isKindOfClass:[CPPWrapper class]])
     {
       [JXcore callDirectMethod:eventName withParams:params isJSON:is_json];
       return;
-    } else {
-      NSLog(@"Error: Only Wrapped JXcore functions can be called from OBJ-C side");
-      return;
     }
-  } else {
-    NSLog(@"Callback reference method %@ not found.", eventName);
+  }
+  
+  if (![cpp isKindOfClass:[CPPWrapper class]]) {
+    NSLog(@"Error: Only Wrapped JXcore functions can be called from OBJ-C side");
     return;
   }
+  fnc = [(CPPWrapper*)cpp getFunction];
   
   unsigned nscount = (unsigned)[params count];
   JXValue arr[2];
@@ -529,6 +527,12 @@ static float delay = 0;
 + (void) callDirectMethod:(NSString*)eventName withParams:(NSArray*)params isJSON:(BOOL) is_json {
   NSObject *cpp = [natives valueForKey:eventName];
   JXValue *fnc;
+  
+  BOOL pingEvent = cpp == nil;
+  if (pingEvent) {
+    [JXcore callEventCallbackNoThread:eventName withParams:params isJSON:is_json];
+    return;
+  }
 
   if (cpp != nil && [cpp isKindOfClass:[CPPWrapper class]])
   {

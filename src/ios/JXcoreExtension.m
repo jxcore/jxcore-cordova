@@ -23,7 +23,7 @@ static void screenInfo(NSArray *arr_, NSString *callbackId) {
 @implementation JXcoreExtension
 {}
 
-+ (void) defineMethods {
+- (void) defineMethods {
   [JXcore addNativeMethod:screenInfo withName:@"ScreenInfo"];
   
   [JXcore addNativeBlock:^(NSArray *params, NSString *callbackId) {

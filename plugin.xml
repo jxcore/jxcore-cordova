@@ -27,7 +27,7 @@
         <header-file src="src/ios/JXcore.h" />
         <source-file src="src/ios/JXcore.m" />
         <header-file src="src/ios/JXcoreExtension.h" />
-        <source-file src="src/ios/JXcoreExtension.m" />
+        <!--<source-file src="src/ios/JXcoreExtension.m" />    OPTIONAL-->
         <header-file src="bin/jx.h" />
         <header-file src="bin/jx_result.h" />
         <source-file src="bin/libcares.a" framework="true" />
@@ -38,6 +38,9 @@
         <source-file src="bin/libopenssl.a" framework="true" />
         <source-file src="bin/libsqlite3.a" framework="true" />
         <source-file src="bin/libuv.a" framework="true" />
+        <source-file src="bin/libleveldb.a" framework="true" compiler-flags="-std=c++11" />
+        <source-file src="bin/libleveldown.a" framework="true" />
+        <source-file src="bin/libsnappy.a" framework="true" />
 
         <framework src="libstdc++.6.0.9.dylib" />
         <framework src="CFNetwork.framework" />

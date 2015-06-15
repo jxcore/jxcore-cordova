@@ -4,6 +4,7 @@ var path = require('path');
 var jx_methods = {};
 var internal_methods = {};
 var ui_methods = {};
+var node_module = require('module');
 
 function cordova(x) {
   if (!(this instanceof cordova)) return new cordova(x);
@@ -390,6 +391,8 @@ if (isAndroid) {
     };
 
     fs.setExtension("jxcore-java", extension);
+    
+    node_module.addGlobalPath(process.execPath);
   };
 
   process.registerAssets();
@@ -403,10 +406,12 @@ if (isAndroid) {
       // Who knows how many node modules would break..
       console.error("You are on iOS. This platform doesn't support setting cwd");
     }
-    return base_path + "/www/jxcore/";
+    return path.join(base_path, "www/jxcore/");
   };
 
+  node_module.addGlobalPath(process.cwd());
   cordova('setProcessUserPath_').registerToNative(function(dir){
+    node_module.addGlobalPath(dir);
     process.userPath = dir;
   });
 }

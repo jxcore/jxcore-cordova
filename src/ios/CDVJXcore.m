@@ -103,7 +103,11 @@ static void callback(NSArray *arr, NSString *_callbackId) {
 
   activeDevice = self;
   
-  [JXcoreExtension defineMethods];
+  Class extensionClass = NSClassFromString(@"JXcoreExtension");
+  if (extensionClass != nil) {
+    id extension = [[extensionClass alloc] init];
+    [extension defineMethods];
+  }
 }
 
 - (void)Evaluate:(CDVInvokedUrlCommand *)command {
