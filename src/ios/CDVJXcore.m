@@ -17,7 +17,6 @@ void fputs$UNIX2003(const char *restrict c, FILE *restrict f) { fputs(c, f); }
 #import <Cordova/CDV.h>
 #import "CDVJXcore.h"
 #import "JXcoreExtension.h"
-#import "JXcoreAppInitializationProtocol.h"
 
 
 static CDVJXcore *activeDevice = nil;
@@ -105,14 +104,6 @@ static void callback(NSArray *arr, NSString *_callbackId) {
   activeDevice = self;
   
   [JXcoreExtension defineMethods];
-    
-  // See if a class called JXcoreAppInitialization can be found that conforms to the JXcoreAppInitializationProtocol.
-  // If so, call its initializeApp method.
-  Class appInitializationClass = NSClassFromString(@"JXcoreAppInitialization");
-  if ([appInitializationClass conformsToProtocol:@protocol(JXcoreAppInitializationProtocol)])
-  {
-    [appInitializationClass initializeApp];
-  }
 }
 
 - (void)Evaluate:(CDVInvokedUrlCommand *)command {
