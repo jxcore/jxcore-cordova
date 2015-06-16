@@ -429,7 +429,10 @@ public class jxcore extends CordovaPlugin {
     String mainFile = FileManager.readFile("jxcore_cordova.js");
 
     String data = "process.cwd = function(){ return '" + home
-        + "/www/jxcore';};\n" + mainFile;
+        + "/www/jxcore';};\n" 
+        + "process.userPath ='" + activity.getBaseContext().getCacheDir().toString() + "';\n"
+        + mainFile;
+    
     defineMainFile(data);
 
     startEngine();
