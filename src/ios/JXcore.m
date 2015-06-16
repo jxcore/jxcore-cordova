@@ -320,7 +320,7 @@ static float delay = 0;
   [JXcore addNativeMethod:jxCallback withName:name];
   
   NSError *error;
-  NSString *fileContents =
+  NSString *fileContents_ =
       [NSString stringWithContentsOfFile:filePath
                                 encoding:NSUTF8StringEncoding
                                    error:&error];
@@ -331,20 +331,17 @@ static float delay = 0;
     assert(0);
   }
 
+  NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+  NSString *documentsDirectory = [paths objectAtIndex:0];
+
+  NSString *fileContents = [NSString stringWithFormat:@"process.userPath='%@';\n%@", documentsDirectory, fileContents_];
+
   JX_Initialize([sandboxPath UTF8String], callback);
   JX_InitializeNewEngine();
   JX_DefineExtension("callJXcoreNative", callJXcoreNative);
   JX_DefineExtension("defineEventCB", defineEventCB);
   JX_DefineMainFile([fileContents UTF8String]);
   JX_StartEngine();
-
-  NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-  NSString *documentsDirectory = [paths objectAtIndex:0];
-
-  NSMutableArray *arr = [[NSMutableArray alloc] init];
-  [arr addObject:documentsDirectory];
-
-  [JXcore callEventCallback:@"setProcessUserPath_" withParams:arr];
 
   [JXcore jxcoreLoop:[NSNumber numberWithInt:0]];
 }

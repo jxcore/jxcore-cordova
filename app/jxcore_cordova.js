@@ -228,7 +228,9 @@ cordova.executeJSON = function (json, callbackId) {
   console.error("JXcore: Method Doesn't Exist [", json.methodName, "] Did you register it?");
 };
 
-console.error("Platform", process.platform);
+console.warn("Platform", process.platform);
+console.warn("Process ARCH", process.arch);
+
 if (isAndroid) {
   process.registerAssets = function (from) {
     var fs = from || require('fs');
@@ -239,7 +241,6 @@ if (isAndroid) {
     // patch execPath to userPath
     process.execPath = root;
 
-    console.warn("creating file system at", root);
     try {
       // force create www/jxcore sub folder so we can write into cwd
       if (!fs.existsSync(process.userPath)) {
@@ -391,29 +392,26 @@ if (isAndroid) {
     };
 
     fs.setExtension("jxcore-java", extension);
-    
     node_module.addGlobalPath(process.execPath);
+    node_module.addGlobalPath(process.userPath);
   };
 
   process.registerAssets();
   process.binding('natives').fs += "(" + process.registerAssets + ")(exports);";
 } else {
   // ugly patching
-  var base_path = process.cwd();
+  var base_path = path.join(process.cwd(), "www/jxcore/");
   process.cwd = function () {
     if (arguments.length) {
       // or we should throw this as an exception ?
       // Who knows how many node modules would break..
       console.error("You are on iOS. This platform doesn't support setting cwd");
     }
-    return path.join(base_path, "www/jxcore/");
+    return base_path;
   };
 
   node_module.addGlobalPath(process.cwd());
-  cordova('setProcessUserPath_').registerToNative(function(dir){
-    node_module.addGlobalPath(dir);
-    process.userPath = dir;
-  });
+  node_module.addGlobalPath(process.userPath);
 }
 
 console.log("JXcore Cordova Bridge is Ready!");
