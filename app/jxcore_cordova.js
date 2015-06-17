@@ -4,7 +4,6 @@ var path = require('path');
 var jx_methods = {};
 var internal_methods = {};
 var ui_methods = {};
-var node_module = require('module');
 
 function cordova(x) {
   if (!(this instanceof cordova)) return new cordova(x);
@@ -231,14 +230,21 @@ cordova.executeJSON = function (json, callbackId) {
 console.warn("Platform", process.platform);
 console.warn("Process ARCH", process.arch);
 
+// see jxcore.java - jxcore.m
+process.setPaths();
+
 if (isAndroid) {
+  // bring APK support into 'fs'
   process.registerAssets = function (from) {
-    var fs = from || require('fs');
+    var fs = from;
+    if (!fs || !fs.existsSync)
+      fs = require('fs');
+
     var path = require('path');
     var folders = process.natives.assetReadDirSync();
     var root = process.cwd();
 
-    // patch execPath to userPath
+    // patch execPath to APK folder
     process.execPath = root;
 
     try {
@@ -392,26 +398,27 @@ if (isAndroid) {
     };
 
     fs.setExtension("jxcore-java", extension);
+    var node_module = require('module');
+
     node_module.addGlobalPath(process.execPath);
     node_module.addGlobalPath(process.userPath);
   };
 
   process.registerAssets();
-  process.binding('natives').fs += "(" + process.registerAssets + ")(exports);";
-} else {
-  // ugly patching
-  var base_path = path.join(process.cwd(), "www/jxcore/");
-  process.cwd = function () {
-    if (arguments.length) {
-      // or we should throw this as an exception ?
-      // Who knows how many node modules would break..
-      console.error("You are on iOS. This platform doesn't support setting cwd");
-    }
-    return base_path;
+
+  // if a submodule monkey patches 'fs' module, make sure APK support comes with it
+  var extendFS = function() {
+    process.binding('natives').fs += "(" + process.registerAssets + ")(exports);";
   };
 
-  node_module.addGlobalPath(process.cwd());
-  node_module.addGlobalPath(process.userPath);
+  extendFS();
+
+  // register below definitions for possible future sub threads
+  jxcore.tasks.register(process.setPaths);
+  jxcore.tasks.register(process.registerAssets);
+  jxcore.tasks.register(extendFS);
+} else {
+  jxcore.tasks.register(process.setPaths);
 }
 
 console.log("JXcore Cordova Bridge is Ready!");

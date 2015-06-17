@@ -325,6 +325,13 @@ static float delay = 0;
                                 encoding:NSUTF8StringEncoding
                                    error:&error];
   
+  NSString *fileDir = sandboxPath;
+  
+  NSUInteger location = [filePath rangeOfString:[NSString stringWithFormat:@"/%@.js", fileName]].location;
+  if (location > 0) {
+    fileDir = [NSString stringWithFormat:@"%@/www/jxcore/",[filePath substringToIndex:location]];
+  }
+  
   if (error) {
     NSLog(@"Error reading jxcore_cordova.js file: %@",
           error.localizedDescription);
@@ -334,9 +341,25 @@ static float delay = 0;
   NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
   NSString *documentsDirectory = [paths objectAtIndex:0];
 
-  NSString *fileContents = [NSString stringWithFormat:@"process.userPath='%@';\n%@", documentsDirectory, fileContents_];
+  NSString *fileContents = [NSString stringWithFormat:
+      @"process.setPaths = function() {\n"
+        "  process.userPath='%@'; "
+        "  var node_module = require('module');\n"
+        "  var pathModule = require('path');\n"
+        "  // ugly patching\n"
+        "  process.cwd = function () {\n"
+        "    if (arguments.length) {\n"
+        "      // or we should throw this as an exception ?\n"
+        "      // Who knows how many node modules would break..\n"
+        "      console.error('You are on iOS. This platform does not support setting cwd');\n"
+        "    }\n"
+        "    return '%@';\n"
+        "  };\n"
+        "  node_module.addGlobalPath(process.cwd());\n"
+        "  node_module.addGlobalPath(process.userPath);\n"
+        "};\n%@", documentsDirectory, fileDir, fileContents_];
 
-  JX_Initialize([sandboxPath UTF8String], callback);
+  JX_Initialize([fileDir UTF8String], callback);
   JX_InitializeNewEngine();
   JX_DefineExtension("callJXcoreNative", callJXcoreNative);
   JX_DefineExtension("defineEventCB", defineEventCB);
