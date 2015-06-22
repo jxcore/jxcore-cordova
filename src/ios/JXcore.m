@@ -631,7 +631,7 @@ static float delay = 0;
 + (void) callEventCallback:(NSString*)eventName_ withParams:(NSArray*)params_ isJSON:(BOOL) is_json {
   if (useThreading && [NSThread currentThread] != jxcoreThread) {
     NativeCall *nc = [[NativeCall alloc] init];
-    [nc setName:eventName_ withParams:params_ isJSON:FALSE];
+    [nc setName:eventName_ withParams:params_ isJSON:is_json];
     
     [JXcore run:^{
       assert([nativeCallsQueue count] !=0 && "Native calls queue shouldn't be empty");
