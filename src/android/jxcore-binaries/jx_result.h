@@ -196,6 +196,15 @@ JX_GetIndexedProperty(JXValue *object, const int index, JXValue *out);
 JXCORE_EXTERN(int)
 JX_GetThreadIdByValue(JXValue *value);
 
+JXCORE_EXTERN(void)
+JX_GetGlobalObject(JXValue *out);
+
+JXCORE_EXTERN(void)
+JX_WrapObject(JXValue *object, void *ptr);
+
+JXCORE_EXTERN(void *)
+JX_UnwrapObject(JXValue *object);
+
 #ifdef __cplusplus
 }
 #endif
