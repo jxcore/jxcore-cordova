@@ -12,7 +12,7 @@ exports.log = function() {
   var msg = util.format.apply(this, arguments);
 
   if (!process.subThread)
-    cordova('log').call(msg);
+    Mobile('log').call(msg);
   else
     process.sendToMain({JXC_SUB:1, method:'log', argv:[msg]});
 };
@@ -23,7 +23,7 @@ if (!process.subThread) {
 
     // check if we sent this message
     if(param.JXC_SUB) {
-      var m = cordova(param.method);
+      var m = Mobile(param.method);
       m.call.apply(m, param.argv);
     }
   });

@@ -4,7 +4,7 @@ var fs = require('fs');
 var clog = require('./utilities').log;
 clog("JXcore is up and running!");
 
-cordova('getBuffer').registerSync(function() {
+Mobile('getBuffer').registerSync(function() {
   clog("getBuffer is called!!!");
   var buffer = new Buffer(25000);
   buffer.fill(45);
@@ -13,7 +13,7 @@ cordova('getBuffer').registerSync(function() {
   return buffer;
 });
 
-cordova('asyncPing').registerAsync(function(message, callback){
+Mobile('asyncPing').registerAsync(function(message, callback){
   setTimeout(function() {
     callback("Pong:" + message);
   }, 500);
@@ -27,7 +27,7 @@ for (var ifc in net) {
   var addrs = net[ifc];
   for (var a in addrs) {
     if (addrs[a].family == "IPv4") {
-      cordova('addIp').call(addrs[a].address);
+      Mobile('addIp').call(addrs[a].address);
     }
   }
 }

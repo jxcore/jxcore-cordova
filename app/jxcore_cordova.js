@@ -5,8 +5,8 @@ var jx_methods = {};
 var internal_methods = {};
 var ui_methods = {};
 
-function cordova(x) {
-  if (!(this instanceof cordova)) return new cordova(x);
+function JXMobile(x) {
+  if (!(this instanceof JXMobile)) return new JXMobile(x);
 
   this.name = x;
 }
@@ -17,10 +17,10 @@ function callJXcoreNative(name, args) {
   var cb = "";
 
   if (params.length && typeof params[params.length - 1] == "function") {
-    cb = "$$jxcore_callback_" + cordova.eventId;
-    cordova.eventId++;
-    cordova.eventId %= 1e5;
-    cordova.on(cb, new WrapFunction(cb, params[params.length - 1]));
+    cb = "$$jxcore_callback_" + JXMobile.eventId;
+    JXMobile.eventId++;
+    JXMobile.eventId %= 1e5;
+    JXMobile.on(cb, new WrapFunction(cb, params[params.length - 1]));
     params.pop();
   }
 
@@ -48,25 +48,25 @@ function WrapFunction(cb, fnc) {
 
   var _this = this;
   this.callback = function () {
-    delete cordova.events[_this.cb];
+    delete JXMobile.events[_this.cb];
     return _this.fnc.apply(null, arguments);
   }
 }
 
-cordova.events = {};
-cordova.eventId = 0;
-cordova.on = function (name, target) {
-  cordova.events[name] = target;
+JXMobile.events = {};
+JXMobile.eventId = 0;
+JXMobile.on = function (name, target) {
+  JXMobile.events[name] = target;
 };
 
-cordova.prototype.callNative = function () {
+JXMobile.prototype.callNative = function () {
   callJXcoreNative(this.name, arguments);
   return this;
 };
 
 var isAndroid = process.platform == "android";
 
-cordova.ping = function (name, param) {
+JXMobile.ping = function (name, param) {
   var x;
   if (Array.isArray(param)) {
     x = param;
@@ -82,8 +82,8 @@ cordova.ping = function (name, param) {
     x = null;
   }
 
-  if (cordova.events.hasOwnProperty(name)) {
-    var target = cordova.events[name];
+  if (JXMobile.events.hasOwnProperty(name)) {
+    var target = JXMobile.events[name];
 
     if (target instanceof WrapFunction) {
       return target.callback.apply(target, x);
@@ -95,27 +95,27 @@ cordova.ping = function (name, param) {
   }
 };
 
-process.natives.defineEventCB("eventPing", cordova.ping);
+process.natives.defineEventCB("eventPing", JXMobile.ping);
 
-cordova.prototype.registerToNative = function (target) {
+JXMobile.prototype.registerToNative = function (target) {
   if (!isAndroid)
     process.natives.defineEventCB(this.name, target);
   else
-    cordova.events[this.name] = target;
+    JXMobile.events[this.name] = target;
   return this;
 };
 
-cordova.prototype.registerSync = function (target) {
+JXMobile.prototype.registerSync = function (target) {
   jx_methods[this.name] = {is_synced: 1, method: target};
   return this;
 };
 
-cordova.prototype.registerAsync = function (target) {
+JXMobile.prototype.registerAsync = function (target) {
   jx_methods[this.name] = {is_synced: 0, method: target};
   return this;
 };
 
-cordova.prototype.unregister = function () {
+JXMobile.prototype.unregister = function () {
   if (jx_methods[this.name]) {
     delete jx_methods[this.name];
   }
@@ -123,7 +123,7 @@ cordova.prototype.unregister = function () {
 };
 
 var return_reference_counter = 0;
-cordova.prototype.call = function (rest) {
+JXMobile.prototype.call = function (rest) {
   var params = Array.prototype.slice.call(arguments, 0);
   var fnc = ui_methods["callLocalMethods"];
 
@@ -146,7 +146,7 @@ cordova.prototype.call = function (rest) {
   return this;
 };
 
-global.cordova = cordova;
+global.Mobile = JXMobile;
 
 internal_methods['registerUIMethod'] = function (methodName, callback_) {
   if (methodName && Array.isArray(methodName)) {
@@ -187,7 +187,7 @@ internal_methods['loadMainFile'] = function (filePath, callback_) {
   callback_(result, !err ? null : err.message + "\n" + err.stack);
 };
 
-cordova.executeJSON = function (json, callbackId) {
+JXMobile.executeJSON = function (json, callbackId) {
   if (!json.methodName) return; // try throw exception
 
   var internal = internal_methods[json.methodName];
@@ -421,4 +421,4 @@ if (isAndroid) {
   jxcore.tasks.register(process.setPaths);
 }
 
-console.log("JXcore Cordova Bridge is Ready!");
+console.log("JXcore Cordova bridge is ready!");

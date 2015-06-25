@@ -116,30 +116,30 @@ These API methods are used on the side of JXcore (for example, in the main
 
 ##### Sharing a synchronous JavaScript function from JXcore to Cordova
 ```js
-cordova(name_of_the_function).registerSync(a_function_to_register);
+Mobile(name_of_the_function).registerSync(a_function_to_register);
 ```
 This method expects the registered function to be synchronous (i.e. to immediately return a value). Example:
 ```js
-cordova('syncPing').registerSync(function(msg){ return msg + ' pong'; });
+Mobile('syncPing').registerSync(function(msg){ return msg + ' pong'; });
 ```
 
 ##### Sharing an asynchronous JavaScript function from JXcore to Cordova
 ```js
-cordova(name_of_the_function).registerAsync(a_function_to_register);
+Mobile(name_of_the_function).registerAsync(a_function_to_register);
 ```
 This method expects the registered function to be asynchronous (i.e. to return some value using a callback). Example:
 ```js
-cordova('asyncPing').registerAsync(function(msg, callback){ callback(msg + ' pong') });
+Mobile('asyncPing').registerAsync(function(msg, callback){ callback(msg + ' pong') });
 ```
 
 ##### Calling a JavaScript function (shared on Cordova side) from JXcore
 
 ```js
-cordova(name_of_the_function).call(params...);
+Mobile(name_of_the_function).call(params...);
 ```
 Example:
 ```js
-cordova('log').call(msg);
+Mobile('log').call(msg);
 ```
 
 #### JXcore to JAVA / Objective-C (vice versa)
@@ -169,7 +169,7 @@ www/jxcore > jx install jxm --autoremove "*.gz"
   - JavaScript is a single threaded language. Don't call the referenced JS methods from other threads. 
 
 ```
-  cordova('fromJXcore').registerToNative(function(param1, param2){
+  Mobile('fromJXcore').registerToNative(function(param1, param2){
     // this method is reachable from Java or ObjectiveC
     // OBJ-C : [JXcore callEventCallback:@"fromJXcore" withParams:arr_parms];
     // Java  : jxcore.CallJSMethod("fromJXcore", arr_params);
