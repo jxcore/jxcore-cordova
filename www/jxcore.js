@@ -58,7 +58,7 @@ function callNative(name, args, callback) {
     },
     'JXcore',
     name,
-    args
+    args || []
   );
 }
 
