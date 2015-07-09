@@ -221,6 +221,7 @@ public class jxcore extends CordovaPlugin {
     });
 
     JXcoreExtension.LoadExtensions();
+    JXMobile.Initialize();
 
     if (!new_instance)
       return;

@@ -26,6 +26,8 @@
         <source-file src="src/ios/CDVJXcore.m" />
         <header-file src="src/ios/JXcore.h" />
         <source-file src="src/ios/JXcore.m" />
+        <header-file src="src/ios/JXMobile.h" />
+        <source-file src="src/ios/JXMobile.m" />
         <header-file src="src/ios/JXcoreExtension.h" />
         <!--<source-file src="src/ios/JXcoreExtension.m" />    OPTIONAL-->
         <header-file src="bin/jx.h" />
@@ -58,6 +60,7 @@
         <source-file src="app/jxcore_cordova.js" target-dir="assets/" />
 
         <source-file src="src/android/java/io/jxcore/node/FileManager.java" target-dir="src/io/jxcore/node/" />
+        <source-file src="src/android/java/io/jxcore/node/JXMobile.java" target-dir="src/io/jxcore/node/" />
         <source-file src="src/android/java/io/jxcore/node/jxcore.java" target-dir="src/io/jxcore/node/" />
         <source-file src="src/android/java/io/jxcore/node/JXcoreExtension.java" target-dir="src/io/jxcore/node/" />
         <source-file src="src/android/libs/armeabi" target-dir="libs/" />

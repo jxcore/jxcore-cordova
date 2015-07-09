@@ -1,5 +1,11 @@
 // License information is available from LICENSE file
 
+/*
+ * This file is only a sample
+ * You are free to update it with the methods you need
+ * from the Native Mobile API
+ */
+
 package io.jxcore.node;
 
 import io.jxcore.node.jxcore.JXcoreCallback;

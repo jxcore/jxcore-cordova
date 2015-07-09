@@ -17,6 +17,7 @@ void fputs$UNIX2003(const char *restrict c, FILE *restrict f) { fputs(c, f); }
 #import <Cordova/CDV.h>
 #import "CDVJXcore.h"
 #import "JXcoreExtension.h"
+#import "JXMobile.h"
 
 
 static CDVJXcore *activeDevice = nil;
@@ -108,6 +109,8 @@ static void callback(NSArray *arr, NSString *_callbackId) {
     id extension = [[extensionClass alloc] init];
     [extension defineMethods];
   }
+
+  [JXMobile defineMethods];
 }
 
 - (void)Evaluate:(CDVInvokedUrlCommand *)command {

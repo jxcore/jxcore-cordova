@@ -180,9 +180,9 @@ internal_methods['loadMainFile'] = function (filePath, callback_) {
     require(path.join(process.cwd(), filePath));
   } catch (e) {
     result = false;
+    Error.captureStackTrace(e);
     err = e;
-    Error.captureStackTrace(err);
-    console.error("loadMainFile", e);
+    JXMobile('OnError').callNative(e.message, JSON.stringify(e.stack));
   }
   callback_(result, !err ? null : err.message + "\n" + err.stack);
 };
@@ -192,39 +192,43 @@ JXMobile.executeJSON = function (json, callbackId) {
 
   var internal = internal_methods[json.methodName];
   var fnc = jx_methods[json.methodName];
-
-  if (internal) {
-    var cb = new MakeCallback(callbackId).callback
-    json.params.push(cb);
-    internal.apply(null, json.params);
-    return;
-  } else if (fnc) {
-    if (!fnc.is_synced) {
-      if (!json.params || (json.params.length == 1 && json.params[0] === null)) {
-        json.params = [];
-      }
-      json.params[json.params.length] = new MakeCallback(callbackId).callback;
-    }
-
-    var ret_val = fnc.method.apply(null, json.params);
-    if (fnc.is_synced && callbackId) {
-      new MakeCallback(callbackId).callback(ret_val);
-    } else {
-      return ret_val;
-    }
-    return;
-  } else if (json.methodName && json.methodName.length>3 && json.methodName.substr(0,3) === "RC-") {
-    var cb = new MakeCallback(callbackId).callback
-    json.params.push(cb);
-    fnc = ui_methods[json.methodName.substr(3)];
-    if (fnc && fnc.returnCallback) {
-      fnc.returnCallback.apply(null, json.params);
-      delete ui_methods[json.methodName.substr(3)];
+  try {
+    if (internal) {
+      var cb = new MakeCallback(callbackId).callback
+      json.params.push(cb);
+      internal.apply(null, json.params);
       return;
-    }
-  }
+    } else if (fnc) {
+      if (!fnc.is_synced) {
+        if (!json.params || (json.params.length == 1 && json.params[0] === null)) {
+          json.params = [];
+        }
+        json.params[json.params.length] = new MakeCallback(callbackId).callback;
+      }
 
-  console.error("JXcore: Method Doesn't Exist [", json.methodName, "] Did you register it?");
+      var ret_val = fnc.method.apply(null, json.params);
+      if (fnc.is_synced && callbackId) {
+        new MakeCallback(callbackId).callback(ret_val);
+      } else {
+        return ret_val;
+      }
+      return;
+    } else if (json.methodName && json.methodName.length>3 && json.methodName.substr(0,3) === "RC-") {
+      var cb = new MakeCallback(callbackId).callback
+      json.params.push(cb);
+      fnc = ui_methods[json.methodName.substr(3)];
+      if (fnc && fnc.returnCallback) {
+        fnc.returnCallback.apply(null, json.params);
+        delete ui_methods[json.methodName.substr(3)];
+        return;
+      }
+    }
+
+    throw new Error("JXcore: Method Doesn't Exist [", json.methodName, "] Did you register it?");
+  } catch(e) {
+    Error.captureStackTrace(e);
+    JXMobile('OnError').callNative(e.message, JSON.stringify(e.stack));
+  }
 };
 
 console.warn("Platform", process.platform);
@@ -420,5 +424,10 @@ if (isAndroid) {
 } else {
   jxcore.tasks.register(process.setPaths);
 }
+
+process.on('uncaughtException', function (e) {
+  Error.captureStackTrace(e);
+  JXMobile('OnError').callNative(e.message, JSON.stringify(e.stack));
+});
 
 console.log("JXcore Cordova bridge is ready!");
