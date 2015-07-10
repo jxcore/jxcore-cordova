@@ -16,5 +16,12 @@
 
     NSLog(@"Error!: %@\nStack:%@\n", errorMessage, errorStack);
   } withName:@"OnError"];
+  
+  // User documents location
+  [JXcore addNativeBlock:^(NSArray *params, NSString *callbackId) {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    [JXcore callEventCallback:callbackId withJSON:[NSString stringWithFormat:@"\"%@\"",documentsDirectory]];
+  } withName:@"GetDocumentsPath"];
 }
 @end

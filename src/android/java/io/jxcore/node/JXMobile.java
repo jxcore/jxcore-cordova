@@ -21,5 +21,14 @@ public class JXMobile {
         Log.e("jxcore", "Error!: " + message + "\nStack: " + stack);
       }
     });
+    
+    jxcore.RegisterMethod("GetDocumentsPath", new JXcoreCallback() {
+      @SuppressLint("NewApi")
+      @Override
+      public void Receiver(ArrayList<Object> params, String callbackId) {
+        String path = jxcore.activity.getBaseContext().getCacheDir().toString();
+        jxcore.CallJSMethod(callbackId, "\"" + path + "\"");
+      }
+    });
   }
 }

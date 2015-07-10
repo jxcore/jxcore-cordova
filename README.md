@@ -7,9 +7,11 @@ This project is intended to ;
 
 ### Installation
 
-If you are on Visual Studio 2015, see [this](https://github.com/jxcore/jxcore-cordova/issues/29#issuecomment-106006938) comment for easy installation.
+If you are on Visual Studio 2015, see [this](https://github.com/jxcore/jxcore-cordova/issues/29#issuecomment-106006938)
+comment for easy installation.
 
-If you don't have **Cordova** installed, follow the steps from [this link](https://cordova.apache.org/docs/en/4.0.0/guide_cli_index.md.html) to install Apache Cordova.
+If you don't have **Cordova** installed, follow the steps from [this link](https://cordova.apache.org/docs/en/4.0.0/guide_cli_index.md.html)
+to install Apache Cordova.
 
 Assuming your first Cordova JXcore application is located under `/hello` folder;
 
@@ -26,14 +28,18 @@ cordova plugin add https://github.com/jxcore/jxcore-cordova.git
 Node modules should go in the `www/jxcore/node_modules` folder.
 
 **Important Steps for the First Timers**  
-Under the sample folder you will find `express sample` application. There you have the entire `www` folder that you can use instead of the `www` folder under cordova project root folder. Replace `www` folder from the project's root to the one under the `sample/express sample`. 
+Under the sample folder you will find `express sample` application. There you have the entire `www` folder that you can
+use instead of the `www` folder under cordova project root folder. Replace `www` folder from the project's root to the
+one under the `sample/express sample`.
 
 You can also use the automated script on posix platforms: `install_and_run.sh`. More on this [here](install_and_run.md).
 
 Are you are looking for a minimalistic sample? follow the steps below;  
- 1. Under the `sample/www` folder of this repo, you will find `index.html`. This sample file shows how to integrate JXcore interface into Cordova client side. Prior to installing JXcore plugin, you should update Cordova's index.html as shown from this sample file.
+ 1. Under the `sample/www` folder of this repo, you will find `index.html`. This sample file shows how to integrate JXcore
+ interface into Cordova client side. Prior to installing JXcore plugin, you should update Cordova's index.html as shown from this sample file.
 
- 2. This plugin expects you to have a folder named `jxcore` under `www` folder. The sample `index.html` tries to load `app.js` from this folder. You can copy `sample/www/` folder into `www` to run the basic demo.
+ 2. This plugin expects you to have a folder named `jxcore` under `www` folder. The sample `index.html` tries to load `app.js`
+ from this folder. You can copy `sample/www/` folder into `www` to run the basic demo.
 
 
 !In case you have a problem with installing the plugin. You may follow the steps below;
@@ -150,7 +156,8 @@ You may also define JXcore JS side methods those you want to call from Java / Ob
 If you need a JS side method that you want to call multiple times use below approach instead depending on a method callback id.
 
 #### Where To Save your Files (Write access on mobile targets) EROFS error ?
-Consider using either `process.userPath` or `require('os').tmpdir()` to get the Documents (on ios) or a folder you have the write access. `process.cwd()` or `__dirname` may not target a folder that you have the write access!
+Consider using either `process.userPath` or `require('os').tmpdir()` to get the Documents (on ios) or a folder you have
+the write access. `process.cwd()` or `__dirname` may not target a folder that you have the write access!
 
 #### How to Install Node Modules
 Visit www/jxcore folder and install the node modules there. It's adviced to use 'jx install' command to install node modules from npm.
@@ -164,9 +171,29 @@ www/jxcore > sudo jx install jxm --autoremove "*.gz"
 www/jxcore > jx install jxm --autoremove "*.gz"
 ```
 
-'--autoremove "*.gz"' will be removing the gz files from modules folder. Android APK doesn't allow you to put .gz files into application's assets.
+'--autoremove "*.gz"' will be removing the gz files from modules folder. Android APK doesn't allow you to put .gz files
+into application's assets.
 
-**Remarks**
+#### Mobile.GetDocumentsPath
+Returns the location for Application User's Documents folder on the device.
+
+```
+Mobile.GetDocumentsPath(function(err, location) {
+  if (err)
+    console.error("Error", err);
+  else
+    console.log("Documents location", location);
+});
+```
+
+Android and iOS file systems behave differently. Android OS supports external persistent storage. If you want to store
+a persistent information on Android OS, consider using sdcard location.
+
+#### JS Error Tracking
+If you want to customize JS side errors, visit `JXMobile.java` for Android and `JXMobile.m` for iOS and update `OnError`
+behavior
+
+#### Remarks
   - JXcore cordova interface doesn't keep the reference for a callback id once it's used.
   - JavaScript is a single threaded language. Don't call the referenced JS methods from other threads. 
 
@@ -181,4 +208,5 @@ www/jxcore > jx install jxm --autoremove "*.gz"
 See JXcoreExtension.java / JXcoreExtension.m / .h for sample Java/Obj-C definitions.
 
 ### Contribution
-If you see a mistake / bug or you think there is a better way to do the things, feel free to contribute. This project considers the contributions under MIT license.
+If you see a mistake / bug or you think there is a better way to do the things, feel free to contribute. This project
+considers the contributions under MIT license.

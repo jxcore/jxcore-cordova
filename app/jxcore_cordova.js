@@ -148,6 +148,16 @@ JXMobile.prototype.call = function (rest) {
 
 global.Mobile = JXMobile;
 
+JXMobile.GetDocumentsPath = function(callback) {
+  if (typeof callback != "function") {
+    throw new Error("JXMobile.GetDocumentsPath expects a function callback");
+  }
+
+  JXMobile('GetDocumentsPath').callNative(function(res){
+    callback(null, res);
+  });
+};
+
 internal_methods['registerUIMethod'] = function (methodName, callback_) {
   if (methodName && Array.isArray(methodName)) {
     methodName = methodName[0];
