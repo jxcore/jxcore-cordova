@@ -20,7 +20,8 @@ Go under `/hello` folder.
 In order to add JXcore plugin into your Android, iOS 'hello' project, use the command line given below;
 
 ```bash
-cordova plugin add https://github.com/jxcore/jxcore-cordova.git
+git clone -b 0.0.2-release https://github.com/jxcore/jxcore-cordova io.jxcore.node
+cordova plugin add io.jxcore.node
 ```
 
 `www/jxcore/app.js` is your entry point to JXcore's JS.
@@ -48,8 +49,8 @@ Are you are looking for a minimalistic sample? follow the steps below;
 ```bash
 cordova platform remove ios
 cordova platform remove android
-cordova plugin remove io.jxcore.node
-cordova plugin add https://github.com/jxcore/jxcore-cordova.git
+cordova plugins remove io.jxcore.node
+cordova plugins add io.jxcore.node
 cordova platform add ios
 cordova platform add android
 ```
