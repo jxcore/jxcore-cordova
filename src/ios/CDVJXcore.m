@@ -135,13 +135,12 @@ static void callback(NSArray *arr, NSString *_callbackId) {
 
 - (void)onPause:(CDVInvokedUrlCommand *)command {
   NSLog(@"Application On Pause");
-
-  [JXcore Evaluate:@"jxcore.tasks.unloadThreads()"];
+  [JXcore Evaluate:@"jxcore.tasks.unloadThreads();process.emit('pause');"];
 }
 
 - (void)onResume:(CDVInvokedUrlCommand *)command {
-  // has no effect
   NSLog(@"Application On Resume");
+  [JXcore Evaluate:@"jxcore.tasks.unloadThreads();process.emit('resume');"];
 }
 
 - (void)isReady:(CDVInvokedUrlCommand *)command {
