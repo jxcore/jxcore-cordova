@@ -431,6 +431,14 @@ if (isAndroid) {
   jxcore.tasks.register(process.setPaths);
   jxcore.tasks.register(process.registerAssets);
   jxcore.tasks.register(extendFS);
+
+  JXMobile('JXcore_Device_OnResume').registerToNative(function(){
+    process.emit('resume');
+  });
+
+  JXMobile('JXcore_Device_OnPause').registerToNative(function(){
+    process.emit('pause');
+  });
 } else {
   jxcore.tasks.register(process.setPaths);
 }
