@@ -187,6 +187,9 @@ Mobile.GetDocumentsPath(function(err, location) {
 });
 ```
 
+Android and iOS file systems behave differently. Android OS supports external persistent storage. If you want to store
+a persistent information on Android OS, consider using sdcard location.
+
 #### Mobile.GetConnectionStatus
 Returns device's connection status
 
@@ -200,9 +203,6 @@ Mobile.GetConnectionStatus(function(err, status) {
     console.log("Mobile Connection");
 });
 ```
-
-Android and iOS file systems behave differently. Android OS supports external persistent storage. If you want to store
-a persistent information on Android OS, consider using sdcard location.
 
 #### JS Error Tracking
 If you want to customize JS side errors, visit `JXMobile.java` for Android and `JXMobile.m` for iOS and update `OnError`
