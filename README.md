@@ -176,7 +176,7 @@ www/jxcore > jx install jxm --autoremove "*.gz"
 into application's assets.
 
 #### Mobile.GetDocumentsPath
-Returns the location for Application User's Documents folder on the device.
+Returns the location for Application User's Documents folder.
 
 ```
 Mobile.GetDocumentsPath(function(err, location) {
@@ -184,6 +184,20 @@ Mobile.GetDocumentsPath(function(err, location) {
     console.error("Error", err);
   else
     console.log("Documents location", location);
+});
+```
+
+#### Mobile.GetConnectionStatus
+Returns device's connection status
+
+```
+Mobile.GetConnectionStatus(function(err, status) {
+  if (status.NotConnected)
+    console.log("No internet connection");
+  else if (status.WiFi)
+    console.log("WiFi");
+  else if (status.WWAN)
+    console.log("Mobile Connection");
 });
 ```
 

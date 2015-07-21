@@ -158,13 +158,23 @@ JXMobile.GetDocumentsPath = function(callback) {
   });
 };
 
+JXMobile.GetConnectionStatus = function(callback) {
+  if (typeof callback != "function") {
+    throw new Error("JXMobile.GetConnectionStatus expects a function callback");
+  }
+
+  JXMobile('GetConnectionStatus').callNative(function(res){
+    callback(null, res);
+  });
+};
+
 internal_methods['registerUIMethod'] = function (methodName, callback_) {
   if (methodName && Array.isArray(methodName)) {
     methodName = methodName[0];
   }
 
   if (!methodName || !methodName.indexOf) {
-    console.error("Couldn't register UI method. '" + methodName + "' is undefined or not string");
+    throw new Error("Couldn't register UI method. '" + methodName + "' is undefined or not string");
     return;
   }
 
@@ -178,9 +188,8 @@ internal_methods['loadMainFile'] = function (filePath, callback_) {
     filePath = filePath[0];
   }
 
-  console.log("loadMainFile", filePath);
   if (!filePath || !filePath.indexOf) {
-    console.error("Couldn't load main file. '" + filePath + "' is undefined or not string");
+    throw new Error("Couldn't load main file. '" + filePath + "' is undefined or not string");
     return;
   }
 

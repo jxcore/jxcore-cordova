@@ -28,6 +28,8 @@
         <source-file src="src/ios/JXcore.m" />
         <header-file src="src/ios/JXMobile.h" />
         <source-file src="src/ios/JXMobile.m" />
+        <header-file src="src/ios/Reachability.h" />
+        <source-file src="src/ios/Reachability.m" />
         <header-file src="src/ios/JXcoreExtension.h" />
         <!--<source-file src="src/ios/JXcoreExtension.m" />    OPTIONAL-->
         <header-file src="bin/jx.h" />
@@ -44,6 +46,7 @@
         <source-file src="bin/libleveldown.a" framework="true" />
         <source-file src="bin/libsnappy.a" framework="true" />
 
+        <framework src="SystemConfiguration.framework" />
         <framework src="libstdc++.6.0.9.dylib" />
         <framework src="CFNetwork.framework" />
         <framework src="Foundation.framework" />
@@ -55,6 +58,11 @@
             <feature name="JXcore" >
                 <param name="android-package" value="io.jxcore.node.jxcore"/>
             </feature>
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
         </config-file>
        <!-- <source-file src="app/jxcore" target-dir="assets/" /> -->
         <source-file src="app/jxcore_cordova.js" target-dir="assets/" />

@@ -4,6 +4,7 @@
 #import "JXcore.h"
 #import "JXMobile.h"
 #import "CDVJXcore.h"
+#import "Reachability.h"
 
 @implementation JXMobile
 {}
@@ -23,5 +24,30 @@
     NSString *documentsDirectory = [paths objectAtIndex:0];
     [JXcore callEventCallback:callbackId withJSON:[NSString stringWithFormat:@"\"%@\"",documentsDirectory]];
   } withName:@"GetDocumentsPath"];
+
+  [JXcore addNativeBlock:^(NSArray *params, NSString *callbackId) {
+    Reachability *reachability = [Reachability reachabilityForInternetConnection];
+    [reachability startNotifier];
+
+    NetworkStatus status = [reachability currentReachabilityStatus];
+
+    NSString *strStatus;
+    if(status == NotReachable) 
+    {
+        //No internet
+        strStatus = @"{\"NotConnected\":1}";
+    }
+    else if (status == ReachableViaWiFi)
+    {
+        //WiFi
+        strStatus = @"{\"WiFi\":1}";
+    }
+    else if (status == ReachableViaWWAN) 
+    {
+        //3G
+        strStatus = @"{\"WWAN\":1}";
+    }
+    [JXcore callEventCallback:callbackId withJSON:strStatus];
+  } withName:@"GetConnectionStatus"];
 }
 @end
