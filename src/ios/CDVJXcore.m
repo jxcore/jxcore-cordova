@@ -143,7 +143,6 @@ static void callback(NSArray *arr, NSString *_callbackId) {
 
 - (void)isReady:(CDVInvokedUrlCommand *)command {
   bool ready = activeDevice != nil;
-  NSLog(@"Is Ready %d\n", ready);
   CDVPluginResult *result =
       [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                           messageAsBool:ready];
