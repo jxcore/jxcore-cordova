@@ -156,10 +156,6 @@ You may also define JXcore JS side methods those you want to call from Java / Ob
 
 If you need a JS side method that you want to call multiple times use below approach instead depending on a method callback id.
 
-#### Where To Save your Files (Write access on mobile targets) EROFS error ?
-Consider using either `process.userPath` or `require('os').tmpdir()` to get the Documents (on ios) or a folder you have
-the write access. `process.cwd()` or `__dirname` may not target a folder that you have the write access!
-
 #### How to Install Node Modules
 Visit www/jxcore folder and install the node modules there. It's adviced to use 'jx install' command to install node modules from npm.
 
@@ -175,8 +171,14 @@ www/jxcore > jx install jxm --autoremove "*.gz"
 '--autoremove "*.gz"' will be removing the gz files from modules folder. Android APK doesn't allow you to put .gz files
 into application's assets.
 
+#### Where To Save your Files (Write access on mobile targets) EROFS error ?
+Consider using either `process.userPath` or `require('os').tmpdir()` to get the Documents (on ios) or a folder you have
+the write access. `process.cwd()` or `__dirname` may not target a folder that you have the write access!
+
+If you are okay with using Mobile specific API see Mobile.GetDocumentsPath below;
+
 #### Mobile.GetDocumentsPath
-Returns the location for Application User's Documents folder.
+Returns the location for Application (specific) writable folder.
 
 ```
 Mobile.GetDocumentsPath(function(err, location) {
