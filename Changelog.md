@@ -1,4 +1,12 @@
-#### 0.0.2 (under development)
+#### 0.0.3 
+
+ - process.on('pause' and 'resume)
+ - Mobile.GetDocumentsPath
+ - Mobule.GetConnectionStatus
+ - JXcore updates
+ - Minor stability improvements
+
+#### 0.0.2 
 
  - Name change (JXcore side) 'cordova' -> 'Mobile'
 
