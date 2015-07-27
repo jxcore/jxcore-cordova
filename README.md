@@ -27,6 +27,8 @@ cordova plugin add https://github.com/jxcore/jxcore-cordova.git
 
 Node modules should go in the `www/jxcore/node_modules` folder.
 
+Note: windows systems might complain about "filename too long". This problem is solved with the command `git config core.longpaths true` making git recognize long file paths on windows systems.
+
 **Important Steps for the First Timers**  
 Under the sample folder you will find `express sample` application. There you have the entire `www` folder that you can
 use instead of the `www` folder under cordova project root folder. Replace `www` folder from the project's root to the
