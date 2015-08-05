@@ -10,6 +10,8 @@ The `install_and_run.sh` script automates the following tasks on **posix** platf
 
 The script assumes, that cordova is already installed as well as android sdk and iOS tools.
 
+> There is also `install_and_run.bat` version for Windows systems.
+
 # Usage
 
 ### Download the script
