@@ -50,7 +50,7 @@ Are you are looking for a minimalistic sample? follow the steps below;
 cordova platform remove ios
 cordova platform remove android
 cordova plugins remove io.jxcore.node
-cordova plugins add io.jxcore.node
+cordova plugins add jxcore-cordova/
 cordova platform add ios
 cordova platform add android
 ```
