@@ -20,7 +20,7 @@ Go under `/hello` folder.
 In order to add JXcore plugin into your Android, iOS 'hello' project, use the command line given below;
 
 ```bash
-git clone -b 0.0.2-release https://github.com/jxcore/jxcore-cordova io.jxcore.node
+git clone -b 0.0.3-release https://github.com/jxcore/jxcore-cordova io.jxcore.node
 cordova plugin add io.jxcore.node
 ```
 
