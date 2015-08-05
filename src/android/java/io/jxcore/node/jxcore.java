@@ -431,7 +431,7 @@ public class jxcore extends CordovaPlugin {
 
     String data = "process.setPaths = function(){ process.cwd = function() { return '" + home
         + "/www/jxcore';};\n" 
-        + "process.userPath ='" + activity.getBaseContext().getCacheDir().toString() + "';\n"
+        + "process.userPath ='" + activity.getBaseContext().getFilesDir().getAbsolutePath() + "';\n"
         + "};"
         + mainFile;
     

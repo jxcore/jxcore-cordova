@@ -29,7 +29,7 @@ public class JXMobile {
       @SuppressLint("NewApi")
       @Override
       public void Receiver(ArrayList<Object> params, String callbackId) {
-        String path = jxcore.activity.getBaseContext().getCacheDir().toString();
+        String path = jxcore.activity.getBaseContext().getFilesDir().getAbsolutePath();
         jxcore.CallJSMethod(callbackId, "\"" + path + "\"");
       }
     });
