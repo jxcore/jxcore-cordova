@@ -26,3 +26,5 @@
 *.app
 
 io.jxcore.node/src/android/obj/
+
+.idea
