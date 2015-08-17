@@ -387,9 +387,9 @@ if (isAndroid) {
     };
 
     var readfilesync = function (pathname) {
-      if (!existssync(pathname)) throw new Error(pathname + " does not exist");
+      if (!existssync(pathname)) return false;
 
-      var n = pathname.indexOf(root);
+        var n = pathname.indexOf(root);
       if (n === 0) {
         pathname = pathname.replace(root, "");
         pathname = path.join('www/jxcore/', pathname);
