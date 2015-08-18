@@ -29,7 +29,8 @@ public class JXMobile {
       @SuppressLint("NewApi")
       @Override
       public void Receiver(ArrayList<Object> params, String callbackId) {
-        String path = jxcore.activity.getBaseContext().getFilesDir().getAbsolutePath();
+        String path = jxcore.activity.getBaseContext().getFilesDir()
+            .getAbsolutePath();
         jxcore.CallJSMethod(callbackId, "\"" + path + "\"");
       }
     });
@@ -57,6 +58,18 @@ public class JXMobile {
         }
 
         jxcore.CallJSMethod(callbackId, info);
+      }
+    });
+
+    jxcore.RegisterMethod("GetDeviceName", new JXcoreCallback() {
+      @SuppressLint("NewApi")
+      @Override
+      public void Receiver(ArrayList<Object> params, String callbackId) {
+        
+        String name = "\"" + android.os.Build.MANUFACTURER + "-"
+            + android.os.Build.MODEL + "\"";
+
+        jxcore.CallJSMethod(callbackId, name);
       }
     });
   }

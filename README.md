@@ -17,30 +17,37 @@ Assuming your first Cordova JXcore application is located under `/hello` folder;
 
 Go under `/hello` folder.
 
-In order to add JXcore plugin into your Android, iOS 'hello' project, use the command line given below;
+In order to add JXcore plugin into your Android, iOS 'hello' project, use the command line 
+given below;
 
 ```bash
 git clone https://github.com/jxcore/jxcore-cordova io.jxcore.node
 cordova plugin add io.jxcore.node
 ```
 
+Once everything is set and you have added jxcore-cordova extension, create a folder named 
+`jxcore` right under `www`
+
 `www/jxcore/app.js` is your entry point to JXcore's JS.
 
 Node modules should go in the `www/jxcore/node_modules` folder.
 
 **Important Steps for the First Timers**  
-Under the sample folder you will find `express sample` application. There you have the entire `www` folder that you can
-use instead of the `www` folder under cordova project root folder. Replace `www` folder from the project's root to the
-one under the `sample/express sample`.
+Under the sample folder you will find `express sample` application. There you have the entire 
+`www` folder that you can use instead of the `www` folder under cordova project root folder. 
+Replace `www` folder from the project's root to the one under the `sample/express sample`.
 
-You can also use the automated script on posix platforms: `install_and_run.sh`. More on this [here](install_and_run.md).
+You can also use the automated script on posix platforms: `install_and_run.sh`. More on this 
+[here](install_and_run.md).
 
 Are you are looking for a minimalistic sample? follow the steps below;  
- 1. Under the `sample/www` folder of this repo, you will find `index.html`. This sample file shows how to integrate JXcore
- interface into Cordova client side. Prior to installing JXcore plugin, you should update Cordova's index.html as shown from this sample file.
+ 1. Under the `sample/www` folder of this repo, you will find `index.html`. This sample file 
+ shows how to integrate JXcore interface into Cordova client side. Prior to installing 
+    JXcore plugin, you should update Cordova's index.html as shown from this sample file.
 
- 2. This plugin expects you to have a folder named `jxcore` under `www` folder. The sample `index.html` tries to load `app.js`
- from this folder. You can copy `sample/www/` folder into `www` to run the basic demo.
+ 2. This plugin expects you to have a folder named `jxcore` under `www` folder. The sample 
+ `index.html` tries to load `app.js` from this folder. You can copy `sample/www/` folder 
+ into `www` to run the basic demo.
 
 
 !In case you have a problem with installing the plugin. You may follow the steps below;
@@ -55,12 +62,14 @@ cordova platform add ios
 cordova platform add android
 ```
 
-Now you can visit `platforms/ios` or `platforms/android` folders and open Xcode project file or import the android project from Eclipse.
+Now you can visit `platforms/ios` or `platforms/android` folders and open Xcode project file 
+or import the android project from Eclipse.
 
 ### Updating JXcore binaries [optional]
 
-Below are the steps to be taken if you want to update JXcore binaries in your Cordova JXcore application.
-They all should be called prior to `cordova plugin add` command. This step is optional. We keep the core binaries are updated. 
+Below are the steps to be taken if you want to update JXcore binaries in your Cordova JXcore 
+application. They all should be called prior to `cordova plugin add` command. This step is 
+optional. We keep the core binaries are updated. 
 
 1. Rebuild JXcore binaries: [Compile as a Static Library](https://github.com/jxcore/jxcore/blob/master/doc/Android_Compile.md#compile-as-a-static-library)
 2. Refresh `jxcore-cordova/src/android/jxcore-binaries` folder contents:
@@ -100,7 +109,8 @@ They all should be called prior to `cordova plugin add` command. This step is op
 So you need an API to communicate between Cordova JS to JXcore JS.
 
 #### Cordova to JXcore
-These API methods are used on the side of Apache Cordova (for example, in the main `index.html` of your Cordova application).
+These API methods are used on the side of Apache Cordova (for example, in the main `index.html` 
+of your Cordova application).
 
 ##### Sharing a JavaScript function from Cordova to JXcore
 ```js
@@ -121,13 +131,16 @@ jxcore('asyncPing').call('Hello', function(p1, p2, p3...){ });
 ```
 
 #### JXcore to Cordova
-These API methods are used on the side of JXcore (for example, in the main `app.js` of your application based on Node API).
+These API methods are used on the side of JXcore (for example, in the main `app.js` of your 
+application based on Node API).
 
 ##### Sharing a synchronous JavaScript function from JXcore to Cordova
 ```js
 Mobile(name_of_the_function).registerSync(a_function_to_register);
 ```
-This method expects the registered function to be synchronous (i.e. to immediately return a value). Example:
+This method expects the registered function to be synchronous (i.e. to immediately return a value). 
+
+Example:
 ```js
 Mobile('syncPing').registerSync(function(msg){ return msg + ' pong'; });
 ```
@@ -136,7 +149,9 @@ Mobile('syncPing').registerSync(function(msg){ return msg + ' pong'; });
 ```js
 Mobile(name_of_the_function).registerAsync(a_function_to_register);
 ```
-This method expects the registered function to be asynchronous (i.e. to return some value using a callback). Example:
+This method expects the registered function to be asynchronous (i.e. to return some value using a callback). 
+
+Example:
 ```js
 Mobile('asyncPing').registerAsync(function(msg, callback){ callback(msg + ' pong') });
 ```
@@ -154,10 +169,12 @@ Mobile('log').call(msg);
 #### JXcore to JAVA / Objective-C (vice versa)
 You may also define JXcore JS side methods those you want to call from Java / Obj-C.
 
-If you need a JS side method that you want to call multiple times use below approach instead depending on a method callback id.
+If you need a JS side method that you want to call multiple times use below approach instead 
+depending on a method callback id.
 
 #### How to Install Node Modules
-Visit www/jxcore folder and install the node modules there. It's adviced to use 'jx install' command to install node modules from npm.
+Visit www/jxcore folder and install the node modules there. It's adviced to use 'jx install' 
+command to install node modules from npm.
 
 For example
 ```
@@ -168,20 +185,21 @@ www/jxcore > sudo jx install jxm --autoremove "*.gz"
 www/jxcore > jx install jxm --autoremove "*.gz"
 ```
 
-'--autoremove "*.gz"' will be removing the gz files from modules folder. Android APK doesn't allow you to put .gz files
-into application's assets.
+'--autoremove "*.gz"' will be removing the gz files from modules folder. Android APK doesn't 
+allow you to put .gz files into application's assets.
 
 #### Where To Save your Files (Write access on mobile targets) EROFS error ?
-Consider using either `process.userPath` or `require('os').tmpdir()` to get the Documents (on ios) or a folder you have
-the write access. `process.cwd()` or `__dirname` may not target a folder that you have the write access!
+Consider using either `process.userPath` or `require('os').tmpdir()` to get the Documents 
+(on ios) or a folder you have the write access. `process.cwd()` or `__dirname` may not 
+target a folder that you have the write access!
 
 If you are okay with using Mobile specific API see Mobile.GetDocumentsPath below;
 
-#### Mobile.GetDocumentsPath
+#### Mobile.getDocumentsPath
 Returns the location for Application (specific) writable folder.
 
 ```
-Mobile.GetDocumentsPath(function(err, location) {
+Mobile.getDocumentsPath(function(err, location) {
   if (err)
     console.error("Error", err);
   else
@@ -189,14 +207,15 @@ Mobile.GetDocumentsPath(function(err, location) {
 });
 ```
 
-Android and iOS file systems behave differently. Android OS supports external persistent storage. If you want to store
-a persistent information on Android OS, consider using sdcard location.
+Android and iOS file systems behave differently. Android OS supports external persistent 
+storage. If you want to store a persistent information on Android OS, consider using sdcard 
+location.
 
-#### Mobile.GetConnectionStatus
+#### Mobile.getConnectionStatus
 Returns device's connection status
 
 ```
-Mobile.GetConnectionStatus(function(err, status) {
+Mobile.getConnectionStatus(function(err, status) {
   if (status.NotConnected)
     console.log("No internet connection");
   else if (status.WiFi)
@@ -206,13 +225,26 @@ Mobile.GetConnectionStatus(function(err, status) {
 });
 ```
 
+#### Mobile.getDeviceName
+Returns device's manufacturer and model name
+
+```
+Mobile.getDeviceName(function(err, name) {
+  if (err)
+    console.error("Something bad has happened");
+  else 
+    console.log("Device name", name)
+});
+```
+
 #### JS Error Tracking
-If you want to customize JS side errors, visit `JXMobile.java` for Android and `JXMobile.m` for iOS and update `OnError`
-behavior
+If you want to customize JS side errors, visit `JXMobile.java` for Android and `JXMobile.m` 
+for iOS and update `OnError` behavior
 
 #### Remarks
   - JXcore cordova interface doesn't keep the reference for a callback id once it's used.
-  - JavaScript is a single threaded language. Don't call the referenced JS methods from other threads. 
+  - JavaScript is a single threaded language. Don't call the referenced JS methods from 
+  other threads. 
 
 ```
   Mobile('fromJXcore').registerToNative(function(param1, param2){
@@ -225,5 +257,5 @@ behavior
 See JXcoreExtension.java / JXcoreExtension.m / .h for sample Java/Obj-C definitions.
 
 ### Contribution
-If you see a mistake / bug or you think there is a better way to do the things, feel free to contribute. This project
-considers the contributions under MIT license.
+If you see a mistake / bug or you think there is a better way to do the things, feel free 
+to contribute. All the contributions are considered under MIT license.

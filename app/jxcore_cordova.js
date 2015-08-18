@@ -148,7 +148,7 @@ JXMobile.prototype.call = function (rest) {
 
 global.Mobile = JXMobile;
 
-JXMobile.GetDocumentsPath = function(callback) {
+JXMobile.getDocumentsPath = JXMobile.GetDocumentsPath = function(callback) {
   if (typeof callback != "function") {
     throw new Error("JXMobile.GetDocumentsPath expects a function callback");
   }
@@ -158,7 +158,17 @@ JXMobile.GetDocumentsPath = function(callback) {
   });
 };
 
-JXMobile.GetConnectionStatus = function(callback) {
+JXMobile.getDeviceName = JXMobile.GetDeviceName = function(callback) {
+  if (typeof callback != "function") {
+    throw new Error("JXMobile.GetDeviceName expects a function callback");
+  }
+
+  JXMobile('GetDeviceName').callNative(function(res){
+    callback(null, res);
+  });
+};
+
+JXMobile.getConnectionStatus = JXMobile.GetConnectionStatus = function(callback) {
   if (typeof callback != "function") {
     throw new Error("JXMobile.GetConnectionStatus expects a function callback");
   }
@@ -387,9 +397,9 @@ if (isAndroid) {
     };
 
     var readfilesync = function (pathname) {
-      if (!existssync(pathname)) return false;
+      if (!existssync(pathname)) throw new Error(pathname + " does not exist");
 
-        var n = pathname.indexOf(root);
+      var n = pathname.indexOf(root);
       if (n === 0) {
         pathname = pathname.replace(root, "");
         pathname = path.join('www/jxcore/', pathname);

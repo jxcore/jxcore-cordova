@@ -49,5 +49,11 @@
     }
     [JXcore callEventCallback:callbackId withJSON:strStatus];
   } withName:@"GetConnectionStatus"];
+  
+  // Manufacturer - Device Name
+  [JXcore addNativeBlock:^(NSArray *params, NSString *callbackId) {
+    NSString *deviceName = [[UIDevice currentDevice] name];
+    [JXcore callEventCallback:callbackId withJSON:[NSString stringWithFormat:@"\"Apple-%@\"",deviceName]];
+  } withName:@"GetDeviceName"];
 }
 @end
