@@ -25,42 +25,6 @@ import android.util.Log;
 
 public class jxcore extends CordovaPlugin {
 
-  public enum JXType {
-    RT_Int32(1), RT_Double(2), RT_Boolean(3), RT_String(4), RT_Object(5), RT_Buffer(
-        6), RT_Undefined(7), RT_Null(8), RT_Error(9), RT_Function(10), RT_Unsupported(11);
-
-    int val;
-
-    private JXType(int n) {
-      val = n;
-    }
-
-    public static JXType fromInt(int n) {
-      switch (n) {
-      case 1:
-        return RT_Int32;
-      case 2:
-        return RT_Double;
-      case 3:
-        return RT_Boolean;
-      case 4:
-        return RT_String;
-      case 5:
-        return RT_Object;
-      case 6:
-        return RT_Buffer;
-      case 7:
-        return RT_Undefined;
-      case 8:
-        return RT_Null;
-      case 9:
-        return RT_Error;
-      default:
-        return RT_Unsupported;
-      }
-    }
-  }
-
   static {
     System.loadLibrary("jxcore");
   }
@@ -82,15 +46,7 @@ public class jxcore extends CordovaPlugin {
 
   public native int getType(long id);
 
-  public native double getDouble(long id);
-
   public native String getString(long id);
-
-  public native byte[] getBuffer(long id);
-
-  public native int getInt32(long id);
-
-  public native int getBoolean(long id);
 
   public native String convertToString(long id);
 
@@ -180,10 +136,6 @@ public class jxcore extends CordovaPlugin {
       CallbackContext ctx = addon.callbacks.remove(callback_id);
       ctx.sendPluginResult(result);
     }
-  }
-
-  public static void callback(long is_error) {
-    Log.e(LOGTAG, "WTF?");
   }
 
   public interface JXcoreCallback {
@@ -283,10 +235,9 @@ public class jxcore extends CordovaPlugin {
   private static void callJSMethod(String id, Object[] args) {
     long ret = addon.callCBArray(id, args, args.length);
     int tp = addon.getType(ret);
-    JXType ret_tp = JXType.fromInt(tp);
 
-    if (ret_tp == JXType.RT_Object || ret_tp == JXType.RT_String
-        || ret_tp == JXType.RT_Error) {
+    // STRING 4, OBJECT 5, ERROR 9 - See jx_types
+    if (tp == 4 || tp == 5 || tp == 9) {
       Log.e(LOGTAG, "jxcore.CallJSMethod :" + addon.getString(ret));
     }
   }
@@ -294,10 +245,9 @@ public class jxcore extends CordovaPlugin {
   private static void callJSMethod(String id, String args) {
     long ret = addon.callCBString(id, args, 1);
     int tp = addon.getType(ret);
-    JXType ret_tp = JXType.fromInt(tp);
 
-    if (ret_tp == JXType.RT_Object || ret_tp == JXType.RT_String
-        || ret_tp == JXType.RT_Error) {
+    // STRING 4, OBJECT 5, ERROR 9 - See jx_types
+    if (tp == 4 || tp == 5 || tp == 9) {
       Log.e(LOGTAG, "jxcore.CallJSMethod :" + addon.getString(ret));
     }
   }
@@ -429,12 +379,14 @@ public class jxcore extends CordovaPlugin {
 
     String mainFile = FileManager.readFile("jxcore_cordova.js");
 
-    String data = "process.setPaths = function(){ process.cwd = function() { return '" + home
-        + "/www/jxcore';};\n" 
-        + "process.userPath ='" + activity.getBaseContext().getFilesDir().getAbsolutePath() + "';\n"
-        + "};"
-        + mainFile;
-    
+    String data = "process.setPaths = function(){ process.cwd = function() { return '"
+        + home
+        + "/www/jxcore';};\n"
+        + "process.userPath ='"
+        + activity.getBaseContext().getFilesDir().getAbsolutePath()
+        + "';\n"
+        + "};" + mainFile;
+
     defineMainFile(data);
 
     startEngine();

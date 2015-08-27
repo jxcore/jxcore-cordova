@@ -28,3 +28,17 @@
 io.jxcore.node/src/android/obj/
 
 .idea
+
+src/android/.project
+
+src/android/.classpath
+
+*.class
+
+*.prefs
+
+.DS_Store
+
+jxcore-cordova.jx
+
+io.jxcore.node.jx
