@@ -42,3 +42,7 @@ src/android/.classpath
 jxcore-cordova.jx
 
 io.jxcore.node.jx
+
+bin/
+
+src/android/libs/
