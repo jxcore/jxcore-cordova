@@ -37,6 +37,10 @@ jx install -g download-cli
  
 ```
 download https://github.com/jxcore/jxcore-cordova-release/raw/master/0.0.4/io.jxcore.node.jx
+```
+
+Extract JX package
+```
 jx io.jxcore.node.jx
 ```
  
