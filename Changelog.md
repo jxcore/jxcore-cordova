@@ -1,3 +1,8 @@
+#### 0.0.4
+ - Android 4.0.3 issue is fixed
+ - New methods to Mobile interface
+ - Stability updates on core
+
 #### 0.0.3 
 
  - process.on('pause' and 'resume)
