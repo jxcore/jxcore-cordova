@@ -137,7 +137,7 @@ var callLocalMethods = function () {
   if (!localMethods.hasOwnProperty(arguments[1]))
     return;
 
-  var hasParams = arguments.length > 1 && Array.isArray(arguments[1]);
+  var hasParams = arguments.length > 2 && Array.isArray(arguments[2]);
   var args;
   var call_id;
   if (!hasParams) {
