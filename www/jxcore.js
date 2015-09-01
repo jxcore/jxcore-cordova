@@ -134,16 +134,16 @@ jxcore.prototype.register = function (callback) {
 
 
 var callLocalMethods = function () {
-  if (!localMethods.hasOwnProperty(arguments[0]))
+  if (!localMethods.hasOwnProperty(arguments[1]))
     return;
 
   var hasParams = arguments.length > 1 && Array.isArray(arguments[1]);
   var args;
   var call_id;
   if (!hasParams) {
-    args = Array.prototype.slice.call(arguments, 1);
+    args = Array.prototype.slice.call(arguments, 2);
   } else {
-    args = arguments[1];
+    args = arguments[2];
     if (args.length && args[args.length - 1].hasOwnProperty("JXCORE_RETURN_CALLBACK")) {
       call_id = args[args.length - 1].JXCORE_RETURN_CALLBACK;
       args[args.length - 1] = function () {
@@ -152,7 +152,7 @@ var callLocalMethods = function () {
       };
     }
   }
-  localMethods[arguments[0]].apply(null, args);
+  localMethods[arguments[1]].apply(null, args);
 };
 
 jxcore.prototype.loadMainFile = function (callback) {
