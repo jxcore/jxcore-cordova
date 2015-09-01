@@ -54,7 +54,7 @@ function callNative(name, args, callback) {
       }
     },
     function errorHandler(err) {
-      if (callback) callback(null, err);
+      if (callback) callback(err);
     },
     'JXcore',
     name,
