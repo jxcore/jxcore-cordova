@@ -50,7 +50,7 @@ function callNative(name, args, callback) {
           }
         }
 
-        callback.apply(null, data);
+        callback.apply(null, [null].concat(data));
       }
     },
     function errorHandler(err) {
@@ -78,7 +78,7 @@ function jxcore(x) {
 var initialized = false;
 jxcore.isReady = function (callback) {
   if (initialized) return;
-  callNative("isReady", [], function (ret) {
+  callNative("isReady", [], function (err, ret) {
     if (ret) {
       initialized = true;
       callback();
