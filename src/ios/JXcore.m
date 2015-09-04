@@ -366,8 +366,7 @@ static float delay = 0;
   JX_DefineMainFile([fileContents UTF8String]);
   JX_StartEngine();
 
-  //int result = JX_LoopOnce();
-  JX_Loop();
+  int result = JX_LoopOnce();
   [JXcore jxcoreLoop:[NSNumber numberWithInt:0]];
 }
 
@@ -398,7 +397,7 @@ static float delay = 0;
         NSTimeInterval waitInterval = delay + (result == 0 ? 0.05 : 0.01);
         [operationCheck waitUntilDate:[NSDate dateWithTimeIntervalSinceNow:waitInterval]];
         
-        JX_Loop();
+        result = JX_LoopOnce();
       }
 
       if ([currentThread isCancelled]) {
