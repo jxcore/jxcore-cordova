@@ -135,10 +135,16 @@ static void callback(NSArray *arr, NSString *_callbackId) {
 
 - (void)onPause:(CDVInvokedUrlCommand *)command {
   [JXcore Evaluate:@"process.emit('pause');"];
+  
+  CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:true];
+  [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
-
+ 
 - (void)onResume:(CDVInvokedUrlCommand *)command {
   [JXcore Evaluate:@"process.emit('resume');"];
+
+  CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:true];
+  [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 - (void)isReady:(CDVInvokedUrlCommand *)command {
