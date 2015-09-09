@@ -278,6 +278,15 @@ for iOS and update `OnError` behavior
   });
 ```
 
+  - Undocumented Android only `toggleWiFi` and `toggleBluetooth` methods.
+  ```
+    Mobile.toggleWifi(true, function() { // WIFI is enabled now });
+
+    Mobile.toggleBluetooth(true, function() { // Bluetooth is enabled now });
+  ```
+  See `src/android/java/io/jxcore/node/JXMobile.java` file for required manifests
+
+
 See JXcoreExtension.java / JXcoreExtension.m / .h for sample Java/Obj-C definitions.
 
 ### Contribution
