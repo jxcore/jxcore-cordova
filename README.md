@@ -17,37 +17,7 @@ Assuming your first Cordova JXcore application is located under `/hello` folder;
 
 Go under `/hello` folder.
 
-In order to add JXcore plugin into your Android, iOS 'hello' project, follow the steps below;
-
-##### 1- Download JXcore from [jxcore.com/downloads](http://jxcore.com/downloads)
-
-##### 2- [Optional] In case you don't have `wget` or something similar is installed
-
-for unix;
-```
-sudo jx install -g download-cli
-```
-
-for windows
-```
-jx install -g download-cli
-```
-
-##### 3- Download `jxcore-cordova` binary into your Cordova/Phonegap project
- 
-```
-download https://github.com/jxcore/jxcore-cordova-release/raw/master/0.0.4/io.jxcore.node.jx
-```
-
-Extract JX package
-```
-jx io.jxcore.node.jx
-```
- 
-##### 4- Install plugin
-```
-cordova plugins add io.jxcore.node/
-```
+In order to add JXcore plugin into your Android, iOS 'hello' project, visit [jxcore-cordova-release](https://github.com/jxcore/jxcore-cordova-release) repository.
 
 Once everything is set and you have added jxcore-cordova extension, create a folder named 
 `jxcore` right under `www`
