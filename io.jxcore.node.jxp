@@ -1,6 +1,6 @@
 {
 	"name": "io.jxcore.node",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"author": "JXcore Contributors",
 	"description": "JXCore Cordova plugin to run node apps on mobile",
 	"company": "JXcore",
@@ -12,7 +12,6 @@
 	"extract": true,
 	"output": "io.jxcore.node.jx",
 	"files": [
-		".fetch.json",
 		"app/jxcore/app.js",
 		"app/jxcore_cordova.js",
 		"index.js",
@@ -45,7 +44,6 @@
 		"plugin.xml",
 		"sample/express_samples.zip",
 		"sample/www/index.html",
-		"sample/www/jxcore/node_modules/json-nice/README.md",
 		"src/android/AndroidManifest.xml",
 		"src/android/bin/AndroidManifest.xml",
 		"src/android/bin/classes/io/jxcore/node/BuildConfig.class",
