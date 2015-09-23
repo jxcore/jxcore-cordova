@@ -8,12 +8,21 @@
 call cordova create hello com.example.hello HelloWorld
 cd hello
 
+@rem get small downloader tool
+jx install git+https://github.com/ktrzeciaknubisa/get-file
+
 @rem get plugin
-call git clone https://github.com/jxcore/jxcore-cordova
+jx node_modules/get-file/cli.js jxcore/jxcore-cordova-release 0.0.5/io.jxcore.node.jx
+
+@rem downloader tool not needed any more
+rm -rf ./node_modules
+
+@rem unpack plugin
+jx io.jxcore.node.jx
 
 @rem replace original sample if given
 IF [%1] NEQ [] (
-    IF EXIST "jxcore-cordova\sample\%~1\www" (
+    IF EXIST "io.jxcore.node\sample\%~1\www" (
 		goto:SAMPLE_EXISTS
     ) else (
 		goto:SAMPLE_DOES_NOT_EXIST
@@ -22,7 +31,7 @@ IF [%1] NEQ [] (
 goto:FINISH
 
 :SAMPLE_DOES_NOT_EXIST
-echo Incorrect sample folder 'jxcore-cordova\sample\%~1\www'.
+echo Incorrect sample folder 'io.jxcore.node\sample\%~1\www'.
 set /p answer= Continue with default sample? [y/n]
 IF /I %answer%== y (
 	goto:FINISH
@@ -32,18 +41,26 @@ IF /I %answer%== y (
 goto:EXIT_NOW
 
 :SAMPLE_EXISTS
-xcopy /I /Q /Y /R /E "jxcore-cordova\sample\%~1\www\*.*" "www\"
+
+    IF EXIST "io.jxcore.node\sample\%~1\www\jxcore\package.json" (
+        @rem installing node modules if sample needs it
+        cd "io.jxcore.node\sample\%~1\www\jxcore"
+        jx install --autoremove ".*,*.md,*.MD"
+        cd ../../../../../
+    )
+
+xcopy /I /Q /Y /R /E "io.jxcore.node\sample\%~1\www\*.*" "www\"
 IF %ERRORLEVEL% == 0 (
-	echo Copied 'jxcore-cordova\sample\%~1\www' sample succesfully.
+	echo Copied 'io.jxcore.node\sample\%~1\www' sample successfully.
 	goto:FINISH
 ) else (
-	echo Could not copy 'jxcore-cordova\sample\%~1\www'
+	echo Could not copy 'io.jxcore.node\sample\%~1\www'
 	goto:EXIT_NOW
 )
 
 :FINISH
 @rem add plugin to the project
-call cordova plugin add jxcore-cordova
+call cordova plugin add io.jxcore.node
 
 @rem run on android
 call cordova platforms add android
