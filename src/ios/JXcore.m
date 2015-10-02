@@ -366,7 +366,7 @@ static float delay = 0;
   JX_DefineMainFile([fileContents UTF8String]);
   JX_StartEngine();
 
-  int result = JX_LoopOnce();
+  JX_LoopOnce();
   [JXcore jxcoreLoop:[NSNumber numberWithInt:0]];
 }
 
