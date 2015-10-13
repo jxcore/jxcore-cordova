@@ -1,3 +1,6 @@
+#### 0.0.7
+ - toggleBluetooth (android)
+ - toggleWiFi (android)
 #### 0.0.5
  - Samsung Android /proc/stat recovery
  - iOS 9.0 support
