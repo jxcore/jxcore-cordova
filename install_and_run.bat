@@ -22,11 +22,11 @@ jx io.jxcore.node.jx
 
 @rem replace original sample if given
 IF [%1] NEQ [] (
-    IF EXIST "io.jxcore.node\sample\%~1\www" (
-		goto:SAMPLE_EXISTS
-    ) else (
-		goto:SAMPLE_DOES_NOT_EXIST
-    )
+  IF EXIST "io.jxcore.node\sample\%~1\www" (
+    goto:SAMPLE_EXISTS
+  ) else (
+    goto:SAMPLE_DOES_NOT_EXIST
+  )
 )
 goto:FINISH
 
@@ -34,9 +34,9 @@ goto:FINISH
 echo Incorrect sample folder 'io.jxcore.node\sample\%~1\www'.
 set /p answer= Continue with default sample? [y/n]
 IF /I %answer%== y (
-	goto:FINISH
+  goto:FINISH
 ) else (
-	goto:EXIT_NOW
+  goto:EXIT_NOW
 )
 goto:EXIT_NOW
 
@@ -51,11 +51,11 @@ goto:EXIT_NOW
 
 xcopy /I /Q /Y /R /E "io.jxcore.node\sample\%~1\www\*.*" "www\"
 IF %ERRORLEVEL% == 0 (
-	echo Copied 'io.jxcore.node\sample\%~1\www' sample successfully.
-	goto:FINISH
+  echo Copied 'io.jxcore.node\sample\%~1\www' sample successfully.
+  goto:FINISH
 ) else (
-	echo Could not copy 'io.jxcore.node\sample\%~1\www'
-	goto:EXIT_NOW
+  echo Could not copy 'io.jxcore.node\sample\%~1\www'
+  goto:EXIT_NOW
 )
 
 :FINISH
