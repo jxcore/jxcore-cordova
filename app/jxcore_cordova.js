@@ -172,8 +172,10 @@ JXMobile.toggleBluetooth = JXMobile.ToggleBluetooth = function(enabled, callback
 
   if (isAndroid)
     JXMobile('ToggleBluetooth').callNative(enabled, callback);
-  else
+  else {
     console.error("Warning: iOS does not support ToggleBluetooth");
+    callback("Warning: iOS does not support ToggleBluetooth")
+  }
 };
 
 JXMobile.toggleWiFi = JXMobile.ToggleWiFi = function(enabled, callback) {
@@ -190,8 +192,10 @@ JXMobile.toggleWiFi = JXMobile.ToggleWiFi = function(enabled, callback) {
 
   if (isAndroid)
     JXMobile('ToggleWiFi').callNative(enabled, callback);
-  else
+  else {
     console.error("Warning: iOS does not support ToggleWiFi");
+    callback("Warning: iOS does not support ToggleWiFi");
+  }
 };
 
 JXMobile.getDeviceName = JXMobile.GetDeviceName = function(callback) {
