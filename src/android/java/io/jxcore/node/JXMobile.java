@@ -7,9 +7,11 @@ import io.jxcore.node.jxcore.JXcoreCallback;
 import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.util.Log;
 
 public class JXMobile {
@@ -65,11 +67,44 @@ public class JXMobile {
       @SuppressLint("NewApi")
       @Override
       public void Receiver(ArrayList<Object> params, String callbackId) {
-        
+
         String name = "\"" + android.os.Build.MANUFACTURER + "-"
             + android.os.Build.MODEL + "\"";
 
         jxcore.CallJSMethod(callbackId, name);
+      }
+    });
+
+    /*
+     * ADD: <uses-permission android:name="android.permission.BLUETOOTH" />
+     * <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+     */
+    jxcore.RegisterMethod("ToggleBluetooth", new JXcoreCallback() {
+      @SuppressLint("NewApi")
+      @Override
+      public void Receiver(ArrayList<Object> params, String callbackId) {
+        Boolean enabled = (Boolean) params.get(0);
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter
+            .getDefaultAdapter();
+        if (enabled)
+          mBluetoothAdapter.enable();
+        else
+          mBluetoothAdapter.disable();
+      }
+    });
+
+    /*
+     * ADD: <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"
+     * />
+     */
+    jxcore.RegisterMethod("ToggleWiFi", new JXcoreCallback() {
+      @SuppressLint("NewApi")
+      @Override
+      public void Receiver(ArrayList<Object> params, String callbackId) {
+        Boolean enabled = (Boolean) params.get(0);
+        WifiManager wifiManager = (WifiManager) jxcore.activity
+            .getBaseContext().getSystemService(Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(enabled);
       }
     });
   }
