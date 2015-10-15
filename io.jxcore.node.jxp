@@ -1,6 +1,6 @@
 {
 	"name": "io.jxcore.node",
-	"version": "0.0.5",
+	"version": "0.0.7",
 	"author": "JXcore Contributors",
 	"description": "JXCore Cordova plugin to run node apps on mobile",
 	"company": "JXcore",
@@ -53,16 +53,13 @@
 		"www/jxcore.js"
 	],
 	"assets": [
-		".gitignore",
 		"Changelog.md",
 		"LICENSE",
 		"README.md",
 		"bin/ios.zip",
-		"create_package.sh",
 		"install_and_run.bat",
 		"install_and_run.md",
 		"install_and_run.sh",
-		"node_modules/adm-zip/README.md",
 		"plugin.xml",
 		"sample/README.md",
 		"sample/express_perf/www/css/default/images/ajax-loader.gif",

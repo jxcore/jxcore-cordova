@@ -273,6 +273,7 @@ static bool useThreading = false;
 static NSThread *jxcoreThread = nil;
 static NSMutableArray *operationQueue;
 static NSCondition *operationCheck;
+static NSCondition *queueCheck;
 static NSMutableArray *scriptsQueue;
 static NSMutableArray *nativeCallsQueue;
 static float delay = 0;
@@ -297,6 +298,7 @@ static float delay = 0;
   if (useThreading) {
     operationQueue = [[NSMutableArray alloc] init];
     operationCheck = [[NSCondition alloc] init];
+    queueCheck = [[NSCondition alloc] init];
     scriptsQueue = [[NSMutableArray alloc] init];
     nativeCallsQueue = [[NSMutableArray alloc] init];
     
@@ -426,9 +428,14 @@ static float delay = 0;
 
 + (void)run:(void(^)())code_block withEvalString:(NSString*)script
 {
+  [queueCheck lock];
+  {
+    [scriptsQueue addObject:[script copy]];
+  }
+  [queueCheck unlock];
+  
   [operationCheck lock];
   {
-    [scriptsQueue addObject:script];
     [operationQueue addObject:[code_block copy]];
     [operationCheck signal];
   }
@@ -438,9 +445,14 @@ static float delay = 0;
 
 + (void)run:(void(^)())code_block withNativeCall:(NativeCall*)native
 {
+  [queueCheck lock];
+  {
+    [nativeCallsQueue addObject:[native copy]];
+  }
+  [queueCheck unlock];
+  
   [operationCheck lock];
   {
-    [nativeCallsQueue addObject:native];
     [operationQueue addObject:[code_block copy]];
     [operationCheck signal];
   }
@@ -634,6 +646,8 @@ static float delay = 0;
     [nc setName:eventName_ withParams:params_ isJSON:is_json];
     
     [JXcore run:^{
+      [queueCheck lock];
+      
       assert([nativeCallsQueue count] !=0 && "Native calls queue shouldn't be empty");
       
       NativeCall *cc = [nativeCallsQueue objectAtIndex:0];
@@ -641,6 +655,8 @@ static float delay = 0;
       NSArray* params = [NSArray arrayWithArray:[cc getParams]];
       BOOL is_json = [cc getIsJSON];
       [nativeCallsQueue removeObjectAtIndex:0];
+
+      [queueCheck unlock];
       
       [JXcore callEventCallbackNoThread:eventName withParams:params isJSON:is_json];
     } withNativeCall:nc];
@@ -670,10 +686,15 @@ static float delay = 0;
 + (void)Evaluate:(NSString *)script_ {
   if (useThreading) {
     [JXcore run:^{
+      [queueCheck lock];
+      
       assert ([scriptsQueue count] != 0 && "What happened to script?");
    
       NSString *script = [NSString stringWithString:[scriptsQueue objectAtIndex:0]];
       [scriptsQueue removeObjectAtIndex:0];
+      
+      [queueCheck unlock];
+      
       JXValue result;
       const char* str_script = [script UTF8String];
       JX_Evaluate(str_script, "eval", &result);

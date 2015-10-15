@@ -158,6 +158,48 @@ JXMobile.getDocumentsPath = JXMobile.GetDocumentsPath = function(callback) {
   });
 };
 
+JXMobile.toggleBluetooth = JXMobile.ToggleBluetooth = function(enabled, callback) {
+  // force boolean
+  if (!enabled) {
+    enabled = false;
+  } else {
+    enabled = true;
+  }
+
+  if (typeof callback != "function") {
+    callback = function(){};
+  }
+
+  if (isAndroid) {
+    JXMobile('ToggleBluetooth').callNative(enabled, callback);
+  } else {
+    var err = "Warning: iOS does not support ToggleBluetooth";
+    console.error(err);
+    callback(err);
+  }
+};
+
+JXMobile.toggleWiFi = JXMobile.ToggleWiFi = function(enabled, callback) {
+  // force boolean
+  if (!enabled) {
+    enabled = false;
+  } else {
+    enabled = true;
+  }
+
+  if (typeof callback != "function") {
+    callback = function(){};
+  }
+
+  if (isAndroid) {
+    JXMobile('ToggleWiFi').callNative(enabled, callback);
+  } else {
+    var err = "Warning: iOS does not support ToggleWiFi";
+    console.error(err);
+    callback(err);
+  }
+};
+
 JXMobile.getDeviceName = JXMobile.GetDeviceName = function(callback) {
   if (typeof callback != "function") {
     throw new Error("JXMobile.GetDeviceName expects a function callback");
