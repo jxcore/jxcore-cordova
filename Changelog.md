@@ -1,5 +1,6 @@
 #### 0.0.8 - DEV Version
-
+ - Update to latest JXcore 0.3.0.7
+ 
 #### 0.0.7
  - toggleBluetooth (android)
  - toggleWiFi (android)
