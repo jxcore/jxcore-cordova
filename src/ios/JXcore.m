@@ -84,6 +84,14 @@ SOFTWARE.
   return is_json_;
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+  NativeCall *nc = [[NativeCall alloc] init];
+  nc->name_ = [name_ copy];
+  nc->arr_ = [arr_ copy];
+  nc->is_json_ = is_json_;
+  return nc;
+}
+
 - (void) setName:(NSString*)name withParams:(NSArray*)arr  isJSON:(BOOL)is_json {
   name_ = [NSString stringWithString:name];
   arr_ = [NSArray arrayWithArray:arr];
