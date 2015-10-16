@@ -1,6 +1,6 @@
 {
 	"name": "io.jxcore.node",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"author": "JXcore Contributors",
 	"description": "JXCore Cordova plugin to run node apps on mobile",
 	"company": "JXcore",
