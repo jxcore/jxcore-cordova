@@ -13,7 +13,7 @@ cd hello
 jx install git+https://github.com/ktrzeciaknubisa/get-file
 
 # get plugin
-jx node_modules/get-file/cli.js jxcore/jxcore-cordova-release 0.0.5/io.jxcore.node.jx
+jx node_modules/get-file/cli.js jxcore/jxcore-cordova-release 0.0.7/io.jxcore.node.jx
 
 # downloader tool not needed any more
 rm -rf ./node_modules
