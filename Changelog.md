@@ -1,7 +1,11 @@
+#### 0.0.8 - DEV Version
+ - Update to latest JXcore 0.3.0.7
+ 
 #### 0.0.7
  - toggleBluetooth (android)
  - toggleWiFi (android)
  - ios: Fix queue corruption on async calls
+ 
 #### 0.0.5
  - Samsung Android /proc/stat recovery
  - iOS 9.0 support

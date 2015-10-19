@@ -8,7 +8,7 @@ This project is intended to ;
 ### Installation
 
 If you are on Visual Studio 2015, see [this](https://github.com/jxcore/jxcore-cordova/issues/29#issuecomment-106006938)
-comment for easy installation.
+comment for easy installation. You still need to follow the instructions from [jxcore-cordova-release](https://github.com/jxcore/jxcore-cordova-release)
 
 If you don't have **Cordova** installed, follow the steps from [this link](https://cordova.apache.org/docs/en/4.0.0/guide_cli_index.md.html)
 to install Apache Cordova.
