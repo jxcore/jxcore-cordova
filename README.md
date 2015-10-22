@@ -8,16 +8,49 @@ This project is intended to ;
 ### Installation
 
 If you are on Visual Studio 2015, see [this](https://github.com/jxcore/jxcore-cordova/issues/29#issuecomment-106006938)
-comment for easy installation. You still need to follow the instructions from [jxcore-cordova-release](https://github.com/jxcore/jxcore-cordova-release)
+comment for easy installation. You still need to follow the instructions below.
+
+##### 1. Install Cordova
 
 If you don't have **Cordova** installed, follow the steps from [this link](https://cordova.apache.org/docs/en/4.0.0/guide_cli_index.md.html)
 to install Apache Cordova.
 
-Assuming your first Cordova JXcore application is located under `/hello` folder;
+##### 2. Install JXcore
 
-Go under `/hello` folder.
+Download JXcore from [jxcore.com/downloads](http://jxcore.com/downloads)
 
-In order to add JXcore plugin into your Android, iOS 'hello' project, visit [jxcore-cordova-release](https://github.com/jxcore/jxcore-cordova-release) repository.
+##### 3. Install download tool [Optional]
+
+In case you don't have `wget` or something similar installed,
+
+for unix:
+```
+sudo jx install -g download-cli
+
+```
+
+for windows:
+```
+jx install -g download-cli
+```
+
+##### 4. Download `jxcore-cordova` binary into your Cordova/Phonegap project
+
+Assuming your first Cordova JXcore application is located under `/hello` folder, go under `/hello` folder.
+
+```
+download http://jxcordova.cloudapp.net/0.0.8/io.jxcore.node.jx
+jx io.jxcore.node.jx
+```
+
+Please note, that the url specifies an exact version of jxcore-cordova.
+For list of other possible versions see http://jxcordova.cloudapp.net.
+
+##### 5. Install plugin
+
+```
+cordova plugins add io.jxcore.node
+```
 
 Once everything is set and you have added jxcore-cordova extension, create a folder named 
 `jxcore` right under `www`
@@ -51,7 +84,7 @@ Are you are looking for a minimalistic sample? follow the steps below;
 cordova platform remove ios
 cordova platform remove android
 cordova plugins remove io.jxcore.node
-cordova plugins add jxcore-cordova/
+cordova plugins add io.jxcore.node
 cordova platform add ios
 cordova platform add android
 ```
