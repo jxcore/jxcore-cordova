@@ -261,7 +261,8 @@ internal_methods['loadMainFile'] = function(filePath, callback_) {
   var result = true;
   var err = null;
   try {
-    require(path.join(process.cwd(), filePath));
+    var src = path.join(process.cwd(), filePath);
+    require(src);
   } catch (e) {
     result = false;
     Error.captureStackTrace(e);
@@ -339,18 +340,29 @@ if (isAndroid) {
     // patch execPath to APK folder
     process.execPath = root;
 
-    try {
-      // force create www/jxcore sub folder so we can write into cwd
-      if (!fs.existsSync(process.userPath)) {
-        fs.mkdir(process.userPath);
-        if (!fs.existsSync(root)) {
-          fs.mkdir(root);
+    function createRealPath(pd) {
+      var arr = [ pd, pd + "/www", pd + "/www/jxcore" ];
+
+      for (var i = 0; i < 3; i++) {
+        try {
+          if (!fs.existsSync(arr[i]))
+            fs.mkdirSync(arr[i]);
+        } catch (e) {
+          console.error("Permission issues ? ", arr[i], e)
         }
       }
-    } catch (e) {
-      console.error("Problem creating assets root at ", root);
-      console.error("You may have a problem with writing files");
-      console.error("Original error was", e);
+    }
+
+    createRealPath(process.userPath);
+
+    var sroot = root;
+    var hasRootLink = false;
+    if (root.indexOf('/data/user/') === 0) {
+      var pd = process.userPath
+          .replace(/\/data\/user\/[0-9]+\//, "/data/data/");
+      createRealPath(pd);
+      sroot = root.replace(/\/data\/user\/[0-9]+\//, "/data/data/");
+      hasRootLink = true;
     }
 
     var jxcore_root;
@@ -419,9 +431,13 @@ if (isAndroid) {
     var stat_archive = {};
     var existssync = function(pathname) {
       var n = pathname.indexOf(root);
+      if (hasRootLink && n == -1)
+        n = pathname.indexOf(sroot);
       if (n === 0 || n === -1) {
         if (n === 0) {
           pathname = pathname.replace(root, '');
+          if (hasRootLink)
+            pathname = pathname.replace(sroot, '');
         }
 
         var last;
@@ -464,16 +480,25 @@ if (isAndroid) {
       if (!existssync(pathname))
         throw new Error(pathname + " does not exist");
 
-      var n = pathname.indexOf(root);
+      var rt = root;
+      var n = pathname.indexOf(rt);
+
+      if (n != 0 && hasRootLink) {
+        n = pathname.indexOf(sroot);
+        rt = sroot;
+      }
+
       if (n === 0) {
-        pathname = pathname.replace(root, "");
+        pathname = pathname.replace(rt, "");
         pathname = path.join('www/jxcore/', pathname);
         return process.natives.assetReadSync(pathname);
       }
     };
 
     var readdirsync = function(pathname) {
-      var n = pathname.indexOf(root);
+      var rt = pathname.indexOf('/data/') === 0 ? (hasRootLink ? sroot : root)
+          : root;
+      var n = pathname.indexOf(rt);
       if (n === 0 || n === -1) {
         var last = getLast(pathname);
         if (!last || typeof last['!s'] !== 'undefined')
