@@ -12,7 +12,7 @@ comment for easy installation. You still need to follow the instructions below.
 
 ##### 1. Install Cordova
 
-If you don't have **Cordova** installed, follow the steps from [this link](https://cordova.apache.org/docs/en/4.0.0/guide_cli_index.md.html)
+If you don't have **Cordova** installed, follow the steps from [this link](https://cordova.apache.org/#getstarted)
 to install Apache Cordova.
 
 ##### 2. Install JXcore
