@@ -6,7 +6,8 @@ var internal_methods = {};
 var ui_methods = {};
 
 function JXMobile(x) {
-  if (!(this instanceof JXMobile)) return new JXMobile(x);
+  if (!(this instanceof JXMobile))
+    return new JXMobile(x);
 
   this.name = x;
 }
@@ -24,7 +25,7 @@ function callJXcoreNative(name, args) {
     params.pop();
   }
 
-  var fnc = [name];
+  var fnc = [ name ];
   var arr = fnc.concat(params);
   arr.push(cb);
 
@@ -35,10 +36,9 @@ function MakeCallback(callbackId) {
   this.cid = callbackId;
 
   var _this = this;
-  this.callback = function () {
-    callJXcoreNative("  _callback_  ", [Array.prototype.slice.call(arguments, 0),
-      null,
-      _this.cid]);
+  this.callback = function() {
+    callJXcoreNative("  _callback_  ", [
+        Array.prototype.slice.call(arguments, 0), null, _this.cid ]);
   };
 }
 
@@ -47,7 +47,7 @@ function WrapFunction(cb, fnc) {
   this.cb = cb;
 
   var _this = this;
-  this.callback = function () {
+  this.callback = function() {
     delete JXMobile.events[_this.cb];
     return _this.fnc.apply(null, arguments);
   }
@@ -55,26 +55,26 @@ function WrapFunction(cb, fnc) {
 
 JXMobile.events = {};
 JXMobile.eventId = 0;
-JXMobile.on = function (name, target) {
+JXMobile.on = function(name, target) {
   JXMobile.events[name] = target;
 };
 
-JXMobile.prototype.callNative = function () {
+JXMobile.prototype.callNative = function() {
   callJXcoreNative(this.name, arguments);
   return this;
 };
 
 var isAndroid = process.platform == "android";
 
-JXMobile.ping = function (name, param) {
+JXMobile.ping = function(name, param) {
   var x;
   if (Array.isArray(param)) {
     x = param;
   } else if (param.str) {
-    x = [param.str];
+    x = [ param.str ];
   } else if (param.json) {
     try {
-      x = [JSON.parse(param.json)];
+      x = [ JSON.parse(param.json) ];
     } catch (e) {
       return e;
     }
@@ -97,7 +97,7 @@ JXMobile.ping = function (name, param) {
 
 process.natives.defineEventCB("eventPing", JXMobile.ping);
 
-JXMobile.prototype.registerToNative = function (target) {
+JXMobile.prototype.registerToNative = function(target) {
   if (!isAndroid)
     process.natives.defineEventCB(this.name, target);
   else
@@ -105,17 +105,23 @@ JXMobile.prototype.registerToNative = function (target) {
   return this;
 };
 
-JXMobile.prototype.registerSync = function (target) {
-  jx_methods[this.name] = {is_synced: 1, method: target};
+JXMobile.prototype.registerSync = function(target) {
+  jx_methods[this.name] = {
+    is_synced : 1,
+    method : target
+  };
   return this;
 };
 
-JXMobile.prototype.registerAsync = function (target) {
-  jx_methods[this.name] = {is_synced: 0, method: target};
+JXMobile.prototype.registerAsync = function(target) {
+  jx_methods[this.name] = {
+    is_synced : 0,
+    method : target
+  };
   return this;
 };
 
-JXMobile.prototype.unregister = function () {
+JXMobile.prototype.unregister = function() {
   if (jx_methods[this.name]) {
     delete jx_methods[this.name];
   }
@@ -123,7 +129,7 @@ JXMobile.prototype.unregister = function () {
 };
 
 var return_reference_counter = 0;
-JXMobile.prototype.call = function (rest) {
+JXMobile.prototype.call = function(rest) {
   var params = Array.prototype.slice.call(arguments, 0);
   var fnc = ui_methods["callLocalMethods"];
 
@@ -131,17 +137,19 @@ JXMobile.prototype.call = function (rest) {
     throw new Error("Method " + this.name + " is undefined.");
   }
 
-  if (typeof params[params.length-1] === 'function') {
+  if (typeof params[params.length - 1] === 'function') {
     var return_reference = return_reference_counter + this.name;
-    return_reference_counter ++;
+    return_reference_counter++;
     return_reference_counter %= 9999;
     ui_methods[return_reference] = {};
 
-    ui_methods[return_reference].returnCallback = params[params.length-1];
-    params[params.length-1] = { JXCORE_RETURN_CALLBACK:"RC-" + return_reference };
+    ui_methods[return_reference].returnCallback = params[params.length - 1];
+    params[params.length - 1] = {
+      JXCORE_RETURN_CALLBACK : "RC-" + return_reference
+    };
   }
 
-  fnc.callback.apply(null, [this.name, params, null]);
+  fnc.callback.apply(null, [ this.name, params, null ]);
 
   return this;
 };
@@ -153,12 +161,13 @@ JXMobile.getDocumentsPath = JXMobile.GetDocumentsPath = function(callback) {
     throw new Error("JXMobile.GetDocumentsPath expects a function callback");
   }
 
-  JXMobile('GetDocumentsPath').callNative(function(res){
+  JXMobile('GetDocumentsPath').callNative(function(res) {
     callback(null, res);
   });
 };
 
-JXMobile.toggleBluetooth = JXMobile.ToggleBluetooth = function(enabled, callback) {
+JXMobile.toggleBluetooth = JXMobile.ToggleBluetooth = function(enabled,
+    callback) {
   // force boolean
   if (!enabled) {
     enabled = false;
@@ -167,7 +176,8 @@ JXMobile.toggleBluetooth = JXMobile.ToggleBluetooth = function(enabled, callback
   }
 
   if (typeof callback != "function") {
-    callback = function(){};
+    callback = function() {
+    };
   }
 
   if (isAndroid) {
@@ -188,7 +198,8 @@ JXMobile.toggleWiFi = JXMobile.ToggleWiFi = function(enabled, callback) {
   }
 
   if (typeof callback != "function") {
-    callback = function(){};
+    callback = function() {
+    };
   }
 
   if (isAndroid) {
@@ -205,7 +216,7 @@ JXMobile.getDeviceName = JXMobile.GetDeviceName = function(callback) {
     throw new Error("JXMobile.GetDeviceName expects a function callback");
   }
 
-  JXMobile('GetDeviceName').callNative(function(res){
+  JXMobile('GetDeviceName').callNative(function(res) {
     callback(null, res);
   });
 };
@@ -215,33 +226,35 @@ JXMobile.getConnectionStatus = JXMobile.GetConnectionStatus = function(callback)
     throw new Error("JXMobile.GetConnectionStatus expects a function callback");
   }
 
-  JXMobile('GetConnectionStatus').callNative(function(res){
+  JXMobile('GetConnectionStatus').callNative(function(res) {
     callback(null, res);
   });
 };
 
-internal_methods['registerUIMethod'] = function (methodName, callback_) {
+internal_methods['registerUIMethod'] = function(methodName, callback_) {
   if (methodName && Array.isArray(methodName)) {
     methodName = methodName[0];
   }
 
   if (!methodName || !methodName.indexOf) {
-    throw new Error("Couldn't register UI method. '" + methodName + "' is undefined or not string");
+    throw new Error("Couldn't register UI method. '" + methodName
+        + "' is undefined or not string");
     return;
   }
 
   ui_methods[methodName] = {
-    callback: callback_
+    callback : callback_
   };
 };
 
-internal_methods['loadMainFile'] = function (filePath, callback_) {
+internal_methods['loadMainFile'] = function(filePath, callback_) {
   if (filePath && Array.isArray(filePath)) {
     filePath = filePath[0];
   }
 
   if (!filePath || !filePath.indexOf) {
-    throw new Error("Couldn't load main file. '" + filePath + "' is undefined or not string");
+    throw new Error("Couldn't load main file. '" + filePath
+        + "' is undefined or not string");
     return;
   }
 
@@ -258,8 +271,9 @@ internal_methods['loadMainFile'] = function (filePath, callback_) {
   callback_(result, !err ? null : err.message + "\n" + err.stack);
 };
 
-JXMobile.executeJSON = function (json, callbackId) {
-  if (!json.methodName) return; // try throw exception
+JXMobile.executeJSON = function(json, callbackId) {
+  if (!json.methodName)
+    return; // try throw exception
 
   var internal = internal_methods[json.methodName];
   var fnc = jx_methods[json.methodName];
@@ -271,7 +285,8 @@ JXMobile.executeJSON = function (json, callbackId) {
       return;
     } else if (fnc) {
       if (!fnc.is_synced) {
-        if (!json.params || (json.params.length == 1 && json.params[0] === null)) {
+        if (!json.params
+            || (json.params.length == 1 && json.params[0] === null)) {
           json.params = [];
         }
         json.params[json.params.length] = new MakeCallback(callbackId).callback;
@@ -284,7 +299,8 @@ JXMobile.executeJSON = function (json, callbackId) {
         return ret_val;
       }
       return;
-    } else if (json.methodName && json.methodName.length>3 && json.methodName.substr(0,3) === "RC-") {
+    } else if (json.methodName && json.methodName.length > 3
+        && json.methodName.substr(0, 3) === "RC-") {
       var cb = new MakeCallback(callbackId).callback
       json.params.push(cb);
       fnc = ui_methods[json.methodName.substr(3)];
@@ -295,8 +311,9 @@ JXMobile.executeJSON = function (json, callbackId) {
       }
     }
 
-    throw new Error("JXcore: Method Doesn't Exist [", json.methodName, "] Did you register it?");
-  } catch(e) {
+    throw new Error("JXcore: Method Doesn't Exist [", json.methodName,
+        "] Did you register it?");
+  } catch (e) {
     Error.captureStackTrace(e);
     JXMobile('OnError').callNative(e.message, JSON.stringify(e.stack));
   }
@@ -310,7 +327,7 @@ process.setPaths();
 
 if (isAndroid) {
   // bring APK support into 'fs'
-  process.registerAssets = function (from) {
+  process.registerAssets = function(from) {
     var fs = from;
     if (!fs || !fs.existsSync)
       fs = require('fs');
@@ -338,14 +355,15 @@ if (isAndroid) {
 
     var jxcore_root;
 
-    var prepVirtualDirs = function () {
+    var prepVirtualDirs = function() {
       var _ = {};
-      for (var o in folders) {
+      for ( var o in folders) {
         var sub = o.split('/');
         var last = _;
-        for (var i in sub) {
+        for ( var i in sub) {
           var loc = sub[i];
-          if (!last.hasOwnProperty(loc)) last[loc] = {};
+          if (!last.hasOwnProperty(loc))
+            last[loc] = {};
           last = last[loc];
         }
         last['!s'] = folders[o];
@@ -353,9 +371,10 @@ if (isAndroid) {
 
       folders = {};
       var sp = root.split('/');
-      if (sp[0] === '') sp.shift();
+      if (sp[0] === '')
+        sp.shift();
       jxcore_root = folders;
-      for (var o in sp) {
+      for ( var o in sp) {
         if (sp[o] === 'jxcore')
           continue;
 
@@ -369,11 +388,12 @@ if (isAndroid) {
 
     prepVirtualDirs();
 
-    var findIn = function (what, where) {
+    var findIn = function(what, where) {
       var last = where;
-      for (var o in what) {
+      for ( var o in what) {
         var subject = what[o];
-        if (!last[subject]) return;
+        if (!last[subject])
+          return;
 
         last = last[subject];
       }
@@ -381,7 +401,7 @@ if (isAndroid) {
       return last;
     };
 
-    var getLast = function (pathname) {
+    var getLast = function(pathname) {
       while (pathname[0] == '/')
         pathname = pathname.substr(1);
 
@@ -391,12 +411,13 @@ if (isAndroid) {
       var dirs = pathname.split('/');
 
       var res = findIn(dirs, jxcore_root);
-      if (!res) res = findIn(dirs, folders);
+      if (!res)
+        res = findIn(dirs, folders);
       return res;
     };
 
     var stat_archive = {};
-    var existssync = function (pathname) {
+    var existssync = function(pathname) {
       var n = pathname.indexOf(root);
       if (n === 0 || n === -1) {
         if (n === 0) {
@@ -406,7 +427,8 @@ if (isAndroid) {
         var last;
         if (pathname !== '') {
           last = getLast(pathname);
-          if (!last) return false;
+          if (!last)
+            return false;
         } else {
           last = jxcore_root;
         }
@@ -421,15 +443,15 @@ if (isAndroid) {
 
         if (typeof last['!s'] === 'undefined') {
           result = { // mark as a folder
-            size: 340,
-            mode: 16877,
-            ino: fs.virtualFiles.getNewIno()
+            size : 340,
+            mode : 16877,
+            ino : fs.virtualFiles.getNewIno()
           };
         } else {
           result = {
-            size: last['!s'],
-            mode: 33188,
-            ino: fs.virtualFiles.getNewIno()
+            size : last['!s'],
+            mode : 33188,
+            ino : fs.virtualFiles.getNewIno()
           };
         }
 
@@ -438,8 +460,9 @@ if (isAndroid) {
       }
     };
 
-    var readfilesync = function (pathname) {
-      if (!existssync(pathname)) throw new Error(pathname + " does not exist");
+    var readfilesync = function(pathname) {
+      if (!existssync(pathname))
+        throw new Error(pathname + " does not exist");
 
       var n = pathname.indexOf(root);
       if (n === 0) {
@@ -449,16 +472,18 @@ if (isAndroid) {
       }
     };
 
-    var readdirsync = function (pathname) {
+    var readdirsync = function(pathname) {
       var n = pathname.indexOf(root);
       if (n === 0 || n === -1) {
         var last = getLast(pathname);
-        if (!last || typeof last['!s'] !== 'undefined') return null;
+        if (!last || typeof last['!s'] !== 'undefined')
+          return null;
 
         var arr = [];
-        for (var o in last) {
+        for ( var o in last) {
           var item = last[o];
-          if (item && o != '!s') arr.push(o);
+          if (item && o != '!s')
+            arr.push(o);
         }
         return arr;
       }
@@ -467,9 +492,9 @@ if (isAndroid) {
     };
 
     var extension = {
-      readFileSync: readfilesync,
-      readDirSync: readdirsync,
-      existsSync: existssync
+      readFileSync : readfilesync,
+      readDirSync : readdirsync,
+      existsSync : existssync
     };
 
     fs.setExtension("jxcore-java", extension);
@@ -481,9 +506,11 @@ if (isAndroid) {
 
   process.registerAssets();
 
-  // if a submodule monkey patches 'fs' module, make sure APK support comes with it
+  // if a submodule monkey patches 'fs' module, make sure APK support comes with
+  // it
   var extendFS = function() {
-    process.binding('natives').fs += "(" + process.registerAssets + ")(exports);";
+    process.binding('natives').fs += "(" + process.registerAssets
+        + ")(exports);";
   };
 
   extendFS();
@@ -493,18 +520,18 @@ if (isAndroid) {
   jxcore.tasks.register(process.registerAssets);
   jxcore.tasks.register(extendFS);
 
-  JXMobile('JXcore_Device_OnResume').registerToNative(function(){
+  JXMobile('JXcore_Device_OnResume').registerToNative(function() {
     process.emit('resume');
   });
 
-  JXMobile('JXcore_Device_OnPause').registerToNative(function(){
+  JXMobile('JXcore_Device_OnPause').registerToNative(function() {
     process.emit('pause');
   });
 } else {
   jxcore.tasks.register(process.setPaths);
 }
 
-process.on('uncaughtException', function (e) {
+process.on('uncaughtException', function(e) {
   Error.captureStackTrace(e);
   JXMobile('OnError').callNative(e.message, JSON.stringify(e.stack));
 });
