@@ -9,10 +9,11 @@ call cordova create hello com.example.hello HelloWorld
 cd hello
 
 @rem get small downloader tool
-jx install git+https://github.com/ktrzeciaknubisa/get-file
+jx install download-cli
 
 @rem get plugin
-jx node_modules/get-file/cli.js jxcore/jxcore-cordova-release 0.0.7/io.jxcore.node.jx
+echo Downloading the file. Please wait...
+jx node_modules/download-cli/cli.js http://jxcordova.cloudapp.net/0.0.8/io.jxcore.node.jx
 
 @rem downloader tool not needed any more
 rm -rf ./node_modules
@@ -74,3 +75,4 @@ goto:EXIT_NOW
 :EXIT_NOW
 cd ..
 goto:eof
+
