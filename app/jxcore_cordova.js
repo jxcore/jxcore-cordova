@@ -382,7 +382,7 @@ if (isAndroid) {
       }
 
       folders = {};
-      var sp = root.split('/');
+      var sp = sroot.split('/');
       if (sp[0] === '')
         sp.shift();
       jxcore_root = folders;
