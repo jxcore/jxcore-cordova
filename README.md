@@ -1,14 +1,41 @@
 [Node.JS](https://nodejs.org) plugin for Apache Cordova (built on [JXcore](https://github.com/jxcore/jxcore))
 
-### Goals
+# Goals
 This project is intended to ;
  - create an easy to use node.js plugin for Apache Cordova (Android, iOS)
  - show JXcore's embedding interface in details.
 
-### Installation
+# Installation
 
-If you are on Visual Studio 2015, see [this](https://github.com/jxcore/jxcore-cordova/issues/29#issuecomment-106006938)
-comment for easy installation. You still need to follow the instructions below.
+### Visual Studio
+
+##### 1. Install JXcore
+
+Download JXcore from [jxcore.com/downloads](http://jxcore.com/downloads)
+
+##### 2. Download and unpack `jxcore-cordova` binary
+
+Download the latest package, e.g. http://jxcordova.cloudapp.net/0.0.8/io.jxcore.node.jx and save into e.g. *c:\jxcore-cordova* .
+
+Please note, that the url specifies an exact version of jxcore-cordova.
+For list of other possible versions see http://jxcordova.cloudapp.net.
+
+To unpack the package open command prompt window and type:
+
+```bash
+> cd c:\jxcore-cordova
+> jx io.jxcore.node.jx
+```
+
+##### 3. Install plugin
+
+* open your cordova solution in Visual Studio
+* double click *config.xml* in Solution Explorer
+* select **Plugins** and then **Custom** tab
+* select **Local** radio button and browse for *c:\jxcore-cordova\io.jxcore.node*
+* click **Add** button
+
+### Posix platforms
 
 ##### 1. Install Cordova
 
@@ -23,15 +50,8 @@ Download JXcore from [jxcore.com/downloads](http://jxcore.com/downloads)
 
 In case you don't have `wget` or something similar installed,
 
-for unix:
-```
-sudo jx install -g download-cli
-
-```
-
-for windows:
-```
-jx install -g download-cli
+```bash
+$ sudo jx install -g download-cli
 ```
 
 ##### 4. Download `jxcore-cordova` binary into your Cordova/Phonegap project
@@ -92,7 +112,7 @@ cordova platform add android
 Now you can visit `platforms/ios` or `platforms/android` folders and open Xcode project file 
 or import the android project from Eclipse.
 
-### Updating JXcore binaries [optional]
+# Updating JXcore binaries [optional]
 
 Below are the steps to be taken if you want to update JXcore binaries in your Cordova JXcore 
 application. They all should be called prior to `cordova plugin add` command. This step is 
@@ -129,7 +149,7 @@ optional. We keep the core binaries are updated.
     $ cordova run
     ```
 
-### Usage
+# Usage
 
 **JavaScript on UI side works on top of Cordova's webUI. JXcore's JavaScript is a separate instance.**
 
@@ -283,6 +303,6 @@ for iOS and update `OnError` behavior
 
 See JXcoreExtension.java / JXcoreExtension.m / .h for sample Java/Obj-C definitions.
 
-### Contribution
+# Contribution
 If you see a mistake / bug or you think there is a better way to do the things, feel free 
 to contribute. All the contributions are considered under MIT license.
