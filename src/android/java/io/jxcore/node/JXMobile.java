@@ -109,6 +109,11 @@ public class JXMobile {
             .getBaseContext().getSystemService(Context.WIFI_SERVICE);
         wifiManager.setWifiEnabled(enabled);
         
+        if(enabled) {
+          wifiManager.disconnect();
+          wifiManager.reconnect();
+        }
+        
         jxcore.CallJSMethod(callbackId, "null");
       }
     });
