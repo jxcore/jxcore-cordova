@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="io.jxcore.node"
+    version="0.0.8">
+    <name>JXcore Mobile</name>
+    <description>Cordova JXcore/Node.JS Plugin</description>
+    <license>MIT</license>
+    <keywords>cordova,jxcore,node.js</keywords>
+
+    <js-module src="www/jxcore.js" name="jxcore">
+        <clobbers target="jxcore" />
+    </js-module>
+
+    <!-- ios -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="JXcore">
+                <param name="ios-package" value="CDVJXcore"/>
+            </feature>
+        </config-file>
+
+        <!--<resource-file src="app/jxcore" />-->
+        <resource-file src="app/jxcore_cordova.js" />
+        <header-file src="src/ios/CDVJXcore.h" />
+        <source-file src="src/ios/CDVJXcore.m" />
+        <header-file src="src/ios/JXcore.h" />
+        <source-file src="src/ios/JXcore.m" />
+        <header-file src="src/ios/JXMobile.h" />
+        <source-file src="src/ios/JXMobile.m" />
+        <header-file src="src/ios/Reachability.h" />
+        <source-file src="src/ios/Reachability.m" />
+        <header-file src="src/ios/JXcoreExtension.h" />
+        <!--<source-file src="src/ios/JXcoreExtension.m" />    OPTIONAL-->
+        <header-file src="bin/jx.h" />
+        <header-file src="bin/jx_result.h" />
+        <source-file src="bin/libcares.a" framework="true" />
+        <source-file src="bin/libchrome_zlib.a" framework="true" />
+        <source-file src="bin/libhttp_parser.a" framework="true" />
+        <source-file src="bin/libjx.a" framework="true" compiler-flags="-std=c++11" />
+        <source-file src="bin/libmozjs.a" framework="true" compiler-flags="-std=c++11" />
+        <source-file src="bin/libopenssl.a" framework="true" />
+        <source-file src="bin/libsqlite3.a" framework="true" />
+        <source-file src="bin/libuv.a" framework="true" />
+        <source-file src="bin/libleveldb.a" framework="true" compiler-flags="-std=c++11" />
+        <source-file src="bin/libleveldown.a" framework="true" />
+        <source-file src="bin/libsnappy.a" framework="true" />
+
+        <framework src="SystemConfiguration.framework" />
+        <framework src="libstdc++.6.0.9.dylib" />
+        <framework src="CFNetwork.framework" />
+        <framework src="Foundation.framework" />
+        <framework src="Security.framework" />
+
+        <config-file target="*-Info.plist" parent="NSAppTransportSecurity">
+            <!--ios9 https security override-->
+            <dict>
+                <key>NSAllowsArbitraryLoads</key>
+                <true/>
+            </dict>
+        </config-file>
+
+    </platform>
+
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="JXcore" >
+                <param name="android-package" value="io.jxcore.node.jxcore"/>
+            </feature>
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+            <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+            <uses-permission android:name="android.permission.BLUETOOTH" />
+        </config-file>
+       <!-- <source-file src="app/jxcore" target-dir="assets/" /> -->
+        <source-file src="app/jxcore_cordova.js" target-dir="assets/" />
+
+        <source-file src="src/android/java/io/jxcore/node/FileManager.java" target-dir="src/io/jxcore/node/" />
+        <source-file src="src/android/java/io/jxcore/node/JXMobile.java" target-dir="src/io/jxcore/node/" />
+        <source-file src="src/android/java/io/jxcore/node/jxcore.java" target-dir="src/io/jxcore/node/" />
+        <source-file src="src/android/java/io/jxcore/node/JXcoreExtension.java" target-dir="src/io/jxcore/node/" />
+        <source-file src="src/android/libs/armeabi" target-dir="libs/" />
+        <source-file src="src/android/libs/armeabi-v7a" target-dir="libs/" />
+        <source-file src="src/android/libs/x86" target-dir="libs/" />
+    </platform>
+
+</plugin>

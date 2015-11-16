@@ -7,70 +7,52 @@ This project is intended to ;
 
 # Installation
 
-### Visual Studio
+### 1. Install Apache Cordova
 
-##### 1. Install JXcore
+If you don't have **Cordova** installed, follow the steps from [this link](https://cordova.apache.org/#getstarted)
+to install Apache Cordova.
 
-Download JXcore from [jxcore.com/downloads](http://jxcore.com/downloads)
-
-##### 2. Download and unpack `jxcore-cordova` binary
-
-Download the latest package, e.g. http://jxcordova.cloudapp.net/0.0.8/io.jxcore.node.jx and save into e.g. *c:\jxcore-cordova* .
-
-Please note, that the url specifies an exact version of jxcore-cordova.
-For list of other possible versions see http://jxcordova.cloudapp.net.
-
-To unpack the package open command prompt window and type:
+### 2. Install jxc tool
 
 ```bash
-> cd c:\jxcore-cordova
-> jx io.jxcore.node.jx
+$ npm install -g jxc
 ```
 
-##### 3. Install plugin
+or if you have JXcore installed:
 
+```bash
+$ jx install -g jxc
+```
+
+On posix platform you may need to run it as sudo.
+
+### 3. Install plugin
+
+Assuming your Cordova JXcore application is located under `/hello` folder, go under `/hello` folder.
+
+```bash
+$ jxc install
+```
+
+By default the latest version of the plugin is used. However you may specify an exact version, e.g.:
+
+```bash
+$ jxc install 0.0.8
+```
+
+For list of other possible versions see http://jxcordova.cloudapp.net.
+
+### Visual Studio
+
+* Download the latest package
+    * either manually (e.g. http://jxcordova.cloudapp.net/0.0.8/io.jxcore.node.jx and save into e.g. *c:\jxcore-cordova*)
+    * or through `jxc download` command (in command prompt window started in e.g. *c:\jxcore-cordova*)
 * open your cordova solution in Visual Studio
 * double click *config.xml* in Solution Explorer
 * select **Plugins** and then **Custom** tab
 * select **Local** radio button and browse for *c:\jxcore-cordova\io.jxcore.node*
 * click **Add** button
 
-### Posix platforms
-
-##### 1. Install Cordova
-
-If you don't have **Cordova** installed, follow the steps from [this link](https://cordova.apache.org/#getstarted)
-to install Apache Cordova.
-
-##### 2. Install JXcore
-
-Download JXcore from [jxcore.com/downloads](http://jxcore.com/downloads)
-
-##### 3. Install download tool [Optional]
-
-In case you don't have `wget` or something similar installed,
-
-```bash
-$ sudo jx install -g download-cli
-```
-
-##### 4. Download `jxcore-cordova` binary into your Cordova/Phonegap project
-
-Assuming your first Cordova JXcore application is located under `/hello` folder, go under `/hello` folder.
-
-```
-download http://jxcordova.cloudapp.net/0.0.8/io.jxcore.node.jx
-jx io.jxcore.node.jx
-```
-
-Please note, that the url specifies an exact version of jxcore-cordova.
-For list of other possible versions see http://jxcordova.cloudapp.net.
-
-##### 5. Install plugin
-
-```
-cordova plugins add io.jxcore.node
-```
 
 Once everything is set and you have added jxcore-cordova extension, create a folder named 
 `jxcore` right under `www`
