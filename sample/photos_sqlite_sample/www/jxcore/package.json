@@ -1,0 +1,7 @@
+{
+    "name": "jxcore-photo",
+    "description": "Sample JXcore cordova app for saving photos in sqlite db",
+    "version": "0.0.1",
+    "author": "Kakhaber Bazerashvili",
+    "dependencies": {}
+}
