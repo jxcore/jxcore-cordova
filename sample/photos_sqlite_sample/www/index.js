@@ -24,8 +24,7 @@ function init(urls) {
     slider = jQuery('#slider').slick({
         infinite: true,
         speed: 300,
-        slidesToShow: 1,
-        adaptiveHeight: true
+        slidesToShow: 1
     });
 
     // add photos
@@ -37,7 +36,6 @@ function init(urls) {
 
 function addPhotoToSlider(url) {
     slider.slick('slickAdd', '<div><img width="100%" src="' + url + '"/></div>');
-    slider.slick('slickNext');
 }
 
 function takeAndSavePhoto() {
@@ -47,6 +45,7 @@ function takeAndSavePhoto() {
                 alert(err);
             } else {
                 addPhotoToSlider(url);
+                slider.slick('slickNext');
             }
         });
     }, function () {
