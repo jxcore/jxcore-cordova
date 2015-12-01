@@ -56,6 +56,7 @@ function takeAndSavePhoto() {
         sourceType: navigator.camera.PictureSourceType.CAMERA,
         encodingType: navigator.camera.EncodingType.JPEG,
         targetwidth: 900,
-        targetHeight: 900
+        targetHeight: 900,
+        correctOrientation: true
     });
 }
