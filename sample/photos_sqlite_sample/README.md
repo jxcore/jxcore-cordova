@@ -14,4 +14,7 @@ To run on android just type:
 gulp run-android
 ```
 
-Note! Low ram devices (ram <= 512mb) **may** terminate app due to lack of memory.
+Notes!
+
+1. Gulp tasks take care of installing plugins, but if you copy a sample manually, don't forget to install the camera plugin.
+2. Low ram devices (ram <= 512mb) **may** terminate app due to lack of memory.
