@@ -1,0 +1,23 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+#takePhoto {
+    position: relative;
+    margin: 1em;
+    padding: 12px 26px;
+    text-align: center;
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+    z-index: 0;
+    cursor: pointer;
+    transition: all 0.1s;
+    background: #0c84e4;
+    box-shadow: 0px 1px 1px #085a9b;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    color: rgba(255, 255, 255, .8);
+}
