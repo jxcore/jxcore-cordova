@@ -13,7 +13,7 @@ jx install download-cli
 
 @rem get plugin
 echo Downloading the file. Please wait...
-jx node_modules/download-cli/cli.js http://jxcordova.cloudapp.net/0.0.8/io.jxcore.node.jx
+jx node_modules/download-cli/cli.js http://az836273.vo.msecnd.net/0.0.8/io.jxcore.node.jx
 
 @rem downloader tool not needed any more
 rm -rf ./node_modules
