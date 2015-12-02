@@ -40,12 +40,12 @@ By default the latest version of the plugin is used. However you may specify an 
 $ jxc install 0.0.8
 ```
 
-For list of other possible versions see http://jxcordova.cloudapp.net.
+For list of other possible versions see http://az836273.vo.msecnd.net.
 
 ### Visual Studio
 
 * Download the latest package
-    * either manually (e.g. http://jxcordova.cloudapp.net/0.0.8/io.jxcore.node.jx and save into e.g. *c:\jxcore-cordova*)
+    * either manually (e.g. http://az836273.vo.msecnd.net/0.0.8/io.jxcore.node.jx and save into e.g. *c:\jxcore-cordova*)
     * or through `jxc download` command (in command prompt window started in e.g. *c:\jxcore-cordova*)
 * open your cordova solution in Visual Studio
 * double click *config.xml* in Solution Explorer

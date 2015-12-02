@@ -15,7 +15,7 @@ cd jxcore-cordova-tests
 #### Download and unpack jxcore-cordova plugin
 
 ```sh
-wget http://jxcordova.cloudapp.net/0.0.8/io.jxcore.node.jx
+wget http://az836273.vo.msecnd.net/0.0.8/io.jxcore.node.jx
 jx io.jxcore.node.jx
 ```
 
