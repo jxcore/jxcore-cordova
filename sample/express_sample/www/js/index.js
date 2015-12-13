@@ -29,7 +29,7 @@ var inter = setInterval(function() {
     jxcore('log').register(log);
     jxcore('addIp').register(addIp);
 
-    jxcore('app.js').loadMainFile(function(ret, err) {
+    jxcore('app.js').loadMainFile(function(err) {
       if (err) {
         alert(JSON.stringify(err));
       } else {
@@ -42,11 +42,11 @@ var inter = setInterval(function() {
 
 function jxcore_ready() {
   // calling a method from JXcore (app.js)
-  jxcore('asyncPing').call('Hello', function(ret, err) {
+  jxcore('asyncPing').call('Hello', function(err, ret) {
     // register getTime method from jxcore (app.js)
     var getBuffer = jxcore("getBuffer");
 
-    getBuffer.call(function(bf, err) {
+    getBuffer.call(function(err, bf) {
       var arr = new Uint8Array(bf);
       log("Buffer size:" + arr.length + " - first item: " + arr[0]);
     });

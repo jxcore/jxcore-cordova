@@ -69,7 +69,7 @@
             jxcore('log').register(log);
 
             // set the main file and load.
-            jxcore('app.js').loadMainFile(function (ret, err) {
+            jxcore('app.js').loadMainFile(function (err, ret) {
                 if(err) {
                     alert(JSON && JSON.stringify ? JSON.stringify(err) : err);
                 } else {
@@ -102,8 +102,8 @@
         async.each(testfiles,
                 function(file, callback) {
                     console.log("Loading tests for file:" + file);
-                    jxcore('asyncSeverStarted').call(file, function(response, err){
-                        console.log("asyncServerCallback:" + JSON.stringify([response,err]));
+                    jxcore('asyncSeverStarted').call(file, function(err, response){
+                        console.log("asyncServerCallback:" + JSON.stringify([err,response]));
                         if(!err) {
                             loadScript( file, function( ) {
                                 console.log( "Test Loaded for file:" + file );

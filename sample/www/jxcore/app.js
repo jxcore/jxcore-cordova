@@ -13,7 +13,7 @@ Mobile('getBuffer').registerSync(function() {
 
 Mobile('asyncPing').registerAsync(function(message, callback){
   setTimeout(function() {
-    callback("Pong:" + message);
+    callback(null, "Pong:" + message);
   }, 500);
 });
 

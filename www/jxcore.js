@@ -54,7 +54,7 @@ function callNative(name, args, callback) {
       }
     },
     function errorHandler(err) {
-      if (callback) callback(null, err);
+      if (callback) callback(err);
     },
     'JXcore',
     name,
@@ -78,8 +78,10 @@ function jxcore(x) {
 var initialized = false;
 jxcore.isReady = function (callback) {
   if (initialized) return;
-  callNative("isReady", [], function (ret) {
-    if (ret) {
+  callNative("isReady", [], function (err, ret) {
+    if (err) {
+      callback(err);
+    } else if (ret) {
       initialized = true;
       callback();
     } else {

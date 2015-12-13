@@ -299,7 +299,10 @@ public class jxcore extends CordovaPlugin {
     PluginResult result = null;
     try {
       if (action.equals("isReady")) {
-        result = new PluginResult(Status.OK, handler != null);
+        JSONArray parameter = new JSONArray();
+        parameter.put(null);
+        parameter.put(handler != null);
+        result = new PluginResult(Status.OK, parameter);
       } else if (action.equals("Evaluate")) {
         final String json = data.get(0).toString() + ", '"
             + callbackContext.getCallbackId() + "')";

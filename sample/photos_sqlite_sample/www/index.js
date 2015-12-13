@@ -4,7 +4,7 @@
     } else {
         jxcore.isReady(function () {
             jxcore('alert').register(alert);
-            jxcore('app.js').loadMainFile(function(result, err) {
+            jxcore('app.js').loadMainFile(function(err) {
                 if (err) {
                     alert(err);
                 } else {

@@ -8,7 +8,7 @@ Mobile('asyncSeverStarted').registerAsync(function(message, callback){
 
     var app = require(message);
 
-    callback("Pong:" + message);
+    callback(null, "Pong:" + message);
 
 });
 

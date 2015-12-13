@@ -269,7 +269,7 @@ internal_methods['loadMainFile'] = function(filePath, callback_) {
     err = e;
     JXMobile('OnError').callNative(e.message, JSON.stringify(e.stack));
   }
-  callback_(result, !err ? null : err.message + "\n" + err.stack);
+  callback_(!err ? null : err.message + "\n" + err.stack, result);
 };
 
 JXMobile.executeJSON = function(json, callbackId) {
@@ -295,7 +295,7 @@ JXMobile.executeJSON = function(json, callbackId) {
 
       var ret_val = fnc.method.apply(null, json.params);
       if (fnc.is_synced && callbackId) {
-        new MakeCallback(callbackId).callback(ret_val);
+        new MakeCallback(callbackId).callback(null, ret_val);
       } else {
         return ret_val;
       }
