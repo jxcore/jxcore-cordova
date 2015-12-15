@@ -62,9 +62,9 @@ Once everything is set and you have added jxcore-cordova extension, create a fol
 Node modules should go in the `www/jxcore/node_modules` folder.
 
 **Important Steps for the First Timers**  
-Under the sample folder you will find `express sample` application. There you have the entire 
+Under the sample folder you will find `express_sample` application. There you have the entire
 `www` folder that you can use instead of the `www` folder under cordova project root folder. 
-Replace `www` folder from the project's root to the one under the `sample/express sample`.
+Replace `www` folder from the project's root to the one under the `sample/express_sample`.
 
 You can also use the automated script on posix platforms: `install_and_run.sh`. More on this 
 [here](install_and_run.md).
