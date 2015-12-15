@@ -258,18 +258,16 @@ internal_methods['loadMainFile'] = function(filePath, callback_) {
     return;
   }
 
-  var result = true;
   var err = null;
   try {
     var src = path.join(process.cwd(), filePath);
     require(src);
   } catch (e) {
-    result = false;
     Error.captureStackTrace(e);
     err = e;
     JXMobile('OnError').callNative(e.message, JSON.stringify(e.stack));
   }
-  callback_(!err ? null : err.message + "\n" + err.stack, result);
+  callback_(!err ? null : err.message + "\n" + err.stack);
 };
 
 JXMobile.executeJSON = function(json, callbackId) {

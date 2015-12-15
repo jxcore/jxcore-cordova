@@ -69,7 +69,7 @@
             jxcore('log').register(log);
 
             // set the main file and load.
-            jxcore('app.js').loadMainFile(function (err, ret) {
+            jxcore('app.js').loadMainFile(function (err) {
                 if(err) {
                     alert(JSON && JSON.stringify ? JSON.stringify(err) : err);
                 } else {
