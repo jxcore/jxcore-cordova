@@ -2,7 +2,7 @@
 
 ![Android](./screens/android.png "Android")
 
-Supposing you have already installed [JXcore](http://jxcore.com/downloads/), cordova and gulp globally, now install local npm modules:
+Supposing you have already installed [JXcore](http://jxcore.com/downloads/) and cordova globally, now install local npm modules:
 
 ```bash
 jx install
@@ -11,7 +11,7 @@ jx install
 To run on android just type:
 
 ```bash
-gulp run-android
+jx npm run-script run-android
 ```
 
 Notes!
