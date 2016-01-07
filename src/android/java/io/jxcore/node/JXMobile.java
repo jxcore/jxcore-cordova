@@ -45,6 +45,7 @@ public class JXMobile {
             .getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
         String info = "{\"NotConnected\":1}";
+        @SuppressWarnings("deprecation")
         NetworkInfo[] netInfo = cm.getAllNetworkInfo();
         for (NetworkInfo ni : netInfo) {
           if (ni.getTypeName().equalsIgnoreCase("WIFI"))
@@ -76,8 +77,7 @@ public class JXMobile {
     });
 
     /*
-     * ADD: 
-     * <uses-permission android:name="android.permission.BLUETOOTH" />
+     * ADD: <uses-permission android:name="android.permission.BLUETOOTH" />
      * <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
      */
     jxcore.RegisterMethod("ToggleBluetooth", new JXcoreCallback() {
@@ -91,14 +91,14 @@ public class JXMobile {
           mBluetoothAdapter.enable();
         else
           mBluetoothAdapter.disable();
-        
+
         jxcore.CallJSMethod(callbackId, "null");
       }
     });
 
     /*
-     * ADD: 
-     * <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+     * ADD: <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"
+     * />
      */
     jxcore.RegisterMethod("ToggleWiFi", new JXcoreCallback() {
       @SuppressLint("NewApi")
@@ -108,12 +108,12 @@ public class JXMobile {
         WifiManager wifiManager = (WifiManager) jxcore.activity
             .getBaseContext().getSystemService(Context.WIFI_SERVICE);
         wifiManager.setWifiEnabled(enabled);
-        
-        if(enabled) {
+
+        if (enabled) {
           wifiManager.disconnect();
           wifiManager.reconnect();
         }
-        
+
         jxcore.CallJSMethod(callbackId, "null");
       }
     });

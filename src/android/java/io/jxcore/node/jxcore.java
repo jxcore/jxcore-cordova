@@ -19,7 +19,6 @@ import org.json.JSONException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
@@ -60,35 +59,9 @@ public class jxcore extends CordovaPlugin {
 
   Map<String, CallbackContext> callbacks;
   static Map<String, JXcoreCallback> java_callbacks;
-  public static Handler handler = null;
+  public static CoreThread coreThread = null;
   public static boolean app_paused = false;
-
-  public class CoreRunable implements Runnable {
-    @Override
-    public void run() {
-      // TODO Auto-generated method stub
-    }
-
-    public String callback_id_;
-    public PluginResult result_;
-    public Object[] params_;
-    public String str_param_;
-
-    public CoreRunable(String callback_id, PluginResult result) {
-      callback_id_ = callback_id;
-      result_ = result;
-    }
-
-    public CoreRunable(String callback_id, String str_param) {
-      callback_id_ = callback_id;
-      str_param_ = str_param;
-    }
-
-    public CoreRunable(String callback_id, Object[] params) {
-      callback_id_ = callback_id;
-      params_ = params;
-    }
-  }
+  public static boolean jxcoreInitialized = false;
 
   public static void CreateResult(Object value, String callback_id,
       boolean async, boolean is_error) {
@@ -124,7 +97,7 @@ public class jxcore extends CordovaPlugin {
     if (async) {
       result.setKeepCallback(true);
       if (addon.callbacks.containsKey(callback_id)) {
-        activity.runOnUiThread(addon.new CoreRunable(callback_id, result) {
+        activity.runOnUiThread(new CoreRunnable(callback_id, result) {
           @Override
           public void run() {
             CallbackContext ctx = addon.callbacks.get(callback_id_);
@@ -144,70 +117,6 @@ public class jxcore extends CordovaPlugin {
 
   public static void jx_callback(Object value, Object error, String callbackId) {
     CreateResult(error == null ? value : error, callbackId, true, error != null);
-  }
-
-  @Override
-  protected void pluginInitialize() {
-    final boolean new_instance = activity == null;
-    activity = cordova.getActivity();
-    if (!new_instance) {
-      setNativeContext(activity.getBaseContext(), activity.getAssets());
-    } else {
-      Log.d(LOGTAG, "jxcore cordova android initializing");
-    }
-    addon = this;
-
-    callbacks = new HashMap<String, CallbackContext>();
-    java_callbacks = new HashMap<String, JXcoreCallback>();
-
-    RegisterMethod("  _callback_  ", new JXcoreCallback() {
-      @Override
-      public void Receiver(ArrayList<Object> params, String callbackId) {
-        if (params.size() < 3 || !params.get(2).getClass().equals(String.class)) {
-          Log.e(LOGTAG, "Unkown _callback_ received");
-          return;
-        }
-        jxcore.jx_callback(params.get(0), params.get(1), params.get(2)
-            .toString());
-      }
-    });
-
-    JXcoreExtension.LoadExtensions();
-    JXMobile.Initialize();
-
-    if (!new_instance)
-      return;
-
-    activity.runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        setNativeContext(activity.getBaseContext(), activity.getAssets());
-        startProgress();
-      }
-    });
-  }
-
-  private static void startProgress() {
-    addon.Initialize(activity.getBaseContext().getFilesDir().getAbsolutePath());
-
-    Runnable runnable = new Runnable() {
-      @Override
-      public void run() {
-        int active = addon.loopOnce();
-        final int wait_long = app_paused ? 50 : 5;
-        if (active == 0)
-          handler.postDelayed(this, wait_long);
-        else
-          handler.postDelayed(this, 1);
-      }
-    };
-
-    if (handler != null) {
-      handler.getLooper().quit();
-    }
-
-    handler = new Handler(activity.getMainLooper());
-    handler.postDelayed(runnable, 5);
   }
 
   public static void javaCall(ArrayList<Object> params) {
@@ -253,13 +162,13 @@ public class jxcore extends CordovaPlugin {
   }
 
   public static boolean CallJSMethod(String id, Object[] args) {
-    if (jxcore.handler == null) {
+    if (jxcore.coreThread == null) {
       Log.e(LOGTAG, "JXcore wasn't initialized yet");
       return false;
     }
 
-    if (Looper.myLooper() != Looper.getMainLooper()) {
-      activity.runOnUiThread(jxcore.addon.new CoreRunable(id, args) {
+    if (Looper.myLooper() != coreThread.handler.getLooper()) {
+      coreThread.handler.post(new CoreRunnable(id, args) {
         @Override
         public void run() {
           callJSMethod(callback_id_, params_);
@@ -273,13 +182,13 @@ public class jxcore extends CordovaPlugin {
   }
 
   public static boolean CallJSMethod(String id, String json) {
-    if (jxcore.handler == null) {
+    if (jxcore.coreThread == null) {
       Log.e(LOGTAG, "JXcore wasn't initialized yet");
       return false;
     }
 
-    if (Looper.myLooper() != Looper.getMainLooper()) {
-      activity.runOnUiThread(jxcore.addon.new CoreRunable(id, json) {
+    if (Looper.myLooper() != coreThread.handler.getLooper()) {
+      coreThread.handler.post(new CoreRunnable(id, json) {
         @Override
         public void run() {
           callJSMethod(callback_id_, str_param_);
@@ -299,7 +208,7 @@ public class jxcore extends CordovaPlugin {
     PluginResult result = null;
     try {
       if (action.equals("isReady")) {
-        result = new PluginResult(Status.OK, handler != null);
+        result = new PluginResult(Status.OK, jxcoreInitialized);
       } else if (action.equals("Evaluate")) {
         final String json = data.get(0).toString() + ", '"
             + callbackContext.getCallbackId() + "')";
@@ -308,8 +217,8 @@ public class jxcore extends CordovaPlugin {
         result = new PluginResult(Status.NO_RESULT);
         result.setKeepCallback(true);
 
-        activity.runOnUiThread(new CoreRunable(callbackContext.getCallbackId(),
-            json) {
+        coreThread.handler.post(new CoreRunnable(callbackContext
+            .getCallbackId(), json) {
           @Override
           public void run() {
             long res = evalEngine(str_param_);
@@ -346,8 +255,27 @@ public class jxcore extends CordovaPlugin {
     app_paused = false;
   }
 
+  private static void startProgress() {
+    addon.Initialize(activity.getBaseContext().getFilesDir().getAbsolutePath());
+
+    Runnable runnable = new Runnable() {
+      @Override
+      public void run() {
+        int active = addon.loopOnce();
+        final int wait_long = app_paused ? 10 : 3;
+        if (active == 0)
+          coreThread.handler.postDelayed(this, wait_long);
+        else
+          coreThread.handler.postDelayed(this, 1);
+      }
+    };
+
+    coreThread.handler.postDelayed(runnable, 1);
+  }
+
+  // Make sure calling this method under CoreThread!!
   private void Initialize(String home) {
-    // assets.list is terribly slow, below trick is literally 100 times faster
+    // assets.list is terribly slow, trick below is literally 100 times faster
     StringBuilder assets = new StringBuilder();
     assets.append("{");
     boolean first_entry = true;
@@ -390,5 +318,55 @@ public class jxcore extends CordovaPlugin {
     defineMainFile(data);
 
     startEngine();
+
+    jxcoreInitialized = true;
+  }
+
+  @Override
+  protected void pluginInitialize() {
+    final boolean new_instance = activity == null;
+    activity = cordova.getActivity();
+    if (!new_instance) {
+      setNativeContext(activity.getBaseContext(), activity.getAssets());
+    } else {
+      Log.d(LOGTAG, "jxcore cordova android initializing");
+    }
+    addon = this;
+
+    callbacks = new HashMap<String, CallbackContext>();
+    java_callbacks = new HashMap<String, JXcoreCallback>();
+
+    RegisterMethod("  _callback_  ", new JXcoreCallback() {
+      @Override
+      public void Receiver(ArrayList<Object> params, String callbackId) {
+        if (params.size() < 3 || !params.get(2).getClass().equals(String.class)) {
+          Log.e(LOGTAG, "Unkown _callback_ received");
+          return;
+        }
+        jxcore.jx_callback(params.get(0), params.get(1), params.get(2)
+            .toString());
+      }
+    });
+
+    JXcoreExtension.LoadExtensions();
+    JXMobile.Initialize();
+
+    if (!new_instance)
+      return;
+
+    if (coreThread != null) {
+      coreThread.handler.getLooper().quit();
+    }
+
+    Runnable runnable = new Runnable() {
+      @Override
+      public void run() {
+        setNativeContext(activity.getBaseContext(), activity.getAssets());
+        startProgress();
+      }
+    };
+
+    coreThread = new CoreThread(runnable);
+    coreThread.start();
   }
 }
