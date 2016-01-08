@@ -72,7 +72,7 @@
         <source-file src="app/jxcore_cordova.js" target-dir="assets/" />
 
         <source-file src="src/android/java/io/jxcore/node/FileManager.java" target-dir="src/io/jxcore/node/" />
-        <source-file src="src/android/java/io/jxcore/node/CoreRunnable.java.java" target-dir="src/io/jxcore/node/" />
+        <source-file src="src/android/java/io/jxcore/node/CoreRunnable.java" target-dir="src/io/jxcore/node/" />
         <source-file src="src/android/java/io/jxcore/node/JXMobile.java" target-dir="src/io/jxcore/node/" />
         <source-file src="src/android/java/io/jxcore/node/jxcore.java" target-dir="src/io/jxcore/node/" />
         <source-file src="src/android/java/io/jxcore/node/JXcoreExtension.java" target-dir="src/io/jxcore/node/" />
