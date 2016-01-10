@@ -552,6 +552,10 @@ if (isAndroid) {
   JXMobile('JXcore_Device_OnPause').registerToNative(function() {
     process.emit('pause');
   });
+
+  JXMobile('JXcore_Device_OnConnectionStatusChanged').registerToNative(function(status) {
+    process.emit('connectionStatusChanged', status);
+  });
 } else {
   jxcore.tasks.register(process.setPaths);
 }
