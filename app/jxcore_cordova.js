@@ -6,8 +6,7 @@ var internal_methods = {};
 var ui_methods = {};
 
 function JXMobile(x) {
-  if (!(this instanceof JXMobile))
-    return new JXMobile(x);
+  if (!(this instanceof JXMobile)) return new JXMobile(x);
 
   this.name = x;
 }
@@ -25,7 +24,7 @@ function callJXcoreNative(name, args) {
     params.pop();
   }
 
-  var fnc = [ name ];
+  var fnc = [name];
   var arr = fnc.concat(params);
   arr.push(cb);
 
@@ -37,8 +36,9 @@ function MakeCallback(callbackId) {
 
   var _this = this;
   this.callback = function() {
-    callJXcoreNative("  _callback_  ", [
-        Array.prototype.slice.call(arguments, 0), null, _this.cid ]);
+    callJXcoreNative(
+        "  _callback_  ",
+        [ Array.prototype.slice.call(arguments, 0), null, _this.cid ]);
   };
 }
 
@@ -55,9 +55,7 @@ function WrapFunction(cb, fnc) {
 
 JXMobile.events = {};
 JXMobile.eventId = 0;
-JXMobile.on = function(name, target) {
-  JXMobile.events[name] = target;
-};
+JXMobile.on = function(name, target) { JXMobile.events[name] = target; };
 
 JXMobile.prototype.callNative = function() {
   callJXcoreNative(this.name, arguments);
@@ -71,10 +69,10 @@ JXMobile.ping = function(name, param) {
   if (Array.isArray(param)) {
     x = param;
   } else if (param.str) {
-    x = [ param.str ];
+    x = [param.str];
   } else if (param.json) {
     try {
-      x = [ JSON.parse(param.json) ];
+      x = [JSON.parse(param.json)];
     } catch (e) {
       return e;
     }
@@ -161,33 +159,31 @@ JXMobile.getDocumentsPath = JXMobile.GetDocumentsPath = function(callback) {
     throw new Error("JXMobile.GetDocumentsPath expects a function callback");
   }
 
-  JXMobile('GetDocumentsPath').callNative(function(res) {
-    callback(null, res);
-  });
+  JXMobile('GetDocumentsPath')
+      .callNative(function(res) { callback(null, res); });
 };
 
-JXMobile.toggleBluetooth = JXMobile.ToggleBluetooth = function(enabled,
-    callback) {
-  // force boolean
-  if (!enabled) {
-    enabled = false;
-  } else {
-    enabled = true;
-  }
+JXMobile.toggleBluetooth =
+    JXMobile.ToggleBluetooth = function(enabled, callback) {
+      // force boolean
+      if (!enabled) {
+        enabled = false;
+      } else {
+        enabled = true;
+      }
 
-  if (typeof callback != "function") {
-    callback = function() {
+      if (typeof callback != "function") {
+        callback = function() {};
+      }
+
+      if (isAndroid) {
+        JXMobile('ToggleBluetooth').callNative(enabled, callback);
+      } else {
+        var err = "Warning: iOS does not support ToggleBluetooth";
+        console.error(err);
+        callback(err);
+      }
     };
-  }
-
-  if (isAndroid) {
-    JXMobile('ToggleBluetooth').callNative(enabled, callback);
-  } else {
-    var err = "Warning: iOS does not support ToggleBluetooth";
-    console.error(err);
-    callback(err);
-  }
-};
 
 JXMobile.toggleWiFi = JXMobile.ToggleWiFi = function(enabled, callback) {
   // force boolean
@@ -198,8 +194,7 @@ JXMobile.toggleWiFi = JXMobile.ToggleWiFi = function(enabled, callback) {
   }
 
   if (typeof callback != "function") {
-    callback = function() {
-    };
+    callback = function() {};
   }
 
   if (isAndroid) {
@@ -216,19 +211,17 @@ JXMobile.getDeviceName = JXMobile.GetDeviceName = function(callback) {
     throw new Error("JXMobile.GetDeviceName expects a function callback");
   }
 
-  JXMobile('GetDeviceName').callNative(function(res) {
-    callback(null, res);
-  });
+  JXMobile('GetDeviceName').callNative(function(res) { callback(null, res); });
 };
 
-JXMobile.getConnectionStatus = JXMobile.GetConnectionStatus = function(callback) {
+JXMobile.getConnectionStatus = JXMobile.GetConnectionStatus = function(
+    callback) {
   if (typeof callback != "function") {
     throw new Error("JXMobile.GetConnectionStatus expects a function callback");
   }
 
-  JXMobile('GetConnectionStatus').callNative(function(res) {
-    callback(null, res);
-  });
+  JXMobile('GetConnectionStatus')
+      .callNative(function(res) { callback(null, res); });
 };
 
 internal_methods['registerUIMethod'] = function(methodName, callback_) {
@@ -237,8 +230,8 @@ internal_methods['registerUIMethod'] = function(methodName, callback_) {
   }
 
   if (!methodName || !methodName.indexOf) {
-    throw new Error("Couldn't register UI method. '" + methodName
-        + "' is undefined or not string");
+    throw new Error("Couldn't register UI method. '" + methodName +
+                    "' is undefined or not string");
     return;
   }
 
@@ -253,8 +246,8 @@ internal_methods['loadMainFile'] = function(filePath, callback_) {
   }
 
   if (!filePath || !filePath.indexOf) {
-    throw new Error("Couldn't load main file. '" + filePath
-        + "' is undefined or not string");
+    throw new Error("Couldn't load main file. '" + filePath +
+                    "' is undefined or not string");
     return;
   }
 
@@ -273,21 +266,19 @@ internal_methods['loadMainFile'] = function(filePath, callback_) {
 };
 
 JXMobile.executeJSON = function(json, callbackId) {
-  if (!json.methodName)
-    return; // try throw exception
+  if (!json.methodName) return;  // try throw exception
 
   var internal = internal_methods[json.methodName];
   var fnc = jx_methods[json.methodName];
   try {
     if (internal) {
-      var cb = new MakeCallback(callbackId).callback
-      json.params.push(cb);
+      var cb = new MakeCallback(callbackId).callback json.params.push(cb);
       internal.apply(null, json.params);
       return;
     } else if (fnc) {
       if (!fnc.is_synced) {
-        if (!json.params
-            || (json.params.length == 1 && json.params[0] === null)) {
+        if (!json.params ||
+            (json.params.length == 1 && json.params[0] === null)) {
           json.params = [];
         }
         json.params[json.params.length] = new MakeCallback(callbackId).callback;
@@ -300,10 +291,9 @@ JXMobile.executeJSON = function(json, callbackId) {
         return ret_val;
       }
       return;
-    } else if (json.methodName && json.methodName.length > 3
-        && json.methodName.substr(0, 3) === "RC-") {
-      var cb = new MakeCallback(callbackId).callback
-      json.params.push(cb);
+    } else if (json.methodName && json.methodName.length > 3 &&
+               json.methodName.substr(0, 3) === "RC-") {
+      var cb = new MakeCallback(callbackId).callback json.params.push(cb);
       fnc = ui_methods[json.methodName.substr(3)];
       if (fnc && fnc.returnCallback) {
         fnc.returnCallback.apply(null, json.params);
@@ -313,7 +303,7 @@ JXMobile.executeJSON = function(json, callbackId) {
     }
 
     throw new Error("JXcore: Method Doesn't Exist [", json.methodName,
-        "] Did you register it?");
+                    "] Did you register it?");
   } catch (e) {
     Error.captureStackTrace(e);
     JXMobile('OnError').callNative(e.message, JSON.stringify(e.stack));
@@ -330,8 +320,7 @@ if (isAndroid) {
   // bring APK support into 'fs'
   process.registerAssets = function(from) {
     var fs = from;
-    if (!fs || !fs.existsSync)
-      fs = require('fs');
+    if (!fs || !fs.existsSync) fs = require('fs');
 
     var path = require('path');
     var folders = process.natives.assetReadDirSync();
@@ -345,8 +334,7 @@ if (isAndroid) {
 
       for (var i = 0; i < 3; i++) {
         try {
-          if (!fs.existsSync(arr[i]))
-            fs.mkdirSync(arr[i]);
+          if (!fs.existsSync(arr[i])) fs.mkdirSync(arr[i]);
         } catch (e) {
           console.error("Permission issues ? ", arr[i], e)
         }
@@ -358,8 +346,7 @@ if (isAndroid) {
     var sroot = root;
     var hasRootLink = false;
     if (root.indexOf('/data/user/') === 0) {
-      var pd = process.userPath
-          .replace(/\/data\/user\/[0-9]+\//, "/data/data/");
+      var pd = process.userPath.replace(/\/data\/user\/[0-9]+\//, "/data/data/");
       createRealPath(pd);
       sroot = root.replace(/\/data\/user\/[0-9]+\//, "/data/data/");
       hasRootLink = true;
@@ -369,32 +356,31 @@ if (isAndroid) {
 
     var prepVirtualDirs = function() {
       var _ = {};
-      for ( var o in folders) {
+      for (var o in folders) {
         var sub = o.split('/');
         var last = _;
-        for ( var i in sub) {
+        for (var i = 0, _ln = sub.length; i < _ln; i++) {
           var loc = sub[i];
-          if (!last.hasOwnProperty(loc))
-            last[loc] = {};
+          if (!last.hasOwnProperty(loc)) last[loc] = {};
           last = last[loc];
         }
+
         last['!s'] = folders[o];
       }
 
       folders = {};
       var sp = sroot.split('/');
-      if (sp[0] === '')
-        sp.shift();
+      if (sp[0] === '') sp.shift();
       jxcore_root = folders;
-      for ( var o in sp) {
-        if (sp[o] === 'jxcore')
-          continue;
+      for (var o = 0, _ln = sp.length; o < _ln; o++) {
+        var spo = sp[o];
+        if (spo === 'jxcore') continue;
 
-        jxcore_root[sp[o]] = {};
-        jxcore_root = jxcore_root[sp[o]];
+        jxcore_root[spo] = {};
+        jxcore_root = jxcore_root[spo];
       }
 
-      jxcore_root['jxcore'] = _; // assets/www/jxcore -> /
+      jxcore_root['jxcore'] = _;  // assets/www/jxcore -> /
       jxcore_root = _;
     };
 
@@ -402,10 +388,9 @@ if (isAndroid) {
 
     var findIn = function(what, where) {
       var last = where;
-      for ( var o in what) {
+      for (var o in what) {
         var subject = what[o];
-        if (!last[subject])
-          return;
+        if (!last[subject]) return;
 
         last = last[subject];
       }
@@ -414,8 +399,7 @@ if (isAndroid) {
     };
 
     var getLast = function(pathname) {
-      while (pathname[0] == '/')
-        pathname = pathname.substr(1);
+      while (pathname[0] == '/') pathname = pathname.substr(1);
 
       while (pathname[pathname.length - 1] == '/')
         pathname = pathname.substr(0, pathname.length - 1);
@@ -423,28 +407,24 @@ if (isAndroid) {
       var dirs = pathname.split('/');
 
       var res = findIn(dirs, jxcore_root);
-      if (!res)
-        res = findIn(dirs, folders);
+      if (!res) res = findIn(dirs, folders);
       return res;
     };
 
     var stat_archive = {};
     var existssync = function(pathname) {
       var n = pathname.indexOf(root);
-      if (hasRootLink && n == -1)
-        n = pathname.indexOf(sroot);
+      if (hasRootLink && n == -1) n = pathname.indexOf(sroot);
       if (n === 0 || n === -1) {
         if (n === 0) {
           pathname = pathname.replace(root, '');
-          if (hasRootLink)
-            pathname = pathname.replace(sroot, '');
+          if (hasRootLink) pathname = pathname.replace(sroot, '');
         }
 
         var last;
         if (pathname !== '') {
           last = getLast(pathname);
-          if (!last)
-            return false;
+          if (!last) return false;
         } else {
           last = jxcore_root;
         }
@@ -477,8 +457,7 @@ if (isAndroid) {
     };
 
     var readfilesync = function(pathname) {
-      if (!existssync(pathname))
-        throw new Error(pathname + " does not exist");
+      if (!existssync(pathname)) throw new Error(pathname + " does not exist");
 
       var rt = root;
       var n = pathname.indexOf(rt);
@@ -497,18 +476,16 @@ if (isAndroid) {
 
     var readdirsync = function(pathname) {
       var rt = pathname.indexOf('/data/') === 0 ? (hasRootLink ? sroot : root)
-          : root;
+                                                : root;
       var n = pathname.indexOf(rt);
       if (n === 0 || n === -1) {
         var last = getLast(pathname);
-        if (!last || typeof last['!s'] !== 'undefined')
-          return null;
+        if (!last || typeof last['!s'] !== 'undefined') return null;
 
         var arr = [];
-        for ( var o in last) {
+        for (var o in last) {
           var item = last[o];
-          if (item && o != '!s')
-            arr.push(o);
+          if (item && o != '!s') arr.push(o);
         }
         return arr;
       }
@@ -531,11 +508,11 @@ if (isAndroid) {
 
   process.registerAssets();
 
-  // if a submodule monkey patches 'fs' module, make sure APK support comes with
-  // it
+  // if a submodule monkey patches 'fs' module, make sure APK
+  // support comes with it
   var extendFS = function() {
-    process.binding('natives').fs += "(" + process.registerAssets
-        + ")(exports);";
+    process.binding('natives').fs +=
+        "(" + process.registerAssets + ")(exports);";
   };
 
   extendFS();
@@ -545,13 +522,11 @@ if (isAndroid) {
   jxcore.tasks.register(process.registerAssets);
   jxcore.tasks.register(extendFS);
 
-  JXMobile('JXcore_Device_OnResume').registerToNative(function() {
-    process.emit('resume');
-  });
+  JXMobile('JXcore_Device_OnResume')
+      .registerToNative(function() { process.emit('resume'); });
 
-  JXMobile('JXcore_Device_OnPause').registerToNative(function() {
-    process.emit('pause');
-  });
+  JXMobile('JXcore_Device_OnPause')
+      .registerToNative(function() { process.emit('pause'); });
 } else {
   jxcore.tasks.register(process.setPaths);
 }
