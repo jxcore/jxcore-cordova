@@ -1,0 +1,7 @@
+node_modules/
+io.jxcore.node/
+platforms/
+plugins/
+www/jxcore/node_modules
+/**/*.db
+build.keystore

@@ -327,7 +327,7 @@ public class jxcore extends CordovaPlugin {
         }
         jxcore.jx_callback(params.get(0), params.get(1), params.get(2)
             .toString());
-      }
+      } 
     });
 
     JXcoreExtension.LoadExtensions();
@@ -340,7 +340,6 @@ public class jxcore extends CordovaPlugin {
           setNativeContext(activity.getBaseContext(), activity.getAssets());
           addon.Initialize(activity.getBaseContext().getFilesDir()
               .getAbsolutePath());
-
           Runnable runnable2 = new Runnable() {
             @Override
             public void run() {
