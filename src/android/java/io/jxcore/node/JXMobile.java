@@ -87,12 +87,17 @@ public class JXMobile {
         Boolean enabled = (Boolean) params.get(0);
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter
             .getDefaultAdapter();
-        if (enabled)
-          mBluetoothAdapter.enable();
-        else
-          mBluetoothAdapter.disable();
-
-        jxcore.CallJSMethod(callbackId, "null");
+        if (mBluetoothAdapter != null) {
+          if (enabled)
+            mBluetoothAdapter.enable();
+          else
+            mBluetoothAdapter.disable();
+          
+          jxcore.CallJSMethod(callbackId, "null");
+        } else {
+          jxcore.CallJSMethod(callbackId,
+              "{\"msg\":\"Bluetooth adapter is not available\"}");
+        }
       }
     });
 
@@ -107,14 +112,20 @@ public class JXMobile {
         Boolean enabled = (Boolean) params.get(0);
         WifiManager wifiManager = (WifiManager) jxcore.activity
             .getBaseContext().getSystemService(Context.WIFI_SERVICE);
-        wifiManager.setWifiEnabled(enabled);
 
-        if (enabled) {
-          wifiManager.disconnect();
-          wifiManager.reconnect();
+        if (wifiManager != null) {
+          wifiManager.setWifiEnabled(enabled);
+          
+          if (enabled) {
+            wifiManager.disconnect();
+            wifiManager.reconnect();
+          }
+          
+          jxcore.CallJSMethod(callbackId, "null");
+        } else {
+          jxcore.CallJSMethod(callbackId,
+              "{\"msg\":\"Wireless adapter is not available\"}");
         }
-
-        jxcore.CallJSMethod(callbackId, "null");
       }
     });
   }
