@@ -272,7 +272,7 @@ JXMobile.executeJSON = function(json, callbackId) {
   var fnc = jx_methods[json.methodName];
   try {
     if (internal) {
-      var cb = new MakeCallback(callbackId).callback;
+      var cb = new MakeCallback(callbackId).callback; 
       json.params.push(cb);
       internal.apply(null, json.params);
       return;
@@ -294,7 +294,7 @@ JXMobile.executeJSON = function(json, callbackId) {
       return;
     } else if (json.methodName && json.methodName.length > 3 &&
                json.methodName.substr(0, 3) === "RC-") {
-      var cb = new MakeCallback(callbackId).callback;
+      var cb = new MakeCallback(callbackId).callback; 
       json.params.push(cb);
       fnc = ui_methods[json.methodName.substr(3)];
       if (fnc && fnc.returnCallback) {
