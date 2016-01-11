@@ -1,4 +1,13 @@
-#### 0.0.8 - DEV Version
+#### 0.1.0 - DEV Version
+ - JXcore 0.3.1.1 
+   - Several stability improvements 
+   - Several Android SIGSEGV fixes
+   - Memory usage reduced (up to 1 Mb)
+ - toggleWifi / Bluetooth adapter check
+ - use proper root value. fixes #93
+ - Android 6.01 Support 
+ - Android no longer uses UI thread 
+#### 0.0.8
  - Update to latest JXcore 0.3.0.7
  - Fixes Android WiFi reconnection issue
 #### 0.0.7
