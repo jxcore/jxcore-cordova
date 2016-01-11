@@ -28,6 +28,8 @@ public class jxcore extends CordovaPlugin {
     System.loadLibrary("jxcore");
   }
 
+  // Methods below are inherited from jxcore-cordova JNI
+  // Make sure reach these methods under the same thread
   public native void setNativeContext(final Context context,
       final AssetManager assetManager);
 
@@ -255,24 +257,6 @@ public class jxcore extends CordovaPlugin {
     app_paused = false;
   }
 
-  private static void startProgress() {
-    addon.Initialize(activity.getBaseContext().getFilesDir().getAbsolutePath());
-
-    Runnable runnable = new Runnable() {
-      @Override
-      public void run() {
-        int active = addon.loopOnce();
-        final int wait_long = app_paused ? 10 : 3;
-        if (active == 0)
-          coreThread.handler.postDelayed(this, wait_long);
-        else
-          coreThread.handler.postDelayed(this, 1);
-      }
-    };
-
-    coreThread.handler.postDelayed(runnable, 1);
-  }
-
   // Make sure calling this method under CoreThread!!
   private void Initialize(String home) {
     // assets.list is terribly slow, trick below is literally 100 times faster
@@ -327,8 +311,6 @@ public class jxcore extends CordovaPlugin {
     final boolean new_instance = activity == null;
     activity = cordova.getActivity();
     if (!new_instance) {
-      setNativeContext(activity.getBaseContext(), activity.getAssets());
-    } else {
       Log.d(LOGTAG, "jxcore cordova android initializing");
     }
     addon = this;
@@ -345,28 +327,49 @@ public class jxcore extends CordovaPlugin {
         }
         jxcore.jx_callback(params.get(0), params.get(1), params.get(2)
             .toString());
-      }
+      } 
     });
 
     JXcoreExtension.LoadExtensions();
     JXMobile.Initialize();
 
-    if (!new_instance)
-      return;
+    if (new_instance) {
+      Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+          setNativeContext(activity.getBaseContext(), activity.getAssets());
+          addon.Initialize(activity.getBaseContext().getFilesDir().getAbsolutePath());
+          
+          Runnable runnable2 = new Runnable() {
+            @Override
+            public void run() {
+              int active = addon.loopOnce();
+              final int wait_long = app_paused ? 10 : 3;
+              if (active == 0)
+                coreThread.handler.postDelayed(this, wait_long);
+              else
+                coreThread.handler.postDelayed(this, 1);
+            }
+          };
 
-    if (coreThread != null) {
-      coreThread.handler.getLooper().quit();
-    }
-
-    Runnable runnable = new Runnable() {
-      @Override
-      public void run() {
-        setNativeContext(activity.getBaseContext(), activity.getAssets());
-        startProgress();
+          coreThread.handler.postDelayed(runnable2, 1);
+        }
+      };
+      
+      if (coreThread != null) {
+        coreThread.handler.getLooper().quit();
       }
-    };
 
-    coreThread = new CoreThread(runnable);
-    coreThread.start();
+      coreThread = new CoreThread(runnable);
+      coreThread.start();
+    } else {
+      Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+          setNativeContext(activity.getBaseContext(), activity.getAssets());
+        }
+      };
+      coreThread.handler.post(runnable);
+    }
   }
 }
