@@ -7,6 +7,7 @@
  - use proper root value. fixes #93
  - Android 6.01 Support 
  - Android no longer uses UI thread 
+ - Connectivity change listener (process.connectionStatusChanged)
 #### 0.0.8
  - Update to latest JXcore 0.3.0.7
  - Fixes Android WiFi reconnection issue
