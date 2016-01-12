@@ -68,9 +68,18 @@
             <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
             <uses-permission android:name="android.permission.BLUETOOTH" />
         </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <receiver android:name="io.jxcore.node.ConnectivityChangeListener" >
+                <intent-filter>
+                    <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                    <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+                </intent-filter>
+            </receiver>
+        </config-file>
        <!-- <source-file src="app/jxcore" target-dir="assets/" /> -->
         <source-file src="app/jxcore_cordova.js" target-dir="assets/" />
 
+        <source-file src="src/android/java/io/jxcore/node/ConnectivityChangeListener.java" target-dir="src/io/jxcore/node/" />
         <source-file src="src/android/java/io/jxcore/node/FileManager.java" target-dir="src/io/jxcore/node/" />
         <source-file src="src/android/java/io/jxcore/node/CoreRunnable.java" target-dir="src/io/jxcore/node/" />
         <source-file src="src/android/java/io/jxcore/node/JXMobile.java" target-dir="src/io/jxcore/node/" />
