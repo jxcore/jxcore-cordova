@@ -245,13 +245,15 @@ public class jxcore extends CordovaPlugin {
     return true;
   }
 
-  public void onStart(boolean multitasking) {
+  @Override
+  public void onPause(boolean multitasking) {
     super.onPause(multitasking);
     jxcore.CallJSMethod("JXcore_Device_OnPause", "{}");
     app_paused = true;
   }
 
-  public void onStop(boolean multitasking) {
+  @Override
+  public void onResume(boolean multitasking) {
     super.onResume(multitasking);
     jxcore.CallJSMethod("JXcore_Device_OnResume", "{}");
     app_paused = false;
@@ -338,8 +340,8 @@ public class jxcore extends CordovaPlugin {
         @Override
         public void run() {
           setNativeContext(activity.getBaseContext(), activity.getAssets());
-          addon.Initialize(activity.getBaseContext().getFilesDir().getAbsolutePath());
-          
+          addon.Initialize(activity.getBaseContext().getFilesDir()
+              .getAbsolutePath());
           Runnable runnable2 = new Runnable() {
             @Override
             public void run() {
@@ -355,7 +357,7 @@ public class jxcore extends CordovaPlugin {
           coreThread.handler.postDelayed(runnable2, 1);
         }
       };
-      
+
       if (coreThread != null) {
         coreThread.handler.getLooper().quit();
       }

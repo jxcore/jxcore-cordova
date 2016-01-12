@@ -493,6 +493,7 @@
     "src/android/build_default.sh",
     "src/android/build_leveldown.sh",
     "src/android/gen/io/jxcore/node/BuildConfig.java",
+    "src/android/java/io/jxcore/node/ConnectivityChangeListener.java",
     "src/android/java/io/jxcore/node/CoreRunnable.java",
     "src/android/java/io/jxcore/node/FileManager.java",
     "src/android/java/io/jxcore/node/JXMobile.java",
