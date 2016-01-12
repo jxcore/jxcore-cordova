@@ -245,13 +245,15 @@ public class jxcore extends CordovaPlugin {
     return true;
   }
 
-  public void onStart(boolean multitasking) {
+  @Override
+  public void onPause(boolean multitasking) {
     super.onPause(multitasking);
     jxcore.CallJSMethod("JXcore_Device_OnPause", "{}");
     app_paused = true;
   }
 
-  public void onStop(boolean multitasking) {
+  @Override
+  public void onResume(boolean multitasking) {
     super.onResume(multitasking);
     jxcore.CallJSMethod("JXcore_Device_OnResume", "{}");
     app_paused = false;

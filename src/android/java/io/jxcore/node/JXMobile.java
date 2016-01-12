@@ -15,6 +15,26 @@ import android.net.wifi.WifiManager;
 import android.util.Log;
 
 public class JXMobile {
+
+	public static String getStatusString(NetworkInfo[] netInfo, Boolean asJSON) {
+		String info = "NotConnected";
+		for (NetworkInfo ni : netInfo) {
+			if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+				if (ni.isConnected()) {
+					info = "WiFi";
+					break;
+				}
+
+			if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+				if (ni.isConnected()) {
+					info = "WWAN";
+					break;
+				}
+		}
+
+		return asJSON ? "{\"" + info + "\":1}" : info;
+	}
+
   public static void Initialize() {
     jxcore.RegisterMethod("OnError", new JXcoreCallback() {
       @SuppressLint("NewApi")
@@ -41,26 +61,11 @@ public class JXMobile {
       @SuppressLint("NewApi")
       @Override
       public void Receiver(ArrayList<Object> params, String callbackId) {
-        ConnectivityManager cm = (ConnectivityManager) jxcore.activity
-            .getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+				ConnectivityManager cm = (ConnectivityManager) jxcore.activity
+						.getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        String info = "{\"NotConnected\":1}";
-        @SuppressWarnings("deprecation")
-        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
-        for (NetworkInfo ni : netInfo) {
-          if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-            if (ni.isConnected()) {
-              info = "{\"WiFi\":1}";
-              break;
-            }
-          if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-            if (ni.isConnected()) {
-              info = "{\"WWAN\":1}";
-              break;
-            }
-        }
-
-        jxcore.CallJSMethod(callbackId, info);
+				String info = JXMobile.getStatusString(cm.getAllNetworkInfo(), true);
+				jxcore.CallJSMethod(callbackId, info);
       }
     });
 

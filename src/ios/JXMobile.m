@@ -9,6 +9,43 @@
 @implementation JXMobile
 {}
 
+Reachability* reachability;
+
++ (void)initialize {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
+    reachability = [Reachability reachabilityForInternetConnection];
+    [reachability startNotifier];
+}
+
++ (void) reachabilityChanged:(NSNotification *)notice
+{
+    NetworkStatus status =  [reachability currentReachabilityStatus];
+    NSString *strStatus = [JXMobile reachabilityStatusString:(status)];
+    [JXcore Evaluate:[NSString stringWithFormat:@"process.emit('connectionStatusChanged','%@');",strStatus]];
+}
+
++ (NSString *) reachabilityStatusString:(NetworkStatus)_status {
+
+    NSString *strStatus;
+    if(_status == NotReachable)
+    {
+        //No internet
+        strStatus = @"NotConnected";
+    }
+    else if (_status == ReachableViaWiFi)
+    {
+        //WiFi
+        strStatus = @"WiFi";
+    }
+    else if (_status == ReachableViaWWAN)
+    {
+        //3G
+        strStatus = @"WWAN";
+    }
+
+    return strStatus;
+}
+
 + (void) defineMethods {
   // Listen to Errors on the JS land
   [JXcore addNativeBlock:^(NSArray *params, NSString *callbackId) {
@@ -26,28 +63,9 @@
   } withName:@"GetDocumentsPath"];
 
   [JXcore addNativeBlock:^(NSArray *params, NSString *callbackId) {
-    Reachability *reachability = [Reachability reachabilityForInternetConnection];
-    [reachability startNotifier];
-
-    NetworkStatus status = [reachability currentReachabilityStatus];
-
-    NSString *strStatus;
-    if(status == NotReachable) 
-    {
-        //No internet
-        strStatus = @"{\"NotConnected\":1}";
-    }
-    else if (status == ReachableViaWiFi)
-    {
-        //WiFi
-        strStatus = @"{\"WiFi\":1}";
-    }
-    else if (status == ReachableViaWWAN) 
-    {
-        //3G
-        strStatus = @"{\"WWAN\":1}";
-    }
-    [JXcore callEventCallback:callbackId withJSON:strStatus];
+      NetworkStatus status = [reachability currentReachabilityStatus];
+      NSString *strStatus = [JXMobile reachabilityStatusString:(status)];
+      [JXcore callEventCallback:callbackId withJSON:[NSString stringWithFormat:@"{\"%@\":1}",strStatus]];
   } withName:@"GetConnectionStatus"];
   
   // Manufacturer - Device Name
