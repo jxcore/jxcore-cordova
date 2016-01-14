@@ -10,5 +10,8 @@
     },
     "scripts": {
         "run-android": "./node_modules/.bin/gulp run-android"
+    },
+    "jxc": {
+      "plugins": ["cordova-plugin-camera"]
     }
 }
