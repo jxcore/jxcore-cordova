@@ -5,7 +5,7 @@ if (process.argv[2] == "EXTRACT") {
   var AdmZip = require('adm-zip');
 
   var zip = new AdmZip("./io.jxcore.node/bin/ios.zip");
-  zip.extractAllTo("./io.jxcore.node/bin/", true);
+  zip.extractAllToAsync("./io.jxcore.node/bin/", true, function(_, __) { /* DO NOTHING */ });
 } else {
 
   require("child_process").execFile(process.execPath, ["io.jxcore.node/index.js", "EXTRACT"],

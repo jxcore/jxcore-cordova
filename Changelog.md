@@ -1,3 +1,9 @@
+#### 0.1.1 
+
+ - Update to latest JXcore
+ - Update to latest leveldown-mobile
+ - Fix packaging issue with JX SM
+
 #### 0.1.0 - DEV Version
  - JXcore 0.3.1.1 
    - Several stability improvements 
