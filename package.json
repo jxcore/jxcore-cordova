@@ -1,6 +1,6 @@
 {
   "name": "jxcore-cordova",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Cordova JXcore Plugin to run node apps on Android and iOS",
   "cordova": {
     "id": "io.jxcore.node",

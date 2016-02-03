@@ -37,7 +37,7 @@ $ jxc install
 By default the latest version of the plugin is used. However you may specify an exact version, e.g.:
 
 ```bash
-$ jxc install 0.1.0
+$ jxc install 0.1.1
 ```
 
 For list of other possible versions see http://az836273.vo.msecnd.net.
