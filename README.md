@@ -28,7 +28,14 @@ On posix platform you may need to run it as sudo.
 
 ### 3. Install plugin
 
-Assuming your Cordova JXcore application is located under `/hello` folder, go under `/hello` folder.
+Before installing the plugin you might want to enable jxc caching as follows.
+This is to prevent multiple downloads of same jxcore-cordova plugin by jxc.
+
+```bash
+$ jxc config set cache
+```
+
+Now, assuming your Cordova JXcore application is located under `/hello` folder, go under `/hello` folder.
 
 ```bash
 $ jxc install
@@ -86,7 +93,12 @@ Are you are looking for a minimalistic sample? follow the steps below;
 cordova platform remove ios
 cordova platform remove android
 cordova plugins remove io.jxcore.node
+
+# re-add the plugin:
 cordova plugins add io.jxcore.node
+# or if you use jxc:
+jxc install --force
+
 cordova platform add ios
 cordova platform add android
 ```
