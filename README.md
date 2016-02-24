@@ -112,7 +112,15 @@ Below are the steps to be taken if you want to update JXcore binaries in your Co
 application. They all should be called prior to `cordova plugin add` command. This step is 
 optional. We keep the core binaries are updated. 
 
-1. Rebuild JXcore binaries: [Compile as a Static Library](https://github.com/jxcore/jxcore/blob/master/doc/Android_Compile.md#compile-as-a-static-library)
+1. [Rebuild JXcore binaries](https://github.com/jxcore/jxcore/blob/master/doc/Android_Compile.md) as a static library by embedding leveldown:
+
+    ```bash
+    $ git clone https://github.com/jxcore/jxcore.git
+    $ cd jxcore
+    $ build_scripts/android-configure.sh /path/to/android/ndk/
+    $ build_scripts/android_compile.sh /path/to/android/ndk/ --embed-leveldown
+    ```
+
 2. Refresh `jxcore-cordova/src/android/jxcore-binaries` folder contents:
 
     ```bash
